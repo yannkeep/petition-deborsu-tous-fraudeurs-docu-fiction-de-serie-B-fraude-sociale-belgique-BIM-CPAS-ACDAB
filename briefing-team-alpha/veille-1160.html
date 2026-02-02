@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Tu n'es pas seul·e — Soutien face au documentaire "Tous Fraudeurs"</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Si le documentaire 'Tous Fraudeurs' t'a blessé·e, tu es au bon endroit. Ressources, soutien, droits et solidarité. Tu mérites mieux que la honte.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,600;1,6..72,300;1,6..72,400&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg: #FFFBF5;
+    --surface: #FFF8EE;
+    --card: #FFFFFF;
+    --green: #2D6A4F;
+    --green-light: #D8F3DC;
+    --green-pale: #F0FFF4;
+    --coral: #E07A5F;
+    --coral-light: #FFF0EB;
+    --blue: #457B9D;
+    --blue-light: #EDF6F9;
+    --gold: #D4A373;
+    --gold-light: #FEFAE0;
+    --text: #2B2B2B;
+    --text-soft: #5C5C5C;
+    --border: rgba(0,0,0,0.06);
+    --font-serif: 'Newsreader', Georgia, serif;
+    --font-sans: 'DM Sans', system-ui, sans-serif;
+    --radius: 16px;
+    --shadow: 0 2px 20px rgba(0,0,0,0.04);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+::selection { background: var(--green-light); color: var(--green); }
+
+body {
+    font-family: var(--font-serif);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+}
+
+/* ═══ HELP BAR — always visible ═══ */
+.help-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: var(--green);
+    color: #fff;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+}
+.help-bar a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    padding: 4px 14px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-radius: 999px;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+.help-bar a:hover { background: rgba(255,255,255,0.15); border-color: #fff; }
+.help-bar .label { opacity: 0.85; font-size: 0.8rem; }
+
+/* ═══ HERO ═══ */
+.hero {
+    min-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 24px 100px;
+    background: 
+        radial-gradient(ellipse at 30% 20%, rgba(216,243,220,0.5), transparent 60%),
+        radial-gradient(ellipse at 70% 80%, rgba(255,240,235,0.6), transparent 60%),
+        var(--bg);
+}
+
+.hero-breath {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--green-light);
+    margin-bottom: 32px;
+    animation: breathe 5s ease-in-out infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+@keyframes breathe {
+    0%, 100% { transform: scale(1); opacity: 0.7; box-shadow: 0 0 0 0 rgba(45,106,79,0.1); }
+    50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 40px 10px rgba(45,106,79,0.08); }
+}
+
+.hero h1 {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 300;
+    color: var(--green);
+    margin-bottom: 20px;
+    line-height: 1.3;
+    max-width: 700px;
+}
+.hero h1 strong { font-weight: 600; }
+
+.hero-sub {
+    font-size: 1.15rem;
+    color: var(--text-soft);
+    max-width: 540px;
+    margin-bottom: 40px;
+    font-style: italic;
+}
+
+.hero-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    max-width: 800px;
+    width: 100%;
+}
+
+.hero-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 24px 20px;
+    text-decoration: none;
+    color: var(--text);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    transition: all 0.3s;
+    text-align: left;
+}
+.hero-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+}
+.hero-card .card-icon {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+    display: block;
+}
+.hero-card .card-title {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--green);
+    margin-bottom: 4px;
+}
+.hero-card .card-desc {
+    font-size: 0.85rem;
+    color: var(--text-soft);
+    line-height: 1.5;
+}
+
+/* Cards color variants */
+.card-sante { border-left: 4px solid var(--coral); }
+.card-sante .card-title { color: var(--coral); }
+.card-droits { border-left: 4px solid var(--blue); }
+.card-droits .card-title { color: var(--blue); }
+.card-honte { border-left: 4px solid var(--gold); }
+.card-honte .card-title { color: var(--gold); }
+.card-solidarite { border-left: 4px solid var(--green); }
+.card-temoignages { border-left: 4px solid #9B5DE5; }
+.card-temoignages .card-title { color: #9B5DE5; }
+.card-proches { border-left: 4px solid #F15BB5; }
+.card-proches .card-title { color: #F15BB5; }
+.card-agir { border-left: 4px solid var(--coral); }
+.card-agir .card-title { color: var(--coral); }
+
+/* ═══ MESSAGE ═══ */
+.message-section {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+}
+
+.message-block {
+    background: var(--green-pale);
+    border-radius: var(--radius);
+    padding: 32px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(45,106,79,0.1);
+}
+
+.message-block h2 {
+    font-family: var(--font-sans);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--green);
+    margin-bottom: 12px;
+}
+
+.message-block p {
+    font-size: 1rem;
+    color: var(--text);
+    margin-bottom: 12px;
+}
+.message-block p:last-child { margin-bottom: 0; }
+
+.message-block .highlight {
+    background: var(--green-light);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.urgence-box {
+    background: var(--coral-light);
+    border: 2px solid var(--coral);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    text-align: center;
+}
+.urgence-box h3 {
+    font-family: var(--font-sans);
+    color: var(--coral);
+    font-size: 1rem;
+    margin-bottom: 8px;
+}
+.urgence-box .phone {
+    font-family: var(--font-sans);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--coral);
+    text-decoration: none;
+    display: block;
+    margin: 8px 0;
+}
+.urgence-box .phone:hover { text-decoration: underline; }
+.urgence-box .sub { font-size: 0.85rem; color: var(--text-soft); }
+
+/* Nav footer */
+.nav-pages {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 24px 140px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+}
+.nav-link {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    padding: 12px 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.2s;
+}
+.nav-link:hover { border-color: var(--green); color: var(--green); }
+.nav-link .n { color: var(--text-soft); font-size: 0.75rem; }
+
+footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 0.8rem;
+    color: var(--text-soft);
+    padding-bottom: 80px;
+}
+footer a { color: var(--green); text-decoration: none; }
+
+@media (max-width: 600px) {
+    .hero-cards { grid-template-columns: 1fr; }
+    .hero { padding: 40px 20px 80px; min-height: auto; }
+    .help-bar { gap: 8px; font-size: 0.75rem; padding: 8px 12px; }
+    .help-bar a { padding: 3px 10px; font-size: 0.75rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HELP BAR ═══ -->
+<div class="help-bar">
+    <span class="label">Besoin de parler&nbsp;?</span>
+    <a href="tel:107">📞 107 — Télé-Accueil (24h/24)</a>
+    <a href="tel:080032123">📞 0800 32 123 — Prévention Suicide</a>
+    <a href="tel:080012341">📞 0800 1234.1 — Santé mentale</a>
+</div>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+    <div class="hero-breath">🌿</div>
+    <h1>Tu n'es <strong>pas seul·e.</strong></h1>
+    <p class="hero-sub">Si le documentaire «&nbsp;Tous Fraudeurs&nbsp;» t'a blessé·e, humilié·e, mis·e en colère ou fait peur — tu es au bon endroit. Ce que tu ressens est légitime.</p>
+
+    <div class="hero-cards">
+        <a href="sante-mentale.html" class="hero-card card-sante">
+            <span class="card-icon">🫂</span>
+            <div class="card-title">Santé mentale</div>
+            <div class="card-desc">Numéros gratuits, services d'écoute, consultations accessibles en Belgique.</div>
+        </a>
+        <a href="tes-droits.html" class="hero-card card-droits">
+            <span class="card-icon">🛡️</span>
+            <div class="card-title">Tes droits</div>
+            <div class="card-desc">Tu as le droit à des aides. Voici comment les obtenir sans honte.</div>
+        </a>
+        <a href="deconstruire-la-honte.html" class="hero-card card-honte">
+            <span class="card-icon">💛</span>
+            <div class="card-title">La honte n'est pas à toi</div>
+            <div class="card-desc">Comprendre pourquoi ce documentaire blesse — et pourquoi tu n'as rien à te reprocher.</div>
+        </a>
+        <a href="solidarite.html" class="hero-card card-solidarite">
+            <span class="card-icon">🤝</span>
+            <div class="card-title">Solidarité</div>
+            <div class="card-desc">Des associations, des collectifs, des gens qui se battent avec toi.</div>
+        </a>
+        <a href="temoignages.html" class="hero-card card-temoignages">
+            <span class="card-icon">💬</span>
+            <div class="card-title">Paroles</div>
+            <div class="card-desc">Des mots posés par des personnes qui vivent la même chose que toi.</div>
+        </a>
+        <a href="lettre-aux-proches.html" class="hero-card card-proches">
+            <span class="card-icon">💌</span>
+            <div class="card-title">Lettre aux proches</div>
+            <div class="card-desc">Pour l'entourage : comment soutenir sans juger, sans minimiser.</div>
+        </a>
+        <a href="agir.html" class="hero-card card-agir">
+            <span class="card-icon">✊</span>
+            <div class="card-title">Agir</div>
+            <div class="card-desc">Porter plainte, signaler, se mobiliser — quand tu te sens prêt·e.</div>
+        </a>
+    </div>
+</section>
+
+<!-- ═══ MESSAGE ═══ -->
+<section class="message-section">
+    <div class="message-block">
+        <h2>Ce que ce site n'est pas</h2>
+        <p>Ce site n'est pas un tribunal. Pas un espace de colère. Pas une liste de «&nbsp;preuves&nbsp;» contre qui que ce soit.</p>
+        <p>C'est un <span class="highlight">espace de soin</span>. Un endroit où ta dignité est reconnue. Où ton droit à l'aide est défendu. Où personne ne te demandera de justifier ta souffrance.</p>
+    </div>
+
+    <div class="message-block">
+        <h2>Pourquoi ces pages existent</h2>
+        <p>Le 7 novembre 2025, RTL-TVI a diffusé un documentaire intitulé «&nbsp;Sans boulot&nbsp;: tous fraudeurs&nbsp;?&nbsp;» devant 410&nbsp;860 téléspectateurs. Ce programme a filmé des personnes en situation de précarité de manière à laisser entendre que la fraude sociale serait généralisée.</p>
+        <p>Or les chiffres sont clairs&nbsp;: la fraude sociale détectée représente 0,17&nbsp;% des allocations versées, soit environ 200&nbsp;millions d'euros par an. Pendant ce temps, 57 à 76&nbsp;% des personnes qui <em>auraient droit</em> à une aide ne la réclament pas.</p>
+        <p>La honte produite par ce type de programme n'est pas un dommage collatéral. La recherche scientifique montre qu'elle est un mécanisme actif qui empêche les gens de demander l'aide à laquelle ils ont droit.</p>
+    </div>
+
+    <div class="urgence-box">
+        <h3>Si tu traverses un moment difficile maintenant</h3>
+        <a href="tel:107" class="phone">📞 107</a>
+        <div class="sub">Télé-Accueil · Gratuit · Anonyme · 24h/24 · 7j/7<br>Quelqu'un t'écoute, sans juger, à n'importe quelle heure.</div>
+    </div>
+</section>
+
+<!-- ═══ NAV ═══ -->
+<nav class="nav-pages">
+    <a href="sante-mentale.html" class="nav-link"><span class="n">01</span> Santé mentale</a>
+    <a href="tes-droits.html" class="nav-link"><span class="n">02</span> Tes droits</a>
+    <a href="deconstruire-la-honte.html" class="nav-link"><span class="n">03</span> La honte n'est pas à toi</a>
+    <a href="solidarite.html" class="nav-link"><span class="n">04</span> Solidarité</a>
+    <a href="temoignages.html" class="nav-link"><span class="n">05</span> Paroles</a>
+    <a href="lettre-aux-proches.html" class="nav-link"><span class="n">06</span> Lettre aux proches</a>
+    <a href="agir.html" class="nav-link"><span class="n">07</span> Agir</a>
+</nav>
+
+<footer>
+    Un projet <a href="https://ouaisfi.eu">ouaisfieu</a> · Pas de cookies · Pas de trackers · Pas de jugement<br>
+    CC BY-NC-SA 4.0 · Fait avec soin à Bruxelles
+</footer>
+
+</body>
+</html>
