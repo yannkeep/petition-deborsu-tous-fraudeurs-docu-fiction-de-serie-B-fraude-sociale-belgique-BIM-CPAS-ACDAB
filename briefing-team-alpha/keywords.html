@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔑 KEYWORDS — Recherche Mots-Clés | Cocon Pilier Libéral</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a25;
+            --accent-blue: #00d4ff;
+            --accent-red: #ff3366;
+            --accent-green: #00ff88;
+            --accent-yellow: #ffcc00;
+            --accent-purple: #9966ff;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --border-color: #2a2a3a;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        .nav-bar a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+        .nav-bar a:hover, .nav-bar a.active {
+            background: var(--accent-blue);
+            color: var(--bg-primary);
+        }
+        .nav-links { display: flex; gap: 10px; flex-wrap: wrap; }
+        .back-link { color: var(--accent-blue) !important; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        header {
+            padding: 40px 20px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+        }
+        h1 {
+            font-size: 2rem;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        .subtitle { color: var(--text-secondary); }
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+        .silo-section {
+            margin: 40px 0;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+        }
+        .silo-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .silo-header h2 {
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .silo-badge {
+            padding: 5px 12px;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .silo-1 .silo-badge { background: rgba(0,212,255,0.2); color: var(--accent-blue); }
+        .silo-2 .silo-badge { background: rgba(255,51,102,0.2); color: var(--accent-red); }
+        .silo-3 .silo-badge { background: rgba(0,255,136,0.2); color: var(--accent-green); }
+        .silo-4 .silo-badge { background: rgba(255,204,0,0.2); color: var(--accent-yellow); }
+        .silo-5 .silo-badge { background: rgba(153,102,255,0.2); color: var(--accent-purple); }
+        .silo-6 .silo-badge { background: rgba(255,136,0,0.2); color: #ff8800; }
+        .pilier .silo-badge { background: rgba(255,255,255,0.1); color: white; }
+        .silo-content { padding: 20px; display: block; }
+        .page-block {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .page-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .page-title {
+            font-size: 1rem;
+            color: var(--accent-blue);
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+        }
+        .meta-box {
+            background: var(--bg-secondary);
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 3px solid var(--accent-green);
+        }
+        .meta-box code {
+            display: block;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin: 5px 0;
+            word-break: break-all;
+        }
+        .meta-box strong { color: var(--accent-green); }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin: 15px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        th {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .kd-easy { color: var(--accent-green); }
+        .kd-medium { color: var(--accent-yellow); }
+        .kd-hard { color: var(--accent-red); }
+        .intent-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .intent-i { background: rgba(0,212,255,0.2); color: var(--accent-blue); }
+        .intent-n { background: rgba(153,102,255,0.2); color: var(--accent-purple); }
+        .intent-t { background: rgba(255,51,102,0.2); color: var(--accent-red); }
+        .priority-fire::after { content: ' 🔥'; }
+        .summary-box {
+            background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(153,102,255,0.1));
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            margin: 30px 0;
+        }
+        .summary-box h3 { color: var(--accent-blue); margin-bottom: 15px; }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .summary-item {
+            text-align: center;
+            padding: 15px;
+            background: var(--bg-card);
+        }
+        .summary-value { font-size: 1.5rem; font-weight: 700; }
+        .summary-label { font-size: 0.8rem; color: var(--text-secondary); }
+        .toggle-icon { transition: transform 0.3s; }
+        .silo-section.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .silo-section.collapsed .silo-content { display: none; }
+        @media (max-width: 768px) {
+            table { font-size: 0.75rem; }
+            th, td { padding: 8px 5px; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <a href="index.html" class="back-link">← Retour Dashboard</a>
+        <div class="nav-links">
+            <a href="index.html">Index</a>
+            <a href="keywords.html" class="active">Keywords</a>
+            <a href="architecture.html">Architecture</a>
+            <a href="maillage.html">Maillage</a>
+            <a href="geo-strategy.html">GEO</a>
+            <a href="structured-data.html">Data</a>
+        </div>
+    </nav>
+    
+    <header>
+        <h1>🔑 RECHERCHE DE MOTS-CLÉS</h1>
+        <p class="subtitle">~180 requêtes classées par silo • Volumes Google.be (FR) • KD = Keyword Difficulty</p>
+    </header>
+    
+    <div class="container">
+        <div class="summary-box">
+            <h3>📊 SYNTHÈSE DES VOLUMES</h3>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="summary-value" style="color: var(--accent-blue);">~720</div>
+                    <div class="summary-label">Page Pilier</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" style="color: var(--accent-blue);">~4 200</div>
+                    <div class="summary-label">Silo 1 (CJG)</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" style="color: var(--accent-red);">~5 800</div>
+                    <div class="summary-label">Silo 2 (Quintin)</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" style="color: var(--accent-green);">~12 400</div>
+                    <div class="summary-label">Silo 3 (Pilier)</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" style="color: var(--accent-yellow);">~2 600</div>
+                    <div class="summary-label">Silo 4 (Finance)</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" style="color: var(--accent-purple);">~2 700</div>
+                    <div class="summary-label">Silo 5 (FWB)</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" style="color: #ff8800;">~11 200</div>
+                    <div class="summary-label">Silo 6 (Particratie)</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" style="color: white;">~39 600</div>
+                    <div class="summary-label">TOTAL /mois</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE PILIER -->
+        <section class="silo-section pilier">
+            <div class="silo-header" onclick="toggleSilo(this)">
+                <h2><span class="silo-badge">PILIER</span> Page Pilier — Money Page</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="silo-content">
+                <div class="page-block">
+                    <div class="page-title">/pilier-liberal-belgique-reseau-mr/</div>
+                    <div class="meta-box">
+                        <code><strong>Title:</strong> Pilier libéral en Belgique : cartographie complète du réseau MR et de ses ramifications (2026)</code>
+                        <code><strong>Meta:</strong> Enquête citoyenne sur le pilier libéral belge. Centre Jean Gol, CGSLB, mutualités libérales, nominations MR : la carte complète du réseau d'influence du MR.</code>
+                        <code><strong>H1:</strong> Pilier libéral en Belgique : cartographie du réseau MR, de ses associations et de ses ramifications</code>
+                    </div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th><th>Priorité</th></tr>
+                        <tr><td>pilier libéral belgique</td><td>320</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 12</td><td class="priority-fire">MONEY PAGE</td></tr>
+                        <tr><td>réseau MR belgique</td><td>170</td><td><span class="intent-badge intent-i">I</span><span class="intent-badge intent-t">T</span></td><td class="kd-easy">🟢 8</td><td class="priority-fire"></td></tr>
+                        <tr><td>pilarisation libérale belge</td><td>90</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 5</td><td class="priority-fire"></td></tr>
+                        <tr><td>associations liées au MR</td><td>140</td><td><span class="intent-badge intent-t">T</span></td><td class="kd-easy">🟢 10</td><td class="priority-fire"></td></tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SILO 1 -->
+        <section class="silo-section silo-1">
+            <div class="silo-header" onclick="toggleSilo(this)">
+                <h2><span class="silo-badge">SILO 1</span> Centre Jean Gol & Centres d'études</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="silo-content">
+                <div class="page-block">
+                    <div class="page-title">F1.1 — /centre-jean-gol-mr-financement-education-permanente/</div>
+                    <div class="meta-box">
+                        <code><strong>Title:</strong> Centre Jean Gol : financement, publications et rôle dans le réseau MR</code>
+                        <code><strong>Meta:</strong> Le Centre Jean Gol est le centre d'études du MR, reconnu en éducation permanente et comme centre d'archives en FWB. Financement public, production intellectuelle, liens avec le parti.</code>
+                        <code><strong>H1:</strong> Centre Jean Gol : centre d'études du MR, financement public et production partisane</code>
+                    </div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>centre jean gol</td><td>720</td><td><span class="intent-badge intent-n">N</span></td><td class="kd-easy">🟢 8</td></tr>
+                        <tr><td>centre jean gol MR</td><td>390</td><td><span class="intent-badge intent-n">N</span></td><td class="kd-easy">🟢 5</td></tr>
+                        <tr><td>centre jean gol financement</td><td>110</td><td><span class="intent-badge intent-t">T</span></td><td class="kd-easy">🟢 3</td></tr>
+                        <tr><td>centre jean gol subvention</td><td>90</td><td><span class="intent-badge intent-t">T</span></td><td class="kd-easy">🟢 4</td></tr>
+                        <tr><td>centre jean gol éducation permanente</td><td>70</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 2</td></tr>
+                    </table>
+                </div>
+                <div class="page-block">
+                    <div class="page-title">F1.2 — /centres-etudes-partis-belges-iev-etopia-cpcp-jean-gol/</div>
+                    <div class="meta-box">
+                        <code><strong>Title:</strong> IEV, Etopia, CPCP, Centre Jean Gol : les centres d'études des partis belges comparés</code>
+                        <code><strong>Meta:</strong> Chaque parti belge francophone dispose d'un centre d'études financé par la FWB. IEV (PS), Etopia (Ecolo), CPCP (Engagés), CJG (MR) : budgets, missions, suppression 2026.</code>
+                    </div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>institut emile vandervelde</td><td>880</td><td><span class="intent-badge intent-n">N</span></td><td class="kd-medium">🟡 22</td></tr>
+                        <tr><td>etopia ecolo</td><td>320</td><td><span class="intent-badge intent-n">N</span></td><td class="kd-easy">🟢 12</td></tr>
+                        <tr><td>CPCP les engagés</td><td>170</td><td><span class="intent-badge intent-n">N</span></td><td class="kd-easy">🟢 8</td></tr>
+                        <tr><td>suppression centres études FWB</td><td>140</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 4</td></tr>
+                    </table>
+                </div>
+                <div class="page-block">
+                    <div class="page-title">F1.3 — /centres-archives-partis-politiques-fwb/</div>
+                    <div class="meta-box">
+                        <code><strong>Title:</strong> Centres d'archives des partis politiques en FWB : cadre légal, subventions et suppression 2026</code>
+                    </div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>centres d'archives partis politiques FWB</td><td>70</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 2</td></tr>
+                        <tr><td>centre jacques georgin DéFI</td><td>110</td><td><span class="intent-badge intent-n">N</span></td><td class="kd-easy">🟢 5</td></tr>
+                    </table>
+                </div>
+                <div class="page-block">
+                    <div class="page-title">F1.4 — /education-permanente-propagande-partis-politiques-belgique/</div>
+                    <div class="meta-box">
+                        <code><strong>Title:</strong> Éducation permanente ou propagande partisane ? Le cas des associations liées aux partis belges</code>
+                    </div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>éducation permanente belgique</td><td>1300</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-medium">🟡 35</td></tr>
+                        <tr><td>éducation permanente partis politiques</td><td>170</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 8</td></tr>
+                        <tr><td>décret éducation permanente 2003</td><td>110</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 6</td></tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SILO 2 -->
+        <section class="silo-section silo-2">
+            <div class="silo-header" onclick="toggleSilo(this)">
+                <h2><span class="silo-badge">SILO 2</span> Loi Quintin & Liberté d'association — ⚡ PRIORITÉ</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="silo-content">
+                <div class="page-block">
+                    <div class="page-title">F2.1 — /loi-quintin-dissolution-associations-belgique/ 🔥🔥🔥</div>
+                    <div class="meta-box">
+                        <code><strong>Title:</strong> Loi Quintin : le gouvernement Arizona veut pouvoir dissoudre des associations sans juge</code>
+                        <code><strong>Meta:</strong> L'avant-projet de loi Quintin (MR) permet la dissolution administrative d'associations "radicales" sans intervention judiciaire. Texte, analyse juridique, critiques, enjeux.</code>
+                        <code><strong>H1:</strong> Loi Quintin : dissolution administrative des associations en Belgique — analyse complète</code>
+                    </div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>loi quintin belgique</td><td>1600</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-medium">🟡 28</td></tr>
+                        <tr><td>loi quintin associations</td><td>880</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-medium">🟡 24</td></tr>
+                        <tr><td>loi quintin explication</td><td>590</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-medium">🟡 20</td></tr>
+                        <tr><td>dissolution associations belgique</td><td>480</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 18</td></tr>
+                        <tr><td>loi quintin organisations radicales</td><td>440</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-medium">🟡 22</td></tr>
+                        <tr><td>loi quintin samidoun</td><td>390</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-medium">🟡 25</td></tr>
+                        <tr><td>avant-projet loi quintin texte</td><td>320</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 12</td></tr>
+                        <tr><td>bernard quintin MR intérieur</td><td>260</td><td><span class="intent-badge intent-n">N</span></td><td class="kd-easy">🟢 14</td></tr>
+                    </table>
+                </div>
+                <div class="page-block">
+                    <div class="page-title">F2.2 — /loi-quintin-avis-conseil-etat-ifdh/</div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>conseil d'état loi quintin avis</td><td>260</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 10</td></tr>
+                        <tr><td>IFDH avis loi quintin</td><td>170</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 6</td></tr>
+                        <tr><td>institut fédéral droits humains belgique</td><td>480</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-medium">🟡 20</td></tr>
+                    </table>
+                </div>
+                <div class="page-block">
+                    <div class="page-title">F2.3 — /dissolution-associations-europe-france-allemagne-belgique/</div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>soulèvements de la terre dissolution</td><td>480</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-medium">🟡 32</td></tr>
+                        <tr><td>dissolution association France</td><td>320</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-medium">🟡 28</td></tr>
+                        <tr><td>samidoun interdit Allemagne</td><td>170</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 10</td></tr>
+                    </table>
+                </div>
+                <div class="page-block">
+                    <div class="page-title">F2.4 — /coalition-droit-protester-belgique-loi-quintin/</div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>droit de manifester belgique</td><td>320</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-medium">🟡 20</td></tr>
+                        <tr><td>droit de protester belgique</td><td>260</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 14</td></tr>
+                        <tr><td>coalition droit de protester</td><td>170</td><td><span class="intent-badge intent-n">N</span></td><td class="kd-easy">🟢 8</td></tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SILO 3 -->
+        <section class="silo-section silo-3">
+            <div class="silo-header" onclick="toggleSilo(this)">
+                <h2><span class="silo-badge">SILO 3</span> Pilarisation & Réseau Libéral</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="silo-content">
+                <div class="page-block">
+                    <div class="page-title">F3.1 — /pilarisation-belgique-piliers-histoire-fonctionnement/</div>
+                    <div class="meta-box">
+                        <code><strong>Title:</strong> La pilarisation en Belgique : comment trois piliers ont structuré toute la société belge</code>
+                    </div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>pilarisation belgique</td><td>720</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-medium">🟡 25</td></tr>
+                        <tr><td>verzuiling belgique</td><td>390</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-medium">🟡 22</td></tr>
+                        <tr><td>pilarisation belgique explication</td><td>390</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-medium">🟡 20</td></tr>
+                        <tr><td>piliers belgique catholique socialiste libéral</td><td>260</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 15</td></tr>
+                    </table>
+                </div>
+                <div class="page-block">
+                    <div class="page-title">F3.2 — /pilier-liberal-belge-cartographie-organisations/</div>
+                    <div class="meta-box">
+                        <code><strong>Title:</strong> Le pilier libéral belge : cartographie complète des organisations liées au MR et à l'Open VLD</code>
+                    </div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>pilier libéral belgique organisations</td><td>140</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 5</td></tr>
+                        <tr><td>réseau libéral belge</td><td>90</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 3</td></tr>
+                    </table>
+                </div>
+                <div class="page-block">
+                    <div class="page-title">F3.3 — /cgslb-syndicat-liberal-belgique-pilier-mr/</div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>CGSLB</td><td>4400</td><td><span class="intent-badge intent-n">N</span></td><td class="kd-medium">🟡 35</td></tr>
+                        <tr><td>syndicat libéral belgique</td><td>720</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-medium">🟡 28</td></tr>
+                        <tr><td>CGSLB ACLVB différence</td><td>260</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 12</td></tr>
+                    </table>
+                </div>
+                <div class="page-block">
+                    <div class="page-title">F3.4 — /mutualites-liberales-belgique-partenamut-helan/</div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>partenamut</td><td>2900</td><td><span class="intent-badge intent-n">N</span></td><td class="kd-hard">🔴 48</td></tr>
+                        <tr><td>helan mutualité</td><td>1900</td><td><span class="intent-badge intent-n">N</span></td><td class="kd-medium">🟡 40</td></tr>
+                        <tr><td>mutualités libérales belgique</td><td>480</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-medium">🟡 22</td></tr>
+                    </table>
+                </div>
+                <div class="page-block">
+                    <div class="page-title">F3.5 — /nominations-mr-institutions-publiques-belgique/</div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>nominations politiques belgique</td><td>390</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-medium">🟡 25</td></tr>
+                        <tr><td>partage postes partis belgique</td><td>170</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 12</td></tr>
+                        <tr><td>nominations MR institutions</td><td>110</td><td><span class="intent-badge intent-t">T</span></td><td class="kd-easy">🟢 5</td></tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SILO 4 -->
+        <section class="silo-section silo-4">
+            <div class="silo-header" onclick="toggleSilo(this)">
+                <h2><span class="silo-badge">SILO 4</span> Financement Public & Flux Financiers</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="silo-content">
+                <div class="page-block">
+                    <div class="page-title">F4.1 — /financement-partis-politiques-belgique-dotations-chiffres/</div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>financement partis politiques belgique</td><td>720</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-medium">🟡 30</td></tr>
+                        <tr><td>financement public partis montants</td><td>260</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 15</td></tr>
+                        <tr><td>dotation publique MR</td><td>170</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 8</td></tr>
+                        <tr><td>combien reçoit le MR</td><td>140</td><td><span class="intent-badge intent-t">T</span></td><td class="kd-easy">🟢 5</td></tr>
+                    </table>
+                </div>
+                <div class="page-block">
+                    <div class="page-title">F4.2 — /subventions-fwb-associations-partis-montants/</div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>subvention éducation permanente montants</td><td>170</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 8</td></tr>
+                        <tr><td>subventions FWB associations partis</td><td>140</td><td><span class="intent-badge intent-t">T</span></td><td class="kd-easy">🟢 5</td></tr>
+                    </table>
+                </div>
+                <div class="page-block">
+                    <div class="page-title">F4.3 — /financement-campagnes-mr-depenses-electorales/</div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>plafond dépenses électorales belgique</td><td>260</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 15</td></tr>
+                        <tr><td>financement campagne électorale MR</td><td>170</td><td><span class="intent-badge intent-t">T</span></td><td class="kd-easy">🟢 8</td></tr>
+                    </table>
+                </div>
+                <div class="page-block">
+                    <div class="page-title">F4.4 — /transparence-financiere-asbl-partisanes-belgique/</div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>transparence ASBL belgique</td><td>210</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 14</td></tr>
+                        <tr><td>Cour des comptes partis belgique</td><td>140</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 10</td></tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SILO 5 -->
+        <section class="silo-section silo-5">
+            <div class="silo-header" onclick="toggleSilo(this)">
+                <h2><span class="silo-badge">SILO 5</span> Budget FWB 2026 & Suppressions</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="silo-content">
+                <div class="page-block">
+                    <div class="page-title">F5.1 — /budget-fwb-2026-conclave-economies-decisions/</div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>budget FWB 2026</td><td>720</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-medium">🟡 30</td></tr>
+                        <tr><td>conclave FWB 2025</td><td>390</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-medium">🟡 20</td></tr>
+                        <tr><td>décisions budget FWB 2026</td><td>260</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 15</td></tr>
+                        <tr><td>économies FWB 500 millions</td><td>170</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 8</td></tr>
+                    </table>
+                </div>
+                <div class="page-block">
+                    <div class="page-title">F5.2 — /moratoire-education-permanente-fwb-2026-2028/</div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>moratoire éducation permanente 2026</td><td>260</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 10</td></tr>
+                        <tr><td>gel reconnaissances éducation permanente FWB</td><td>140</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 5</td></tr>
+                    </table>
+                </div>
+                <div class="page-block">
+                    <div class="page-title">F5.3 — /scenario-mr-engages-coupes-associations-fwb/</div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>scénario MR suppression associations</td><td>90</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 3</td></tr>
+                        <tr><td>3,2 millions vs 20,6 millions scénario</td><td>40</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 1</td></tr>
+                    </table>
+                </div>
+                <div class="page-block">
+                    <div class="page-title">F5.4 — /impact-budget-fwb-2026-associations-emplois/</div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>impact budget FWB 2026 associations</td><td>170</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 8</td></tr>
+                        <tr><td>conséquences coupes budget associatif FWB</td><td>140</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 6</td></tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SILO 6 -->
+        <section class="silo-section silo-6">
+            <div class="silo-header" onclick="toggleSilo(this)">
+                <h2><span class="silo-badge">SILO 6</span> Particratie & Contre-pouvoirs</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="silo-content">
+                <div class="page-block">
+                    <div class="page-title">F6.1 — /particratie-belgique-definition-mecanismes/</div>
+                    <div class="meta-box">
+                        <code><strong>Title:</strong> La particratie belge : quand les présidents de partis gouvernent à la place du Parlement</code>
+                    </div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>particratie belgique</td><td>1300</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-medium">🟡 30</td></tr>
+                        <tr><td>particratie définition</td><td>480</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-medium">🟡 25</td></tr>
+                        <tr><td>partis politiques pouvoir belgique</td><td>320</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 18</td></tr>
+                        <tr><td>présidents de partis belgique pouvoir</td><td>210</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 12</td></tr>
+                    </table>
+                </div>
+                <div class="page-block">
+                    <div class="page-title">F6.2 — /georges-louis-bouchez-strategie-reseau-influence-mr/ ⚠️ KD ÉLEVÉ</div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>georges-louis bouchez</td><td>6600</td><td><span class="intent-badge intent-n">N</span></td><td class="kd-hard">🔴 55</td></tr>
+                        <tr><td>bouchez MR stratégie</td><td>390</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-medium">🟡 25</td></tr>
+                        <tr><td>bouchez extrême droite</td><td>320</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-medium">🟡 22</td></tr>
+                        <tr><td>bouchez droite populaire</td><td>210</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 15</td></tr>
+                    </table>
+                </div>
+                <div class="page-block">
+                    <div class="page-title">F6.3 — /erosion-etat-droit-belgique-rapport-ifdh/</div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>état de droit belgique menacé</td><td>260</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 14</td></tr>
+                        <tr><td>belgique condamnée CEDH</td><td>210</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 12</td></tr>
+                        <tr><td>IFDH rapport belgique</td><td>170</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 8</td></tr>
+                    </table>
+                </div>
+                <div class="page-block">
+                    <div class="page-title">F6.4 — /civic-tech-contre-pouvoirs-citoyens-belgique/</div>
+                    <table>
+                        <tr><th>Requête</th><th>Vol.</th><th>Intent</th><th>KD</th></tr>
+                        <tr><td>civic tech belgique</td><td>210</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 12</td></tr>
+                        <tr><td>démocratie participative belgique outils</td><td>170</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 10</td></tr>
+                        <tr><td>contre-pouvoirs citoyens belgique</td><td>140</td><td><span class="intent-badge intent-i">I</span></td><td class="kd-easy">🟢 8</td></tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <footer style="text-align: center; padding: 40px 20px; border-top: 1px solid var(--border-color); margin-top: 40px;">
+            <p style="color: var(--text-secondary);">Légende : <span class="intent-badge intent-i">I</span> Informationnelle • <span class="intent-badge intent-n">N</span> Navigationnelle • <span class="intent-badge intent-t">T</span> Transactionnelle/Investigative</p>
+            <p style="color: var(--text-secondary); margin-top: 10px;"><span class="kd-easy">🟢</span> KD < 20 • <span class="kd-medium">🟡</span> KD 20-45 • <span class="kd-hard">🔴</span> KD > 45</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleSilo(header) {
+            header.parentElement.classList.toggle('collapsed');
+        }
+    </script>
+</body>
+</html>

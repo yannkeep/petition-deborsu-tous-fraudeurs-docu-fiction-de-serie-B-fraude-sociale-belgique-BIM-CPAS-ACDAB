@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏗️ ARCHITECTURE — Briefs de Contenu | Cocon Pilier Libéral</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a25;
+            --accent-blue: #00d4ff;
+            --accent-red: #ff3366;
+            --accent-green: #00ff88;
+            --accent-yellow: #ffcc00;
+            --accent-purple: #9966ff;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --border-color: #2a2a3a;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        .nav-bar a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+        .nav-bar a:hover, .nav-bar a.active {
+            background: var(--accent-blue);
+            color: var(--bg-primary);
+        }
+        .nav-links { display: flex; gap: 10px; flex-wrap: wrap; }
+        .back-link { color: var(--accent-blue) !important; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        header {
+            padding: 40px 20px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+        }
+        h1 {
+            font-size: 2rem;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        .subtitle { color: var(--text-secondary); }
+        .calendar-section {
+            background: linear-gradient(135deg, rgba(153,102,255,0.1), rgba(0,212,255,0.1));
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            margin: 30px 0;
+        }
+        .calendar-section h2 {
+            color: var(--accent-purple);
+            margin-bottom: 20px;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .calendar-item {
+            background: var(--bg-card);
+            padding: 15px;
+            border-left: 3px solid var(--accent-blue);
+        }
+        .calendar-item:nth-child(2) { border-color: var(--accent-red); }
+        .calendar-item:nth-child(3) { border-color: var(--accent-green); }
+        .calendar-item:nth-child(4) { border-color: var(--accent-yellow); }
+        .calendar-item:nth-child(5) { border-color: var(--accent-purple); }
+        .calendar-phase {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .calendar-content {
+            margin-top: 8px;
+            font-size: 0.9rem;
+        }
+        .brief-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            margin: 30px 0;
+            overflow: hidden;
+        }
+        .brief-header {
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .brief-header h3 {
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .priority-badge {
+            background: var(--accent-red);
+            color: white;
+            padding: 3px 10px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .brief-content {
+            padding: 25px;
+        }
+        .brief-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .meta-item {
+            background: var(--bg-secondary);
+            padding: 12px;
+        }
+        .meta-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .meta-value {
+            font-size: 0.9rem;
+            margin-top: 5px;
+            font-family: 'Courier New', monospace;
+        }
+        .code-block {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+        }
+        .code-block .label {
+            color: var(--accent-green);
+            font-weight: 700;
+        }
+        .code-block .value {
+            color: var(--text-secondary);
+        }
+        .h2-list {
+            list-style: none;
+            margin: 20px 0;
+        }
+        .h2-list li {
+            padding: 10px 15px;
+            border-left: 2px solid var(--accent-blue);
+            margin: 5px 0;
+            background: rgba(0,212,255,0.05);
+            font-size: 0.9rem;
+        }
+        .faq-section {
+            background: var(--bg-secondary);
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .faq-section h4 {
+            color: var(--accent-yellow);
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        .faq-item {
+            margin: 15px 0;
+            padding: 15px;
+            background: var(--bg-card);
+        }
+        .faq-q {
+            color: var(--accent-blue);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .faq-a {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .sources-section {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px dashed var(--border-color);
+        }
+        .sources-section h4 {
+            color: var(--accent-green);
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+        .sources-section ul {
+            list-style: none;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .sources-section li {
+            padding: 5px 0;
+            padding-left: 15px;
+            position: relative;
+        }
+        .sources-section li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+        }
+        .toggle-icon { transition: transform 0.3s; }
+        .brief-card.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .brief-card.collapsed .brief-content { display: none; }
+        .volume-badge {
+            display: inline-block;
+            background: rgba(0,255,136,0.2);
+            color: var(--accent-green);
+            padding: 3px 8px;
+            font-size: 0.7rem;
+            margin-left: 10px;
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .brief-meta { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <a href="index.html" class="back-link">← Retour Dashboard</a>
+        <div class="nav-links">
+            <a href="index.html">Index</a>
+            <a href="keywords.html">Keywords</a>
+            <a href="architecture.html" class="active">Architecture</a>
+            <a href="maillage.html">Maillage</a>
+            <a href="geo-strategy.html">GEO</a>
+            <a href="structured-data.html">Data</a>
+        </div>
+    </nav>
+    
+    <header>
+        <h1>🏗️ ARCHITECTURE & BRIEFS</h1>
+        <p class="subtitle">26 pages • 56 000 mots • Calendrier de déploiement • Briefs de contenu détaillés</p>
+    </header>
+    
+    <div class="container">
+        <div class="calendar-section">
+            <h2>📅 CALENDRIER DE DÉPLOIEMENT</h2>
+            <div class="calendar-grid">
+                <div class="calendar-item">
+                    <div class="calendar-phase">Phase 1 — Sem. 1-2</div>
+                    <div class="calendar-content"><strong>Page pilier + Silo 2 (Loi Quintin)</strong><br>Sujet chaud, volume élevé</div>
+                </div>
+                <div class="calendar-item">
+                    <div class="calendar-phase">Phase 2 — Sem. 3-4</div>
+                    <div class="calendar-content"><strong>Silo 1 (CJG) + Silo 5 (Budget FWB)</strong><br>Actualité directe</div>
+                </div>
+                <div class="calendar-item">
+                    <div class="calendar-phase">Phase 3 — Sem. 5-6</div>
+                    <div class="calendar-content"><strong>Silo 3 (Pilarisation)</strong><br>Contenu evergreen, autorité</div>
+                </div>
+                <div class="calendar-item">
+                    <div class="calendar-phase">Phase 4 — Sem. 7-8</div>
+                    <div class="calendar-content"><strong>Silo 4 + Silo 6</strong><br>Finance + Particratie</div>
+                </div>
+                <div class="calendar-item">
+                    <div class="calendar-phase">Phase 5 — Sem. 9-10</div>
+                    <div class="calendar-content"><strong>Optimisation</strong><br>Ajout données, FAQ, sitemap</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BRIEF PAGE PILIER -->
+        <div class="brief-card">
+            <div class="brief-header" onclick="toggleBrief(this)">
+                <h3>📍 PAGE PILIER <span class="volume-badge">~720/mois</span></h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="brief-content">
+                <div class="brief-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">URL</div>
+                        <div class="meta-value">/pilier-liberal-belgique-reseau-mr/</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Longueur</div>
+                        <div class="meta-value">2500-3000 mots</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Liens sortants</div>
+                        <div class="meta-value">6 (vers silos)</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Schema</div>
+                        <div class="meta-value">Article + Organization</div>
+                    </div>
+                </div>
+                <div class="code-block">
+                    <span class="label">Title:</span> <span class="value">Pilier libéral en Belgique : cartographie complète du réseau MR (2026)</span><br>
+                    <span class="label">Meta:</span> <span class="value">Enquête citoyenne sur le pilier libéral belge. Centre Jean Gol, CGSLB, mutualités libérales, nominations MR : la carte complète du réseau d'influence du MR.</span><br>
+                    <span class="label">H1:</span> <span class="value">Pilier libéral en Belgique : cartographie du réseau MR, de ses associations et de ses ramifications</span>
+                </div>
+                <h4 style="color: var(--accent-blue); margin: 20px 0 10px;">Structure H2 :</h4>
+                <ul class="h2-list">
+                    <li>Qu'est-ce que le pilier libéral en Belgique ?</li>
+                    <li>Le Centre Jean Gol et les centres d'études des partis</li>
+                    <li>La loi Quintin menace la liberté d'association</li>
+                    <li>Les organisations du pilier libéral</li>
+                    <li>Combien le pilier libéral coûte-t-il aux contribuables ?</li>
+                    <li>Budget FWB 2026 — la fin des associations partisanes</li>
+                    <li>Particratie et contre-pouvoirs citoyens</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- BRIEF LOI QUINTIN -->
+        <div class="brief-card">
+            <div class="brief-header" onclick="toggleBrief(this)">
+                <h3>🔥 F2.1 — LOI QUINTIN <span class="priority-badge">PRIORITÉ #1</span> <span class="volume-badge">~5800/mois</span></h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="brief-content">
+                <div class="brief-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">URL</div>
+                        <div class="meta-value">/loi-quintin-dissolution-associations-belgique/</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Longueur</div>
+                        <div class="meta-value">3000-3500 mots</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">KW Principal</div>
+                        <div class="meta-value">loi quintin belgique (1600)</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Schema</div>
+                        <div class="meta-value">Article + FAQPage</div>
+                    </div>
+                </div>
+                <div class="code-block">
+                    <span class="label">Title:</span> <span class="value">Loi Quintin : le gouvernement Arizona veut pouvoir dissoudre des associations sans juge</span><br>
+                    <span class="label">Meta:</span> <span class="value">L'avant-projet de loi Quintin (MR) permet la dissolution administrative d'associations "radicales" sans intervention judiciaire. Texte, analyse juridique, critiques, enjeux.</span><br>
+                    <span class="label">H1:</span> <span class="value">Loi Quintin : dissolution administrative des associations en Belgique — analyse complète</span>
+                </div>
+                <h4 style="color: var(--accent-blue); margin: 20px 0 10px;">Structure H2 :</h4>
+                <ul class="h2-list">
+                    <li>Que prévoit l'avant-projet de loi Quintin ?</li>
+                    <li>Qui peut être visé ? Les zones grises du texte</li>
+                    <li>L'exception syndicats et partis politiques : une fausse garantie</li>
+                    <li>La procédure : dissolution sans juge, recours limité</li>
+                    <li>Samidoun : le cas qui a déclenché le projet</li>
+                    <li>Le précédent français et les leçons européennes</li>
+                    <li>Les critiques et la résistance</li>
+                </ul>
+                <div class="faq-section">
+                    <h4>❓ FAQ GEO (Schema FAQPage)</h4>
+                    <div class="faq-item">
+                        <div class="faq-q">Q: Qu'est-ce que la loi Quintin ?</div>
+                        <div class="faq-a">R: La loi Quintin est un avant-projet de loi du ministre de l'Intérieur Bernard Quintin (MR) qui permettrait au gouvernement belge de dissoudre administrativement des associations jugées constituer une menace pour la sécurité nationale, sans passer par un juge. Le Conseil d'État et l'IFDH ont émis des avis très critiques.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-q">Q: La loi Quintin peut-elle être utilisée contre les syndicats ?</div>
+                        <div class="faq-a">R: L'avant-projet exclut formellement les syndicats reconnus. Cependant, si le gouvernement estime qu'un syndicat « détourne sa finalité déclarée », la mesure pourrait s'appliquer. Cette exception est jugée insuffisante par la CSC et la FGTB.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-q">Q: Le Conseil d'État a-t-il approuvé la loi Quintin ?</div>
+                        <div class="faq-a">R: Non. Le Conseil d'État a rendu un avis réservé le 31 décembre 2025, pointant des notions trop vagues et rappelant que la dissolution définitive d'organisations relève de la justice, pas de l'exécutif.</div>
+                    </div>
+                </div>
+                <div class="sources-section">
+                    <h4>📚 Sources obligatoires</h4>
+                    <ul>
+                        <li>Avant-projet de loi approuvé en Conseil des ministres (juillet 2025)</li>
+                        <li>Avis du Conseil d'État (31 décembre 2025)</li>
+                        <li>Avis de l'IFDH</li>
+                        <li>Communiqué Amnesty International Belgique / coalition "Droit de protester"</li>
+                        <li>Article 27 de la Constitution belge (liberté d'association)</li>
+                        <li>Réactions syndicales (FGTB, CSC)</li>
+                        <li>Déclarations Sammy Mahdi (CD&V)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- BRIEF CENTRE JEAN GOL -->
+        <div class="brief-card">
+            <div class="brief-header" onclick="toggleBrief(this)">
+                <h3>🏛️ F1.1 — CENTRE JEAN GOL <span class="priority-badge">PRIORITÉ #2</span> <span class="volume-badge">~1400/mois</span></h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="brief-content">
+                <div class="brief-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">URL</div>
+                        <div class="meta-value">/centre-jean-gol-mr-financement-education-permanente/</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Longueur</div>
+                        <div class="meta-value">2000-2500 mots</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">KW Principal</div>
+                        <div class="meta-value">centre jean gol (720)</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Schema</div>
+                        <div class="meta-value">Article + FAQPage + Organization</div>
+                    </div>
+                </div>
+                <div class="code-block">
+                    <span class="label">Title:</span> <span class="value">Centre Jean Gol : financement, publications et rôle dans le réseau MR</span><br>
+                    <span class="label">Meta:</span> <span class="value">Le Centre Jean Gol est le centre d'études du MR, reconnu en éducation permanente et comme centre d'archives en FWB. Financement public, production intellectuelle, liens avec le parti.</span><br>
+                    <span class="label">H1:</span> <span class="value">Centre Jean Gol : centre d'études du MR, financement public et production partisane</span>
+                </div>
+                <h4 style="color: var(--accent-blue); margin: 20px 0 10px;">Structure H2 :</h4>
+                <ul class="h2-list">
+                    <li>Qu'est-ce que le Centre Jean Gol ?</li>
+                    <li>Combien d'argent public reçoit le Centre Jean Gol ?</li>
+                    <li>Double reconnaissance — éducation permanente et centre d'archives</li>
+                    <li>Publications du CJG — analyse ou argumentaire MR ?</li>
+                    <li>Suppression de la reconnaissance prévue fin 2026</li>
+                </ul>
+                <div class="faq-section">
+                    <h4>❓ FAQ GEO</h4>
+                    <div class="faq-item">
+                        <div class="faq-q">Q: Qu'est-ce que le Centre Jean Gol ?</div>
+                        <div class="faq-a">R: Le Centre Jean Gol est le centre d'études et d'archives du Mouvement Réformateur (MR), parti libéral francophone belge. Il est reconnu en éducation permanente et comme centre d'archives par la FWB, ce qui lui donne accès à des subventions publiques. Sa reconnaissance sera supprimée fin 2026.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-q">Q: Pourquoi le Centre Jean Gol perd-il sa reconnaissance ?</div>
+                        <div class="faq-a">R: Le gouvernement FWB (MR-Engagés) a décidé lors du conclave budgétaire d'octobre 2025 de supprimer d'ici fin 2026 les reconnaissances de toutes les associations présentant des liens explicites avec des partis politiques.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BRIEF PARTICRATIE -->
+        <div class="brief-card">
+            <div class="brief-header" onclick="toggleBrief(this)">
+                <h3>⚖️ F6.1 — PARTICRATIE BELGE <span class="volume-badge">~2300/mois</span></h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="brief-content">
+                <div class="brief-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">URL</div>
+                        <div class="meta-value">/particratie-belgique-definition-mecanismes/</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Longueur</div>
+                        <div class="meta-value">3000 mots</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">KW Principal</div>
+                        <div class="meta-value">particratie belgique (1300)</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Schema</div>
+                        <div class="meta-value">Article + FAQPage</div>
+                    </div>
+                </div>
+                <div class="code-block">
+                    <span class="label">Title:</span> <span class="value">La particratie belge : quand les présidents de partis gouvernent à la place du Parlement</span><br>
+                    <span class="label">Meta:</span> <span class="value">La Belgique est une particratie : les décisions sont prises par les présidents de partis, pas par le Parlement. Définition, mécanismes et conséquences.</span>
+                </div>
+                <h4 style="color: var(--accent-blue); margin: 20px 0 10px;">Structure H2 :</h4>
+                <ul class="h2-list">
+                    <li>Qu'est-ce que la particratie ?</li>
+                    <li>Le rôle des présidents de partis</li>
+                    <li>La discipline de parti</li>
+                    <li>Les mécanismes de la particratie</li>
+                    <li>Particratie et pilarisation</li>
+                    <li>Critiques et défenses de la particratie</li>
+                </ul>
+                <div class="faq-section">
+                    <h4>❓ FAQ GEO</h4>
+                    <div class="faq-item">
+                        <div class="faq-q">Q: Qu'est-ce que la particratie ?</div>
+                        <div class="faq-a">R: La particratie est un système politique où les partis et leurs dirigeants exercent un pouvoir prépondérant sur les décisions, au détriment du Parlement. En Belgique, les décisions cruciales sont prises entre présidents de partis, et les parlementaires votent selon la consigne du parti plutôt que selon leur conviction.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BRIEF PILARISATION -->
+        <div class="brief-card">
+            <div class="brief-header" onclick="toggleBrief(this)">
+                <h3>🏛️ F3.1 — PILARISATION BELGE <span class="volume-badge">~1800/mois</span></h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="brief-content">
+                <div class="brief-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">URL</div>
+                        <div class="meta-value">/pilarisation-belgique-piliers-histoire-fonctionnement/</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Longueur</div>
+                        <div class="meta-value">2500-3000 mots</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">KW Principal</div>
+                        <div class="meta-value">pilarisation belgique (720)</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Schema</div>
+                        <div class="meta-value">Article + FAQPage</div>
+                    </div>
+                </div>
+                <div class="code-block">
+                    <span class="label">Title:</span> <span class="value">La pilarisation en Belgique : comment trois piliers ont structuré toute la société belge</span><br>
+                    <span class="label">Meta:</span> <span class="value">Catholique, socialiste, libéral : les trois piliers belges organisent depuis le XIXe siècle syndicats, mutuelles, écoles, médias et partis. Histoire et fonctionnement de la verzuiling.</span>
+                </div>
+                <h4 style="color: var(--accent-blue); margin: 20px 0 10px;">Structure H2 :</h4>
+                <ul class="h2-list">
+                    <li>Qu'est-ce que la pilarisation ?</li>
+                    <li>Les origines historiques (XIXe siècle)</li>
+                    <li>Les trois piliers et leurs organisations [TABLEAU]</li>
+                    <li>Le fonctionnement de la démocratie consociative</li>
+                    <li>La dépilarisation depuis les années 1960</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- VOLUMES TOTAUX -->
+        <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 25px; margin: 30px 0;">
+            <h3 style="color: var(--accent-yellow); margin-bottom: 20px;">📊 VOLUME TOTAL DE CONTENU</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; text-align: center;">
+                <div>
+                    <div style="font-size: 2rem; font-weight: 800; color: var(--accent-blue);">26</div>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary);">Pages</div>
+                </div>
+                <div>
+                    <div style="font-size: 2rem; font-weight: 800; color: var(--accent-green);">~56K</div>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary);">Mots</div>
+                </div>
+                <div>
+                    <div style="font-size: 2rem; font-weight: 800; color: var(--accent-yellow);">~115</div>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary);">Liens internes</div>
+                </div>
+                <div>
+                    <div style="font-size: 2rem; font-weight: 800; color: var(--accent-purple);">~35</div>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary);">Schemas JSON-LD</div>
+                </div>
+                <div>
+                    <div style="font-size: 2rem; font-weight: 800; color: var(--accent-red);">~80</div>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary);">FAQ GEO</div>
+                </div>
+            </div>
+        </div>
+
+        <footer style="text-align: center; padding: 40px 20px; border-top: 1px solid var(--border-color); margin-top: 40px;">
+            <p style="color: var(--text-secondary);">Les briefs complets des 26 pages sont disponibles dans le repo markdown.</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleBrief(header) {
+            header.parentElement.classList.toggle('collapsed');
+        }
+    </script>
+</body>
+</html>

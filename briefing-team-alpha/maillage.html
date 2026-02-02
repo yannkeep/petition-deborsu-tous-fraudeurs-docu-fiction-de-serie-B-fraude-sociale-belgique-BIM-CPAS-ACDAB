@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔗 MAILLAGE — Liens Internes | Cocon Pilier Libéral</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a25;
+            --accent-blue: #00d4ff;
+            --accent-red: #ff3366;
+            --accent-green: #00ff88;
+            --accent-yellow: #ffcc00;
+            --accent-purple: #9966ff;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --border-color: #2a2a3a;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        .nav-bar a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+        .nav-bar a:hover, .nav-bar a.active {
+            background: var(--accent-blue);
+            color: var(--bg-primary);
+        }
+        .nav-links { display: flex; gap: 10px; flex-wrap: wrap; }
+        .back-link { color: var(--accent-blue) !important; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        header {
+            padding: 40px 20px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+        }
+        h1 {
+            font-size: 2rem;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        .subtitle { color: var(--text-secondary); }
+        .rules-section {
+            background: linear-gradient(135deg, rgba(0,255,136,0.1), rgba(0,212,255,0.1));
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            margin: 30px 0;
+        }
+        .rules-section h2 {
+            color: var(--accent-green);
+            margin-bottom: 20px;
+        }
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .rule-card {
+            background: var(--bg-card);
+            padding: 20px;
+            border-left: 3px solid var(--accent-green);
+        }
+        .rule-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--accent-green);
+            opacity: 0.3;
+            float: right;
+        }
+        .rule-card h4 {
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+        }
+        .rule-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .forbidden-section {
+            background: rgba(255,51,102,0.1);
+            border: 1px solid var(--accent-red);
+            padding: 25px;
+            margin: 30px 0;
+        }
+        .forbidden-section h3 {
+            color: var(--accent-red);
+            margin-bottom: 15px;
+        }
+        .forbidden-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+        }
+        .forbidden-list li {
+            padding: 10px 15px;
+            background: var(--bg-card);
+            font-size: 0.9rem;
+        }
+        .forbidden-list li::before {
+            content: '❌ ';
+        }
+        .matrix-section {
+            margin: 40px 0;
+        }
+        .matrix-section h2 {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+        .silo-matrix {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            margin-bottom: 25px;
+        }
+        .silo-matrix-header {
+            padding: 15px 20px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .silo-matrix-header h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .silo-badge {
+            padding: 4px 10px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            border-radius: 3px;
+        }
+        .pilier .silo-badge { background: rgba(255,255,255,0.1); color: white; }
+        .silo-1 .silo-badge { background: rgba(0,212,255,0.2); color: var(--accent-blue); }
+        .silo-2 .silo-badge { background: rgba(255,51,102,0.2); color: var(--accent-red); }
+        .silo-3 .silo-badge { background: rgba(0,255,136,0.2); color: var(--accent-green); }
+        .silo-4 .silo-badge { background: rgba(255,204,0,0.2); color: var(--accent-yellow); }
+        .silo-5 .silo-badge { background: rgba(153,102,255,0.2); color: var(--accent-purple); }
+        .silo-6 .silo-badge { background: rgba(255,136,0,0.2); color: #ff8800; }
+        .silo-matrix-content {
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        th {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .link-type {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .type-desc { background: rgba(0,212,255,0.2); color: var(--accent-blue); }
+        .type-remon { background: rgba(0,255,136,0.2); color: var(--accent-green); }
+        .type-soeur { background: rgba(153,102,255,0.2); color: var(--accent-purple); }
+        .anchor-text {
+            font-style: italic;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        .anchor-rules {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            margin: 30px 0;
+        }
+        .anchor-rules h3 {
+            color: var(--accent-yellow);
+            margin-bottom: 20px;
+        }
+        .anchor-table {
+            width: 100%;
+        }
+        .anchor-table th {
+            background: var(--bg-secondary);
+        }
+        .toggle-icon { transition: transform 0.3s; }
+        .silo-matrix.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .silo-matrix.collapsed .silo-matrix-content { display: none; }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            table { font-size: 0.75rem; }
+            th, td { padding: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <a href="index.html" class="back-link">← Retour Dashboard</a>
+        <div class="nav-links">
+            <a href="index.html">Index</a>
+            <a href="keywords.html">Keywords</a>
+            <a href="architecture.html">Architecture</a>
+            <a href="maillage.html" class="active">Maillage</a>
+            <a href="geo-strategy.html">GEO</a>
+            <a href="structured-data.html">Data</a>
+        </div>
+    </nav>
+    
+    <header>
+        <h1>🔗 MATRICE DE MAILLAGE</h1>
+        <p class="subtitle">~115 liens internes • Méthodologie Bourrelly stricte • Étanchéité inter-silos</p>
+    </header>
+    
+    <div class="container">
+        <div class="rules-section">
+            <h2>📐 RÈGLES DE MAILLAGE</h2>
+            <div class="rules-grid">
+                <div class="rule-card">
+                    <span class="rule-number">1</span>
+                    <h4>Page pilier → Pages mères de silo</h4>
+                    <p>Liens descendants dans le corps de texte. La page pilier distribue le jus vers les 6 silos.</p>
+                </div>
+                <div class="rule-card">
+                    <span class="rule-number">2</span>
+                    <h4>Page mère → Ses filles</h4>
+                    <p>Liens descendants vers les sous-pages du silo. Chaque mère introduit et renvoie vers ses filles.</p>
+                </div>
+                <div class="rule-card">
+                    <span class="rule-number">3</span>
+                    <h4>Page fille → Sa mère</h4>
+                    <p>Lien remontant en début de contenu (premier paragraphe). Renforce l'autorité de la page mère.</p>
+                </div>
+                <div class="rule-card">
+                    <span class="rule-number">4</span>
+                    <h4>Page fille ↔ Ses sœurs</h4>
+                    <p>Liens transversaux en fin de contenu ou encadré "À lire aussi". Maximum 3 liens sœurs par page.</p>
+                </div>
+                <div class="rule-card">
+                    <span class="rule-number">5</span>
+                    <h4>JAMAIS de cross-silo direct</h4>
+                    <p>Une page fille ne peut PAS lier directement vers une fille d'un autre silo. Passer par la page pilier.</p>
+                </div>
+                <div class="rule-card">
+                    <span class="rule-number">6</span>
+                    <h4>Maximum 5 liens / 1500 mots</h4>
+                    <p>Ne pas diluer le jus SEO. Chaque lien doit être pertinent et contextualisé.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="forbidden-section">
+            <h3>🚫 LIENS INTERDITS</h3>
+            <ul class="forbidden-list">
+                <li>Fille S1 → Fille S3 (cross-silo direct)</li>
+                <li>Page pilier → Petite-fille directement</li>
+                <li>Liens réciproques symétriques (A→B ET B→A même ancre)</li>
+                <li>Ancres génériques ("en savoir plus", "cliquez ici")</li>
+                <li>Plus de 5 liens internes / 1500 mots</li>
+            </ul>
+        </div>
+
+        <div class="anchor-rules">
+            <h3>⚓ RÈGLES D'ANCRAGE</h3>
+            <table class="anchor-table">
+                <tr>
+                    <th>Type de lien</th>
+                    <th>Position dans la page</th>
+                    <th>Format d'ancre</th>
+                </tr>
+                <tr>
+                    <td><span class="link-type type-remon">Remontant</span></td>
+                    <td>1er paragraphe</td>
+                    <td>Phrase complète descriptive intégrée naturellement</td>
+                </tr>
+                <tr>
+                    <td><span class="link-type type-desc">Descendant</span></td>
+                    <td>Dans les H2 pertinents</td>
+                    <td>Syntagme nominal spécifique (pas de "cliquez ici")</td>
+                </tr>
+                <tr>
+                    <td><span class="link-type type-soeur">Sœur</span></td>
+                    <td>Dernier paragraphe / "À lire aussi"</td>
+                    <td>Titre reformulé ou expression-clé de la page cible</td>
+                </tr>
+                <tr>
+                    <td><span class="link-type type-remon">Vers pilier</span></td>
+                    <td>Footer du contenu</td>
+                    <td><code>Retour à la cartographie du pilier libéral</code></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="matrix-section">
+            <h2>📊 MATRICE PAR SILO</h2>
+
+            <!-- PAGE PILIER -->
+            <div class="silo-matrix pilier">
+                <div class="silo-matrix-header" onclick="toggleMatrix(this)">
+                    <h3><span class="silo-badge">PILIER</span> Page Pilier : pilier-liberal-belgique-reseau-mr</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="silo-matrix-content">
+                    <table>
+                        <tr>
+                            <th>Lien vers</th>
+                            <th>Type</th>
+                            <th>Ancre recommandée</th>
+                        </tr>
+                        <tr>
+                            <td>→ S1 mère (centres d'études)</td>
+                            <td><span class="link-type type-desc">descendant</span></td>
+                            <td class="anchor-text">les centres d'études des partis politiques belges</td>
+                        </tr>
+                        <tr>
+                            <td>→ S2 mère (loi Quintin)</td>
+                            <td><span class="link-type type-desc">descendant</span></td>
+                            <td class="anchor-text">la loi Quintin menace la liberté d'association</td>
+                        </tr>
+                        <tr>
+                            <td>→ S3 mère (pilarisation)</td>
+                            <td><span class="link-type type-desc">descendant</span></td>
+                            <td class="anchor-text">la pilarisation historique de la société belge</td>
+                        </tr>
+                        <tr>
+                            <td>→ S4 mère (financement)</td>
+                            <td><span class="link-type type-desc">descendant</span></td>
+                            <td class="anchor-text">le financement public des partis et de leurs associations</td>
+                        </tr>
+                        <tr>
+                            <td>→ S5 mère (budget FWB)</td>
+                            <td><span class="link-type type-desc">descendant</span></td>
+                            <td class="anchor-text">le budget FWB 2026 et la suppression des reconnaissances</td>
+                        </tr>
+                        <tr>
+                            <td>→ S6 mère (particratie)</td>
+                            <td><span class="link-type type-desc">descendant</span></td>
+                            <td class="anchor-text">la particratie et les contre-pouvoirs citoyens</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SILO 1 -->
+            <div class="silo-matrix silo-1">
+                <div class="silo-matrix-header" onclick="toggleMatrix(this)">
+                    <h3><span class="silo-badge">SILO 1</span> Centre Jean Gol & Centres d'études</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="silo-matrix-content">
+                    <table>
+                        <tr><th>Page</th><th>Liens sortants</th><th>Type</th><th>Ancre</th></tr>
+                        <tr>
+                            <td>S1 mère (F1.2)</td>
+                            <td>→ Pilier</td>
+                            <td><span class="link-type type-remon">remontant</span></td>
+                            <td class="anchor-text">le réseau complet du pilier libéral belge</td>
+                        </tr>
+                        <tr>
+                            <td>S1 mère</td>
+                            <td>→ F1.1 (CJG)</td>
+                            <td><span class="link-type type-desc">descendant</span></td>
+                            <td class="anchor-text">le Centre Jean Gol, centre d'études du MR</td>
+                        </tr>
+                        <tr>
+                            <td>S1 mère</td>
+                            <td>→ F1.3 (Archives)</td>
+                            <td><span class="link-type type-desc">descendant</span></td>
+                            <td class="anchor-text">les centres d'archives des partis en FWB</td>
+                        </tr>
+                        <tr>
+                            <td>S1 mère</td>
+                            <td>→ F1.4 (EP/propagande)</td>
+                            <td><span class="link-type type-desc">descendant</span></td>
+                            <td class="anchor-text">éducation permanente ou propagande partisane</td>
+                        </tr>
+                        <tr>
+                            <td>F1.1 (CJG)</td>
+                            <td>→ S1 mère</td>
+                            <td><span class="link-type type-remon">remontant</span></td>
+                            <td class="anchor-text">les centres d'études de tous les partis belges</td>
+                        </tr>
+                        <tr>
+                            <td>F1.1</td>
+                            <td>↔ F1.3</td>
+                            <td><span class="link-type type-soeur">sœur</span></td>
+                            <td class="anchor-text">le CJG est aussi reconnu comme centre d'archives</td>
+                        </tr>
+                        <tr>
+                            <td>F1.1</td>
+                            <td>↔ F1.4</td>
+                            <td><span class="link-type type-soeur">sœur</span></td>
+                            <td class="anchor-text">la question du double standard en EP</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SILO 2 -->
+            <div class="silo-matrix silo-2">
+                <div class="silo-matrix-header" onclick="toggleMatrix(this)">
+                    <h3><span class="silo-badge">SILO 2</span> Loi Quintin & Liberté d'association</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="silo-matrix-content">
+                    <table>
+                        <tr><th>Page</th><th>Liens sortants</th><th>Type</th><th>Ancre</th></tr>
+                        <tr>
+                            <td>S2 mère (F2.1)</td>
+                            <td>→ Pilier</td>
+                            <td><span class="link-type type-remon">remontant</span></td>
+                            <td class="anchor-text">le réseau du pilier libéral et ses ramifications</td>
+                        </tr>
+                        <tr>
+                            <td>S2 mère</td>
+                            <td>→ F2.2 (CE/IFDH)</td>
+                            <td><span class="link-type type-desc">descendant</span></td>
+                            <td class="anchor-text">les avis critiques du Conseil d'État et de l'IFDH</td>
+                        </tr>
+                        <tr>
+                            <td>S2 mère</td>
+                            <td>→ F2.3 (Europe)</td>
+                            <td><span class="link-type type-desc">descendant</span></td>
+                            <td class="anchor-text">les précédents européens de dissolution</td>
+                        </tr>
+                        <tr>
+                            <td>S2 mère</td>
+                            <td>→ F2.4 (Coalition)</td>
+                            <td><span class="link-type type-desc">descendant</span></td>
+                            <td class="anchor-text">la coalition Droit de protester</td>
+                        </tr>
+                        <tr>
+                            <td>F2.2</td>
+                            <td>→ S2 mère</td>
+                            <td><span class="link-type type-remon">remontant</span></td>
+                            <td class="anchor-text">l'avant-projet de loi Quintin en détail</td>
+                        </tr>
+                        <tr>
+                            <td>F2.2</td>
+                            <td>↔ F2.3</td>
+                            <td><span class="link-type type-soeur">sœur</span></td>
+                            <td class="anchor-text">le Conseil d'État renvoie aux exemples européens</td>
+                        </tr>
+                        <tr>
+                            <td>F2.3</td>
+                            <td>↔ F2.4</td>
+                            <td><span class="link-type type-soeur">sœur</span></td>
+                            <td class="anchor-text">les mobilisations européennes contre les dissolutions</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SILO 3 -->
+            <div class="silo-matrix silo-3 collapsed">
+                <div class="silo-matrix-header" onclick="toggleMatrix(this)">
+                    <h3><span class="silo-badge">SILO 3</span> Pilarisation & Réseau libéral</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="silo-matrix-content">
+                    <table>
+                        <tr><th>Page</th><th>Liens sortants</th><th>Type</th><th>Ancre</th></tr>
+                        <tr><td>S3 mère (F3.1)</td><td>→ Pilier</td><td><span class="link-type type-remon">remontant</span></td><td class="anchor-text">le pilier libéral et le réseau MR</td></tr>
+                        <tr><td>S3 mère</td><td>→ F3.2</td><td><span class="link-type type-desc">descendant</span></td><td class="anchor-text">la cartographie complète du pilier libéral</td></tr>
+                        <tr><td>S3 mère</td><td>→ F3.3</td><td><span class="link-type type-desc">descendant</span></td><td class="anchor-text">le syndicat libéral belge CGSLB</td></tr>
+                        <tr><td>S3 mère</td><td>→ F3.4</td><td><span class="link-type type-desc">descendant</span></td><td class="anchor-text">les mutualités libérales Partenamut et Helan</td></tr>
+                        <tr><td>S3 mère</td><td>→ F3.5</td><td><span class="link-type type-desc">descendant</span></td><td class="anchor-text">les nominations dans les institutions</td></tr>
+                        <tr><td>F3.2</td><td>↔ F3.3</td><td><span class="link-type type-soeur">sœur</span></td><td class="anchor-text">la CGSLB, bras syndical du pilier libéral</td></tr>
+                        <tr><td>F3.3</td><td>↔ F3.4</td><td><span class="link-type type-soeur">sœur</span></td><td class="anchor-text">la mutualité libérale, l'autre organisation pilarisée</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SILO 4 -->
+            <div class="silo-matrix silo-4 collapsed">
+                <div class="silo-matrix-header" onclick="toggleMatrix(this)">
+                    <h3><span class="silo-badge">SILO 4</span> Financement public</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="silo-matrix-content">
+                    <table>
+                        <tr><th>Page</th><th>Liens sortants</th><th>Type</th><th>Ancre</th></tr>
+                        <tr><td>S4 mère (F4.1)</td><td>→ Pilier</td><td><span class="link-type type-remon">remontant</span></td><td class="anchor-text">le réseau du pilier libéral et ses financements</td></tr>
+                        <tr><td>S4 mère</td><td>→ F4.2</td><td><span class="link-type type-desc">descendant</span></td><td class="anchor-text">les subventions FWB aux associations partisanes</td></tr>
+                        <tr><td>S4 mère</td><td>→ F4.3</td><td><span class="link-type type-desc">descendant</span></td><td class="anchor-text">le financement des campagnes du MR</td></tr>
+                        <tr><td>S4 mère</td><td>→ F4.4</td><td><span class="link-type type-desc">descendant</span></td><td class="anchor-text">la transparence financière des ASBL partisanes</td></tr>
+                        <tr><td>F4.2</td><td>↔ F4.3</td><td><span class="link-type type-soeur">sœur</span></td><td class="anchor-text">le financement des campagnes électorales</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SILO 5 -->
+            <div class="silo-matrix silo-5 collapsed">
+                <div class="silo-matrix-header" onclick="toggleMatrix(this)">
+                    <h3><span class="silo-badge">SILO 5</span> Budget FWB 2026</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="silo-matrix-content">
+                    <table>
+                        <tr><th>Page</th><th>Liens sortants</th><th>Type</th><th>Ancre</th></tr>
+                        <tr><td>S5 mère (F5.1)</td><td>→ Pilier</td><td><span class="link-type type-remon">remontant</span></td><td class="anchor-text">le pilier libéral et les coupes budgétaires</td></tr>
+                        <tr><td>S5 mère</td><td>→ F5.2</td><td><span class="link-type type-desc">descendant</span></td><td class="anchor-text">le moratoire sur l'éducation permanente</td></tr>
+                        <tr><td>S5 mère</td><td>→ F5.3</td><td><span class="link-type type-desc">descendant</span></td><td class="anchor-text">les deux scénarios de coupes</td></tr>
+                        <tr><td>S5 mère</td><td>→ F5.4</td><td><span class="link-type type-desc">descendant</span></td><td class="anchor-text">l'impact sur le tissu associatif</td></tr>
+                        <tr><td>F5.2</td><td>↔ F5.3</td><td><span class="link-type type-soeur">sœur</span></td><td class="anchor-text">le scénario MR allait plus loin que le moratoire</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SILO 6 -->
+            <div class="silo-matrix silo-6 collapsed">
+                <div class="silo-matrix-header" onclick="toggleMatrix(this)">
+                    <h3><span class="silo-badge">SILO 6</span> Particratie & Contre-pouvoirs</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="silo-matrix-content">
+                    <table>
+                        <tr><th>Page</th><th>Liens sortants</th><th>Type</th><th>Ancre</th></tr>
+                        <tr><td>S6 mère (F6.1)</td><td>→ Pilier</td><td><span class="link-type type-remon">remontant</span></td><td class="anchor-text">le pilier libéral dans le système particratique</td></tr>
+                        <tr><td>S6 mère</td><td>→ F6.2</td><td><span class="link-type type-desc">descendant</span></td><td class="anchor-text">Georges-Louis Bouchez et le virage droite populaire</td></tr>
+                        <tr><td>S6 mère</td><td>→ F6.3</td><td><span class="link-type type-desc">descendant</span></td><td class="anchor-text">l'érosion de l'État de droit en Belgique</td></tr>
+                        <tr><td>S6 mère</td><td>→ F6.4</td><td><span class="link-type type-desc">descendant</span></td><td class="anchor-text">les alternatives citoyennes à la particratie</td></tr>
+                        <tr><td>F6.2</td><td>↔ F6.3</td><td><span class="link-type type-soeur">sœur</span></td><td class="anchor-text">les conséquences de sa stratégie sur l'État de droit</td></tr>
+                        <tr><td>F6.3</td><td>↔ F6.4</td><td><span class="link-type type-soeur">sœur</span></td><td class="anchor-text">les alternatives pour défendre l'État de droit</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <footer style="text-align: center; padding: 40px 20px; border-top: 1px solid var(--border-color); margin-top: 40px;">
+            <p style="color: var(--text-secondary);">Légende : <span class="link-type type-desc">descendant</span> <span class="link-type type-remon">remontant</span> <span class="link-type type-soeur">sœur</span></p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleMatrix(header) {
+            header.parentElement.classList.toggle('collapsed');
+        }
+    </script>
+</body>
+</html>

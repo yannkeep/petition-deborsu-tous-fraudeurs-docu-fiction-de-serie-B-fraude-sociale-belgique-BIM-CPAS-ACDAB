@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 GEO STRATEGY — Optimisation IA | Cocon Pilier Libéral</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a25;
+            --accent-blue: #00d4ff;
+            --accent-red: #ff3366;
+            --accent-green: #00ff88;
+            --accent-yellow: #ffcc00;
+            --accent-purple: #9966ff;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --border-color: #2a2a3a;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        .nav-bar a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+        .nav-bar a:hover, .nav-bar a.active {
+            background: var(--accent-blue);
+            color: var(--bg-primary);
+        }
+        .nav-links { display: flex; gap: 10px; flex-wrap: wrap; }
+        .back-link { color: var(--accent-blue) !important; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        header {
+            padding: 40px 20px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+        }
+        h1 {
+            font-size: 2rem;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        .subtitle { color: var(--text-secondary); }
+        .intro-box {
+            background: linear-gradient(135deg, rgba(153,102,255,0.1), rgba(255,51,102,0.1));
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            margin: 30px 0;
+        }
+        .intro-box h2 {
+            color: var(--accent-purple);
+            margin-bottom: 15px;
+        }
+        .intro-box p {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+        .principle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .principle-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            position: relative;
+        }
+        .principle-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-blue);
+        }
+        .principle-card:nth-child(2)::before { background: var(--accent-green); }
+        .principle-card:nth-child(3)::before { background: var(--accent-yellow); }
+        .principle-card:nth-child(4)::before { background: var(--accent-purple); }
+        .principle-card:nth-child(5)::before { background: var(--accent-red); }
+        .principle-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--accent-blue);
+            opacity: 0.2;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+        }
+        .principle-card:nth-child(2) .principle-number { color: var(--accent-green); }
+        .principle-card:nth-child(3) .principle-number { color: var(--accent-yellow); }
+        .principle-card:nth-child(4) .principle-number { color: var(--accent-purple); }
+        .principle-card:nth-child(5) .principle-number { color: var(--accent-red); }
+        .principle-card h3 {
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        .principle-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .template-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            margin: 30px 0;
+        }
+        .template-header {
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .template-header h3 {
+            color: var(--accent-yellow);
+        }
+        .template-content {
+            padding: 25px;
+        }
+        .code-block {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            color: var(--accent-green);
+        }
+        .code-comment { color: var(--text-secondary); }
+        .code-highlight { color: var(--accent-yellow); }
+        .eeat-section {
+            margin: 40px 0;
+        }
+        .eeat-section h2 {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+        .eeat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .eeat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+        }
+        .eeat-card h4 {
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .eeat-card ul {
+            list-style: none;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .eeat-card li {
+            padding: 5px 0;
+            padding-left: 15px;
+            position: relative;
+        }
+        .eeat-card li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+        }
+        .priority-table {
+            margin: 30px 0;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        th {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .priority-high { color: var(--accent-red); }
+        .priority-med { color: var(--accent-yellow); }
+        .checklist-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            margin: 30px 0;
+        }
+        .checklist-section h3 {
+            color: var(--accent-green);
+            margin-bottom: 20px;
+        }
+        .checklist {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 10px;
+        }
+        .checklist-item {
+            padding: 10px 15px;
+            background: var(--bg-secondary);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .check-box {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--accent-green);
+            flex-shrink: 0;
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .principle-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <a href="index.html" class="back-link">← Retour Dashboard</a>
+        <div class="nav-links">
+            <a href="index.html">Index</a>
+            <a href="keywords.html">Keywords</a>
+            <a href="architecture.html">Architecture</a>
+            <a href="maillage.html">Maillage</a>
+            <a href="geo-strategy.html" class="active">GEO</a>
+            <a href="structured-data.html">Data</a>
+        </div>
+    </nav>
+    
+    <header>
+        <h1>🤖 GENERATIVE ENGINE OPTIMIZATION</h1>
+        <p class="subtitle">Comment être cité par ChatGPT, Perplexity, Google AI Overview, Claude</p>
+    </header>
+    
+    <div class="container">
+        <div class="intro-box">
+            <h2>🎯 Qu'est-ce que le GEO ?</h2>
+            <p>Le GEO (Generative Engine Optimization) vise à ce que le contenu soit <strong>sélectionné comme source</strong> par les modèles de langage lorsqu'ils répondent à des requêtes. Contrairement au SEO classique (position dans les 10 liens bleus), le GEO vise l'<strong>inclusion dans la réponse générée</strong>.</p>
+            <p>Les moteurs génératifs (Google AI Overview, Perplexity, ChatGPT Search, Claude) privilégient les contenus <strong>factuels, structurés, sourcés et uniques</strong>.</p>
+        </div>
+
+        <h2 style="color: var(--text-secondary); font-size: 1rem; text-transform: uppercase; letter-spacing: 2px; margin: 40px 0 20px;">🔑 LES 5 PRINCIPES GEO</h2>
+        
+        <div class="principle-grid">
+            <div class="principle-card">
+                <span class="principle-number">1</span>
+                <h3>Factuels et sourcés</h3>
+                <p>Données chiffrées, dates, noms propres, liens vers des sources primaires. Les LLM adorent les réponses contenant des chiffres précis.</p>
+            </div>
+            <div class="principle-card">
+                <span class="principle-number">2</span>
+                <h3>Structurés clairement</h3>
+                <p>Réponses directes sous les H2, format question/réponse. Le premier paragraphe sous un heading = le snippet cité.</p>
+            </div>
+            <div class="principle-card">
+                <span class="principle-number">3</span>
+                <h3>Autoritatifs (E-E-A-T)</h3>
+                <p>Experience, Expertise, Authoritativeness, Trustworthiness. Sources primaires (Moniteur, Conseil d'État, rapports officiels).</p>
+            </div>
+            <div class="principle-card">
+                <span class="principle-number">4</span>
+                <h3>Uniques</h3>
+                <p>Informations qu'on ne trouve pas facilement ailleurs : analyses originales, compilations inédites, données croisées.</p>
+            </div>
+            <div class="principle-card">
+                <span class="principle-number">5</span>
+                <h3>Citables</h3>
+                <p>Phrases autonomes (40-60 mots) qui peuvent être extraites et insérées directement dans une réponse IA.</p>
+            </div>
+        </div>
+
+        <div class="template-section">
+            <div class="template-header">
+                <h3>📝 TEMPLATE DE CONTENU GEO-OPTIMISÉ</h3>
+            </div>
+            <div class="template-content">
+                <div class="code-block"><span class="code-comment"># [H1 : mot-clé principal + contexte]</span>
+
+<span class="code-highlight">[Paragraphe d'accroche — réponse directe à l'intention de recherche
+principale en 50-80 mots. C'est LE paragraphe que les LLM vont citer.
+Il doit contenir : la définition, 1 chiffre clé, 1 date, le contexte
+belge. Pas de question, pas de teaser — la réponse directement.]</span>
+
+<span class="code-comment">## [H2 : question informationnelle #1]</span>
+
+<span class="code-highlight">[Réponse directe 40-60 mots — le "snippet"]</span>
+
+[Développement 200-400 mots avec données, sources, contexte]
+
+<span class="code-comment">## [H2 : question informationnelle #2]</span>
+
+[Même structure]
+
+<span class="code-comment">## [H2 : dimension critique / analyse originale]</span>
+
+[C'est ici que le contenu se distingue : analyse que les LLM ne
+trouvent nulle part ailleurs. C'est la valeur ajoutée unique.]
+
+<span class="code-comment">## [H2 : données et chiffres clés]</span>
+
+[Tableau comparatif ou chronologie avec sources]
+
+<span class="code-comment">## Questions fréquentes</span>
+
+<span class="code-comment">### [Question 1 reformulée naturellement]</span>
+<span class="code-highlight">[Réponse 40-80 mots, autonome, citable]</span>
+
+<span class="code-comment">### [Question 2]</span>
+[Réponse]
+
+---
+
+<span class="code-comment">**Sources** : [liste numérotée avec liens vers sources primaires]
+**Dernière mise à jour** : [date ISO]</span></div>
+            </div>
+        </div>
+
+        <h2 style="color: var(--text-secondary); font-size: 1rem; text-transform: uppercase; letter-spacing: 2px; margin: 40px 0 20px;">⭐ PAGES À PLUS FORT POTENTIEL GEO</h2>
+        
+        <div class="priority-table">
+            <table>
+                <tr>
+                    <th>Page</th>
+                    <th>Requête GEO cible</th>
+                    <th>Type de réponse IA attendue</th>
+                    <th>Priorité</th>
+                </tr>
+                <tr>
+                    <td>F2.1 Loi Quintin</td>
+                    <td>"qu'est-ce que la loi quintin"</td>
+                    <td>Définition + contexte + critique</td>
+                    <td class="priority-high">🔥🔥🔥</td>
+                </tr>
+                <tr>
+                    <td>F6.1 Particratie</td>
+                    <td>"particratie belgique"</td>
+                    <td>Définition + explication + exemples</td>
+                    <td class="priority-high">🔥🔥🔥</td>
+                </tr>
+                <tr>
+                    <td>F3.1 Pilarisation</td>
+                    <td>"pilarisation belgique explication"</td>
+                    <td>Définition + 3 piliers + fonctionnement</td>
+                    <td class="priority-high">🔥🔥🔥</td>
+                </tr>
+                <tr>
+                    <td>F1.1 Centre Jean Gol</td>
+                    <td>"centre jean gol"</td>
+                    <td>Fiche d'identité + financement + suppression</td>
+                    <td class="priority-med">🔥🔥</td>
+                </tr>
+                <tr>
+                    <td>F3.2 Carto pilier libéral</td>
+                    <td>"organisations pilier libéral belgique"</td>
+                    <td>Liste exhaustive + relations</td>
+                    <td class="priority-med">🔥🔥</td>
+                </tr>
+                <tr>
+                    <td>F4.1 Dotations partis</td>
+                    <td>"financement partis politiques belgique"</td>
+                    <td>Chiffres + cadre légal</td>
+                    <td class="priority-med">🔥🔥</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="eeat-section">
+            <h2>🏆 SIGNAUX E-E-A-T À IMPLÉMENTER</h2>
+            <div class="eeat-grid">
+                <div class="eeat-card">
+                    <h4>📚 Experience</h4>
+                    <ul>
+                        <li>Mentionner le contexte citoyen belge</li>
+                        <li>Inclure des données de terrain</li>
+                        <li>Analyses de documents primaires</li>
+                    </ul>
+                </div>
+                <div class="eeat-card">
+                    <h4>🎓 Expertise</h4>
+                    <ul>
+                        <li>Page "À propos" détaillée</li>
+                        <li>Liens vers les sources de données</li>
+                        <li>Vocabulaire technique précis</li>
+                    </ul>
+                </div>
+                <div class="eeat-card">
+                    <h4>🏛️ Authoritativeness</h4>
+                    <ul>
+                        <li>Backlinks depuis sites .be reconnus</li>
+                        <li>Mentions dans la presse</li>
+                        <li>Citations académiques</li>
+                    </ul>
+                </div>
+                <div class="eeat-card">
+                    <h4>🔒 Trustworthiness</h4>
+                    <ul>
+                        <li>HTTPS obligatoire</li>
+                        <li>Page "Méthodologie"</li>
+                        <li>Pas de pub, pas de sponsoring</li>
+                        <li>Mentions légales complètes</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="template-section">
+            <div class="template-header">
+                <h3>📊 SOURCES PRIMAIRES DE HAUTE AUTORITÉ</h3>
+            </div>
+            <div class="template-content">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                    <div>
+                        <h4 style="color: var(--accent-green); margin-bottom: 10px;">Sources officielles</h4>
+                        <ul style="list-style: none; font-size: 0.9rem; color: var(--text-secondary);">
+                            <li>• Moniteur Belge / Belgisch Staatsblad</li>
+                            <li>• Décrets FWB (gallilex.cfwb.be)</li>
+                            <li>• Rapports Cour des comptes</li>
+                            <li>• Avis du Conseil d'État</li>
+                            <li>• Rapports de l'IFDH</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--accent-blue); margin-bottom: 10px;">Presse de référence</h4>
+                        <ul style="list-style: none; font-size: 0.9rem; color: var(--text-secondary);">
+                            <li>• Le Soir, La Libre, L'Avenir</li>
+                            <li>• RTBF, La DH</li>
+                            <li>• De Standaard, De Morgen, VRT</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--accent-purple); margin-bottom: 10px;">Sources académiques</h4>
+                        <ul style="list-style: none; font-size: 0.9rem; color: var(--text-secondary);">
+                            <li>• UCLouvain, ULB, KU Leuven</li>
+                            <li>• CRISP (Courriers hebdomadaires)</li>
+                            <li>• Publications science politique</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="checklist-section">
+            <h3>✅ CHECKLIST GEO AVANT PUBLICATION</h3>
+            <div class="checklist">
+                <div class="checklist-item"><span class="check-box"></span> H1 contient le mot-clé principal + "Belgique/belge"</div>
+                <div class="checklist-item"><span class="check-box"></span> Premier paragraphe = réponse directe citable (40-80 mots)</div>
+                <div class="checklist-item"><span class="check-box"></span> Chaque H2 commence par une réponse directe</div>
+                <div class="checklist-item"><span class="check-box"></span> Minimum 3 chiffres clés dans la page</div>
+                <div class="checklist-item"><span class="check-box"></span> Minimum 1 tableau de données</div>
+                <div class="checklist-item"><span class="check-box"></span> Section FAQ avec 3-5 questions/réponses</div>
+                <div class="checklist-item"><span class="check-box"></span> Schema JSON-LD Article + FAQPage</div>
+                <div class="checklist-item"><span class="check-box"></span> Sources primaires citées (min. 3/page)</div>
+                <div class="checklist-item"><span class="check-box"></span> Date publication + dernière modification visibles</div>
+                <div class="checklist-item"><span class="check-box"></span> Auteur/organisation identifié</div>
+                <div class="checklist-item"><span class="check-box"></span> Meta description ≤ 155 caractères</div>
+                <div class="checklist-item"><span class="check-box"></span> Title tag ≤ 60 caractères</div>
+                <div class="checklist-item"><span class="check-box"></span> Open Graph + Twitter Cards</div>
+                <div class="checklist-item"><span class="check-box"></span> Canonical URL définie</div>
+                <div class="checklist-item"><span class="check-box"></span> Temps chargement < 2s (LCP)</div>
+                <div class="checklist-item"><span class="check-box"></span> Mobile-first (responsive)</div>
+            </div>
+        </div>
+
+        <footer style="text-align: center; padding: 40px 20px; border-top: 1px solid var(--border-color); margin-top: 40px;">
+            <p style="color: var(--text-secondary);">L'objectif GEO : être LA source citée par les IA sur "pilier libéral belge", "loi Quintin", "particratie belgique".</p>
+        </footer>
+    </div>
+</body>
+</html>

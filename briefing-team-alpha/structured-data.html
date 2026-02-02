@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 STRUCTURED DATA — JSON-LD & Open Graph | Cocon Pilier Libéral</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a25;
+            --accent-blue: #00d4ff;
+            --accent-red: #ff3366;
+            --accent-green: #00ff88;
+            --accent-yellow: #ffcc00;
+            --accent-purple: #9966ff;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --border-color: #2a2a3a;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        .nav-bar a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+        .nav-bar a:hover, .nav-bar a.active {
+            background: var(--accent-blue);
+            color: var(--bg-primary);
+        }
+        .nav-links { display: flex; gap: 10px; flex-wrap: wrap; }
+        .back-link { color: var(--accent-blue) !important; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        header {
+            padding: 40px 20px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+        }
+        h1 {
+            font-size: 2rem;
+            background: linear-gradient(90deg, var(--accent-yellow), var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        .subtitle { color: var(--text-secondary); }
+        .schema-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            margin: 25px 0;
+            overflow: hidden;
+        }
+        .schema-header {
+            padding: 15px 20px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .schema-header h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+        }
+        .schema-badge {
+            padding: 3px 10px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            border-radius: 3px;
+            background: rgba(0,255,136,0.2);
+            color: var(--accent-green);
+        }
+        .schema-content {
+            padding: 20px;
+        }
+        .code-block {
+            background: #0d1117;
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            white-space: pre;
+            color: #e6edf3;
+            position: relative;
+        }
+        .code-block .string { color: #a5d6ff; }
+        .code-block .key { color: #7ee787; }
+        .code-block .number { color: #f2cc60; }
+        .code-block .comment { color: #8b949e; }
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--accent-blue);
+            color: var(--bg-primary);
+            border: none;
+            padding: 5px 12px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .copy-btn:hover {
+            background: var(--accent-green);
+        }
+        .usage-note {
+            background: rgba(255,204,0,0.1);
+            border-left: 3px solid var(--accent-yellow);
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .toggle-icon { transition: transform 0.3s; }
+        .schema-section.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .schema-section.collapsed .schema-content { display: none; }
+        .checklist-final {
+            background: linear-gradient(135deg, rgba(0,255,136,0.1), rgba(0,212,255,0.1));
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            margin: 30px 0;
+        }
+        .checklist-final h3 {
+            color: var(--accent-green);
+            margin-bottom: 20px;
+        }
+        .checklist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 10px;
+        }
+        .check-item {
+            padding: 10px 15px;
+            background: var(--bg-card);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .check-box {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--accent-green);
+            flex-shrink: 0;
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .code-block { font-size: 0.7rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <a href="index.html" class="back-link">← Retour Dashboard</a>
+        <div class="nav-links">
+            <a href="index.html">Index</a>
+            <a href="keywords.html">Keywords</a>
+            <a href="architecture.html">Architecture</a>
+            <a href="maillage.html">Maillage</a>
+            <a href="geo-strategy.html">GEO</a>
+            <a href="structured-data.html" class="active">Data</a>
+        </div>
+    </nav>
+    
+    <header>
+        <h1>📊 STRUCTURED DATA</h1>
+        <p class="subtitle">JSON-LD • Open Graph • Twitter Cards • Sitemap • Templates prêts à copier</p>
+    </header>
+    
+    <div class="container">
+
+        <!-- OPEN GRAPH -->
+        <div class="schema-section">
+            <div class="schema-header" onclick="toggleSchema(this)">
+                <h3>🌐 Open Graph + Twitter Cards <span class="schema-badge">TOUTES PAGES</span></h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="schema-content">
+                <div class="code-block" id="og-code">
+<span class="comment">&lt;!-- Open Graph (Facebook, LinkedIn, etc.) --&gt;</span>
+&lt;meta property="<span class="key">og:type</span>" content="<span class="string">article</span>"&gt;
+&lt;meta property="<span class="key">og:title</span>" content="<span class="string">[Title de la page]</span>"&gt;
+&lt;meta property="<span class="key">og:description</span>" content="<span class="string">[Meta description]</span>"&gt;
+&lt;meta property="<span class="key">og:url</span>" content="<span class="string">https://[domain]/[slug]/</span>"&gt;
+&lt;meta property="<span class="key">og:image</span>" content="<span class="string">https://[domain]/images/og-[slug].jpg</span>"&gt;
+&lt;meta property="<span class="key">og:image:width</span>" content="<span class="number">1200</span>"&gt;
+&lt;meta property="<span class="key">og:image:height</span>" content="<span class="number">630</span>"&gt;
+&lt;meta property="<span class="key">og:locale</span>" content="<span class="string">fr_BE</span>"&gt;
+&lt;meta property="<span class="key">og:site_name</span>" content="<span class="string">Pilier Libéral Belgique</span>"&gt;
+&lt;meta property="<span class="key">article:published_time</span>" content="<span class="string">2026-02-01T00:00:00+01:00</span>"&gt;
+&lt;meta property="<span class="key">article:modified_time</span>" content="<span class="string">2026-02-03T00:00:00+01:00</span>"&gt;
+&lt;meta property="<span class="key">article:section</span>" content="<span class="string">Politique belge</span>"&gt;
+
+<span class="comment">&lt;!-- Twitter Cards --&gt;</span>
+&lt;meta name="<span class="key">twitter:card</span>" content="<span class="string">summary_large_image</span>"&gt;
+&lt;meta name="<span class="key">twitter:title</span>" content="<span class="string">[Title de la page]</span>"&gt;
+&lt;meta name="<span class="key">twitter:description</span>" content="<span class="string">[Meta description]</span>"&gt;
+&lt;meta name="<span class="key">twitter:image</span>" content="<span class="string">https://[domain]/images/og-[slug].jpg</span>"&gt;
+
+<span class="comment">&lt;!-- Canonical --&gt;</span>
+&lt;link rel="<span class="key">canonical</span>" href="<span class="string">https://[domain]/[slug]/</span>"&gt;
+                    <button class="copy-btn" onclick="copyCode('og-code')">COPIER</button>
+                </div>
+                <div class="usage-note">
+                    <strong>⚠️ À personnaliser :</strong> Remplacer [domain], [slug], [Title], [Meta description] pour chaque page. Images OG : 1200×630px minimum.
+                </div>
+            </div>
+        </div>
+
+        <!-- JSON-LD ARTICLE -->
+        <div class="schema-section">
+            <div class="schema-header" onclick="toggleSchema(this)">
+                <h3>📰 Schema Article <span class="schema-badge">TOUTES PAGES</span></h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="schema-content">
+                <div class="code-block" id="article-code">
+&lt;script type="application/ld+json"&gt;
+{
+  "<span class="key">@context</span>": "<span class="string">https://schema.org</span>",
+  "<span class="key">@type</span>": "<span class="string">Article</span>",
+  "<span class="key">headline</span>": "<span class="string">[H1 de la page]</span>",
+  "<span class="key">description</span>": "<span class="string">[Meta description]</span>",
+  "<span class="key">image</span>": "<span class="string">https://[domain]/images/og-[slug].jpg</span>",
+  "<span class="key">datePublished</span>": "<span class="string">2026-02-01T00:00:00+01:00</span>",
+  "<span class="key">dateModified</span>": "<span class="string">2026-02-03T00:00:00+01:00</span>",
+  "<span class="key">author</span>": {
+    "<span class="key">@type</span>": "<span class="string">Organization</span>",
+    "<span class="key">name</span>": "<span class="string">ouaisfieu</span>",
+    "<span class="key">url</span>": "<span class="string">https://ouaisfieu.be</span>"
+  },
+  "<span class="key">publisher</span>": {
+    "<span class="key">@type</span>": "<span class="string">Organization</span>",
+    "<span class="key">name</span>": "<span class="string">ouaisfieu</span>",
+    "<span class="key">logo</span>": {
+      "<span class="key">@type</span>": "<span class="string">ImageObject</span>",
+      "<span class="key">url</span>": "<span class="string">https://[domain]/images/logo.png</span>"
+    }
+  },
+  "<span class="key">mainEntityOfPage</span>": {
+    "<span class="key">@type</span>": "<span class="string">WebPage</span>",
+    "<span class="key">@id</span>": "<span class="string">https://[domain]/[slug]/</span>"
+  },
+  "<span class="key">articleSection</span>": "<span class="string">Politique belge</span>",
+  "<span class="key">keywords</span>": "<span class="string">[mot-clé 1], [mot-clé 2], [mot-clé 3]</span>",
+  "<span class="key">inLanguage</span>": "<span class="string">fr-BE</span>"
+}
+&lt;/script&gt;
+                    <button class="copy-btn" onclick="copyCode('article-code')">COPIER</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- JSON-LD FAQPAGE -->
+        <div class="schema-section">
+            <div class="schema-header" onclick="toggleSchema(this)">
+                <h3>❓ Schema FAQPage <span class="schema-badge">PAGES AVEC FAQ</span></h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="schema-content">
+                <div class="code-block" id="faq-code">
+&lt;script type="application/ld+json"&gt;
+{
+  "<span class="key">@context</span>": "<span class="string">https://schema.org</span>",
+  "<span class="key">@type</span>": "<span class="string">FAQPage</span>",
+  "<span class="key">mainEntity</span>": [
+    {
+      "<span class="key">@type</span>": "<span class="string">Question</span>",
+      "<span class="key">name</span>": "<span class="string">Qu'est-ce que la loi Quintin ?</span>",
+      "<span class="key">acceptedAnswer</span>": {
+        "<span class="key">@type</span>": "<span class="string">Answer</span>",
+        "<span class="key">text</span>": "<span class="string">La loi Quintin est un avant-projet de loi du ministre de l'Intérieur Bernard Quintin (MR) qui permettrait au gouvernement belge de dissoudre administrativement des associations jugées constituer une menace pour la sécurité nationale, sans passer par un juge.</span>"
+      }
+    },
+    {
+      "<span class="key">@type</span>": "<span class="string">Question</span>",
+      "<span class="key">name</span>": "<span class="string">Le Conseil d'État a-t-il approuvé la loi Quintin ?</span>",
+      "<span class="key">acceptedAnswer</span>": {
+        "<span class="key">@type</span>": "<span class="string">Answer</span>",
+        "<span class="key">text</span>": "<span class="string">Non. Le Conseil d'État a rendu un avis réservé le 31 décembre 2025, pointant des notions trop vagues et rappelant que la dissolution définitive d'organisations relève de la justice, pas de l'exécutif.</span>"
+      }
+    },
+    {
+      "<span class="key">@type</span>": "<span class="string">Question</span>",
+      "<span class="key">name</span>": "<span class="string">Quelles associations sont visées par la loi Quintin ?</span>",
+      "<span class="key">acceptedAnswer</span>": {
+        "<span class="key">@type</span>": "<span class="string">Answer</span>",
+        "<span class="key">text</span>": "<span class="string">L'accord de gouvernement Arizona cite explicitement Samidoun. Georges-Louis Bouchez a également mentionné les 'antifas'. Les critiques craignent que les notions vagues du texte permettent de cibler des syndicats ou des associations militantes.</span>"
+      }
+    }
+  ]
+}
+&lt;/script&gt;
+                    <button class="copy-btn" onclick="copyCode('faq-code')">COPIER</button>
+                </div>
+                <div class="usage-note">
+                    <strong>📌 Pages concernées :</strong> F2.1 (Loi Quintin), F6.1 (Particratie), F3.1 (Pilarisation), F1.1 (CJG), toutes pages avec section FAQ.
+                </div>
+            </div>
+        </div>
+
+        <!-- JSON-LD ORGANIZATION -->
+        <div class="schema-section">
+            <div class="schema-header" onclick="toggleSchema(this)">
+                <h3>🏛️ Schema Organization <span class="schema-badge">ENTITÉS MENTIONNÉES</span></h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="schema-content">
+                <div class="code-block" id="org-code">
+<span class="comment">// Centre Jean Gol</span>
+{
+  "<span class="key">@context</span>": "<span class="string">https://schema.org</span>",
+  "<span class="key">@type</span>": "<span class="string">Organization</span>",
+  "<span class="key">name</span>": "<span class="string">Centre Jean Gol</span>",
+  "<span class="key">alternateName</span>": "<span class="string">CJG</span>",
+  "<span class="key">url</span>": "<span class="string">https://www.cjg.be</span>",
+  "<span class="key">description</span>": "<span class="string">Centre d'études et d'archives du Mouvement Réformateur (MR), reconnu en éducation permanente par la FWB.</span>",
+  "<span class="key">parentOrganization</span>": {
+    "<span class="key">@type</span>": "<span class="string">PoliticalParty</span>",
+    "<span class="key">name</span>": "<span class="string">Mouvement Réformateur</span>",
+    "<span class="key">alternateName</span>": "<span class="string">MR</span>"
+  }
+}
+
+<span class="comment">// Mouvement Réformateur</span>
+{
+  "<span class="key">@context</span>": "<span class="string">https://schema.org</span>",
+  "<span class="key">@type</span>": "<span class="string">PoliticalParty</span>",
+  "<span class="key">name</span>": "<span class="string">Mouvement Réformateur</span>",
+  "<span class="key">alternateName</span>": "<span class="string">MR</span>",
+  "<span class="key">url</span>": "<span class="string">https://www.mr.be</span>",
+  "<span class="key">foundingDate</span>": "<span class="string">2002</span>",
+  "<span class="key">areaServed</span>": "<span class="string">Belgique francophone</span>",
+  "<span class="key">member</span>": {
+    "<span class="key">@type</span>": "<span class="string">Person</span>",
+    "<span class="key">name</span>": "<span class="string">Georges-Louis Bouchez</span>",
+    "<span class="key">jobTitle</span>": "<span class="string">Président</span>"
+  }
+}
+
+<span class="comment">// CGSLB</span>
+{
+  "<span class="key">@context</span>": "<span class="string">https://schema.org</span>",
+  "<span class="key">@type</span>": "<span class="string">Organization</span>",
+  "<span class="key">name</span>": "<span class="string">Centrale Générale des Syndicats Libéraux de Belgique</span>",
+  "<span class="key">alternateName</span>": ["<span class="string">CGSLB</span>", "<span class="string">ACLVB</span>"],
+  "<span class="key">url</span>": "<span class="string">https://www.cgslb.be</span>",
+  "<span class="key">description</span>": "<span class="string">Troisième syndicat belge (295 000 membres), appartenant au pilier libéral.</span>"
+}
+                    <button class="copy-btn" onclick="copyCode('org-code')">COPIER</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- JSON-LD BREADCRUMB -->
+        <div class="schema-section">
+            <div class="schema-header" onclick="toggleSchema(this)">
+                <h3>🔗 Schema BreadcrumbList <span class="schema-badge">TOUTES PAGES</span></h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="schema-content">
+                <div class="code-block" id="breadcrumb-code">
+&lt;script type="application/ld+json"&gt;
+{
+  "<span class="key">@context</span>": "<span class="string">https://schema.org</span>",
+  "<span class="key">@type</span>": "<span class="string">BreadcrumbList</span>",
+  "<span class="key">itemListElement</span>": [
+    {
+      "<span class="key">@type</span>": "<span class="string">ListItem</span>",
+      "<span class="key">position</span>": <span class="number">1</span>,
+      "<span class="key">name</span>": "<span class="string">Pilier libéral</span>",
+      "<span class="key">item</span>": "<span class="string">https://[domain]/pilier-liberal-belgique-reseau-mr/</span>"
+    },
+    {
+      "<span class="key">@type</span>": "<span class="string">ListItem</span>",
+      "<span class="key">position</span>": <span class="number">2</span>,
+      "<span class="key">name</span>": "<span class="string">Loi Quintin</span>",
+      "<span class="key">item</span>": "<span class="string">https://[domain]/loi-quintin-dissolution-associations-belgique/</span>"
+    },
+    {
+      "<span class="key">@type</span>": "<span class="string">ListItem</span>",
+      "<span class="key">position</span>": <span class="number">3</span>,
+      "<span class="key">name</span>": "<span class="string">Avis Conseil d'État</span>",
+      "<span class="key">item</span>": "<span class="string">https://[domain]/loi-quintin-avis-conseil-etat-ifdh/</span>"
+    }
+  ]
+}
+&lt;/script&gt;
+                    <button class="copy-btn" onclick="copyCode('breadcrumb-code')">COPIER</button>
+                </div>
+                <div class="usage-note">
+                    <strong>📌 Structure :</strong> Pilier → Silo mère → Page fille. Adapter pour chaque page selon sa position dans la hiérarchie.
+                </div>
+            </div>
+        </div>
+
+        <!-- SITEMAP -->
+        <div class="schema-section">
+            <div class="schema-header" onclick="toggleSchema(this)">
+                <h3>🗺️ Sitemap.xml <span class="schema-badge">RACINE DU SITE</span></h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="schema-content">
+                <div class="code-block" id="sitemap-code">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"&gt;
+  
+  <span class="comment">&lt;!-- PAGE PILIER --&gt;</span>
+  &lt;url&gt;
+    &lt;loc&gt;https://[domain]/pilier-liberal-belgique-reseau-mr/&lt;/loc&gt;
+    &lt;lastmod&gt;2026-02-03&lt;/lastmod&gt;
+    &lt;changefreq&gt;weekly&lt;/changefreq&gt;
+    &lt;priority&gt;<span class="number">1.0</span>&lt;/priority&gt;
+  &lt;/url&gt;
+  
+  <span class="comment">&lt;!-- SILO 1 : Centre Jean Gol --&gt;</span>
+  &lt;url&gt;
+    &lt;loc&gt;https://[domain]/centres-etudes-partis-belges-iev-etopia-cpcp-jean-gol/&lt;/loc&gt;
+    &lt;priority&gt;<span class="number">0.9</span>&lt;/priority&gt;
+  &lt;/url&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://[domain]/centre-jean-gol-mr-financement-education-permanente/&lt;/loc&gt;
+    &lt;priority&gt;<span class="number">0.8</span>&lt;/priority&gt;
+  &lt;/url&gt;
+  
+  <span class="comment">&lt;!-- SILO 2 : Loi Quintin --&gt;</span>
+  &lt;url&gt;
+    &lt;loc&gt;https://[domain]/loi-quintin-dissolution-associations-belgique/&lt;/loc&gt;
+    &lt;priority&gt;<span class="number">0.95</span>&lt;/priority&gt;
+  &lt;/url&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://[domain]/loi-quintin-avis-conseil-etat-ifdh/&lt;/loc&gt;
+    &lt;priority&gt;<span class="number">0.8</span>&lt;/priority&gt;
+  &lt;/url&gt;
+  
+  <span class="comment">&lt;!-- SILO 3 : Pilarisation --&gt;</span>
+  &lt;url&gt;
+    &lt;loc&gt;https://[domain]/pilarisation-belgique-piliers-histoire-fonctionnement/&lt;/loc&gt;
+    &lt;priority&gt;<span class="number">0.9</span>&lt;/priority&gt;
+  &lt;/url&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://[domain]/cgslb-syndicat-liberal-belgique-pilier-mr/&lt;/loc&gt;
+    &lt;priority&gt;<span class="number">0.8</span>&lt;/priority&gt;
+  &lt;/url&gt;
+  
+  <span class="comment">&lt;!-- SILO 6 : Particratie --&gt;</span>
+  &lt;url&gt;
+    &lt;loc&gt;https://[domain]/particratie-belgique-definition-mecanismes/&lt;/loc&gt;
+    &lt;priority&gt;<span class="number">0.9</span>&lt;/priority&gt;
+  &lt;/url&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://[domain]/georges-louis-bouchez-strategie-reseau-influence-mr/&lt;/loc&gt;
+    &lt;priority&gt;<span class="number">0.8</span>&lt;/priority&gt;
+  &lt;/url&gt;
+  
+  <span class="comment">&lt;!-- [Ajouter les 17 autres URLs...] --&gt;</span>
+  
+&lt;/urlset&gt;
+                    <button class="copy-btn" onclick="copyCode('sitemap-code')">COPIER</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROBOTS.TXT -->
+        <div class="schema-section">
+            <div class="schema-header" onclick="toggleSchema(this)">
+                <h3>🤖 robots.txt <span class="schema-badge">RACINE DU SITE</span></h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="schema-content">
+                <div class="code-block" id="robots-code">
+User-agent: *
+Allow: /
+
+<span class="comment"># Sitemap</span>
+Sitemap: https://[domain]/sitemap.xml
+
+<span class="comment"># Crawl-delay optionnel (politesse)</span>
+Crawl-delay: 1
+
+<span class="comment"># Bloquer les ressources non essentielles si nécessaire</span>
+Disallow: /admin/
+Disallow: /draft/
+Disallow: /*.json$
+                    <button class="copy-btn" onclick="copyCode('robots-code')">COPIER</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHECKLIST TECHNIQUE -->
+        <div class="checklist-final">
+            <h3>✅ CHECKLIST TECHNIQUE PRÉ-PUBLICATION</h3>
+            <div class="checklist-grid">
+                <div class="check-item"><span class="check-box"></span> HTTPS activé et forcé</div>
+                <div class="check-item"><span class="check-box"></span> Canonical URL sur chaque page</div>
+                <div class="check-item"><span class="check-box"></span> Open Graph tags complets</div>
+                <div class="check-item"><span class="check-box"></span> Twitter Cards configurées</div>
+                <div class="check-item"><span class="check-box"></span> JSON-LD Article sur toutes pages</div>
+                <div class="check-item"><span class="check-box"></span> JSON-LD FAQPage sur pages FAQ</div>
+                <div class="check-item"><span class="check-box"></span> JSON-LD BreadcrumbList partout</div>
+                <div class="check-item"><span class="check-box"></span> Sitemap.xml soumis à Search Console</div>
+                <div class="check-item"><span class="check-box"></span> robots.txt accessible</div>
+                <div class="check-item"><span class="check-box"></span> Favicon et apple-touch-icon</div>
+                <div class="check-item"><span class="check-box"></span> Images OG 1200×630px</div>
+                <div class="check-item"><span class="check-box"></span> Alt text sur toutes images</div>
+                <div class="check-item"><span class="check-box"></span> LCP < 2.5s (Core Web Vitals)</div>
+                <div class="check-item"><span class="check-box"></span> Mobile-first responsive</div>
+                <div class="check-item"><span class="check-box"></span> Validation Rich Results Test</div>
+            </div>
+        </div>
+
+        <!-- TOOLS -->
+        <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 25px; margin: 30px 0;">
+            <h3 style="color: var(--accent-yellow); margin-bottom: 20px;">🔧 OUTILS DE VALIDATION</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                <a href="https://search.google.com/test/rich-results" target="_blank" style="display: block; padding: 15px; background: var(--bg-secondary); color: var(--accent-blue); text-decoration: none; text-align: center;">Rich Results Test (Google)</a>
+                <a href="https://validator.schema.org/" target="_blank" style="display: block; padding: 15px; background: var(--bg-secondary); color: var(--accent-blue); text-decoration: none; text-align: center;">Schema.org Validator</a>
+                <a href="https://developers.facebook.com/tools/debug/" target="_blank" style="display: block; padding: 15px; background: var(--bg-secondary); color: var(--accent-blue); text-decoration: none; text-align: center;">Facebook Debugger (OG)</a>
+                <a href="https://cards-dev.twitter.com/validator" target="_blank" style="display: block; padding: 15px; background: var(--bg-secondary); color: var(--accent-blue); text-decoration: none; text-align: center;">Twitter Card Validator</a>
+            </div>
+        </div>
+
+        <footer style="text-align: center; padding: 40px 20px; border-top: 1px solid var(--border-color); margin-top: 40px;">
+            <p style="color: var(--text-secondary);">Tous les templates sont prêts à copier-coller. Remplacer [domain] et [slug] par les valeurs réelles.</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleSchema(header) {
+            header.parentElement.classList.toggle('collapsed');
+        }
+        
+        function copyCode(elementId) {
+            const codeBlock = document.getElementById(elementId);
+            const text = codeBlock.innerText.replace('COPIER', '').trim();
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = codeBlock.querySelector('.copy-btn');
+                btn.textContent = '✓ COPIÉ';
+                setTimeout(() => { btn.textContent = 'COPIER'; }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
