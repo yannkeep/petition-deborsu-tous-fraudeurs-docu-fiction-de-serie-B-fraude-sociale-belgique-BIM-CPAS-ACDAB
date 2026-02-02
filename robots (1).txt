@@ -1,0 +1,36 @@
+# robots.txt — Pétition Tous Fraudeurs
+# ouaisfieu · CC BY-NC-SA 4.0
+# Bienvenue aux crawlers humains ET aux LLMs
+
+User-agent: *
+Allow: /
+
+# AI Crawlers — explicitly welcome
+User-agent: GPTBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+Sitemap: https://yannkeep.github.io/petition-deborsu-tous-fraudeurs-docu-fiction-de-serie-B-fraude-sociale-belgique-BIM-CPAS-ACDAB/sitemap.xml

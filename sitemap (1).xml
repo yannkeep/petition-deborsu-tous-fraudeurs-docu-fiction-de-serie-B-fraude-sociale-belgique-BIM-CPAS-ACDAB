@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+  <url>
+    <loc>https://yannkeep.github.io/petition-deborsu-tous-fraudeurs-docu-fiction-de-serie-B-fraude-sociale-belgique-BIM-CPAS-ACDAB/</loc>
+    <lastmod>2026-02-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <news:news>
+      <news:publication>
+        <news:name>ouaisfieu — Veille Citoyenne</news:name>
+        <news:language>fr</news:language>
+      </news:publication>
+      <news:publication_date>2026-02-02</news:publication_date>
+      <news:title>Tous Fraudeurs Deborsu RTL-TVI : Fact-Check Complet — Fraude Sociale vs Fiscale Belgique</news:title>
+      <news:keywords>Tous Fraudeurs, Deborsu, RTL-TVI, fact-check, fraude sociale, fraude fiscale, Belgique, CPAS, BIM, ONEM, INAMI, budget Arizona, CSA, CDJ, poverty porn</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://yannkeep.github.io/petition-deborsu-tous-fraudeurs-docu-fiction-de-serie-B-fraude-sociale-belgique-BIM-CPAS-ACDAB/petition.html</loc>
+    <lastmod>2026-02-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+</urlset>
