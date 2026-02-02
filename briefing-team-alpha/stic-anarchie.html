@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🕸️ COCON SÉMANTIQUE — Pilier Libéral Belge | Briefing Team Alpha</title>
+    <meta name="description" content="Stratégie SEO/GEO complète pour documenter le réseau d'influence du MR, le Centre Jean Gol, la loi Quintin et les ramifications du pilier libéral en Belgique.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a25;
+            --accent-blue: #00d4ff;
+            --accent-red: #ff3366;
+            --accent-green: #00ff88;
+            --accent-yellow: #ffcc00;
+            --accent-purple: #9966ff;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --border-color: #2a2a3a;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.1) 0px,
+                rgba(0, 0, 0, 0.1) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            z-index: 1000;
+            opacity: 0.3;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(180deg, rgba(0,212,255,0.05) 0%, transparent 100%);
+        }
+        
+        .mission-badge {
+            display: inline-block;
+            background: var(--accent-red);
+            color: white;
+            padding: 5px 15px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 40px 0;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--accent-blue);
+        }
+        
+        .stat-card:nth-child(2)::before { background: var(--accent-green); }
+        .stat-card:nth-child(3)::before { background: var(--accent-yellow); }
+        .stat-card:nth-child(4)::before { background: var(--accent-purple); }
+        .stat-card:nth-child(5)::before { background: var(--accent-red); }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--accent-blue);
+        }
+        
+        .stat-card:nth-child(2) .stat-value { color: var(--accent-green); }
+        .stat-card:nth-child(3) .stat-value { color: var(--accent-yellow); }
+        .stat-card:nth-child(4) .stat-value { color: var(--accent-purple); }
+        .stat-card:nth-child(5) .stat-value { color: var(--accent-red); }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+        
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+        
+        .nav-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-card:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.2);
+        }
+        
+        .nav-card::after {
+            content: '→';
+            position: absolute;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: var(--accent-blue);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-card:hover::after {
+            opacity: 1;
+            right: 20px;
+        }
+        
+        .nav-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+        
+        .nav-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+        
+        .nav-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .architecture-preview {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            margin: 40px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+        }
+        
+        .architecture-preview pre {
+            color: var(--accent-green);
+            white-space: pre;
+        }
+        
+        .silo-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            font-size: 0.7rem;
+            border-radius: 3px;
+            margin-right: 5px;
+            font-weight: 600;
+        }
+        
+        .silo-1 { background: rgba(0, 212, 255, 0.2); color: var(--accent-blue); }
+        .silo-2 { background: rgba(255, 51, 102, 0.2); color: var(--accent-red); }
+        .silo-3 { background: rgba(0, 255, 136, 0.2); color: var(--accent-green); }
+        .silo-4 { background: rgba(255, 204, 0, 0.2); color: var(--accent-yellow); }
+        .silo-5 { background: rgba(153, 102, 255, 0.2); color: var(--accent-purple); }
+        .silo-6 { background: rgba(255, 136, 0, 0.2); color: #ff8800; }
+        
+        .objective-section {
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.1) 0%, rgba(0, 212, 255, 0.1) 100%);
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            margin: 40px 0;
+        }
+        
+        .objective-section h2 {
+            color: var(--accent-red);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .objective-list {
+            list-style: none;
+        }
+        
+        .objective-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        
+        .objective-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .check-icon {
+            color: var(--accent-green);
+            font-size: 1.2rem;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 60px;
+        }
+        
+        footer p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        footer a {
+            color: var(--accent-blue);
+            text-decoration: none;
+        }
+        
+        .timestamp {
+            font-family: 'Courier New', monospace;
+            color: var(--accent-green);
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            .nav-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+    
+    <header>
+        <div class="mission-badge">⚠️ MISSION BRIEFING — CLASSIFIED</div>
+        <h1>🕸️ COCON SÉMANTIQUE</h1>
+        <p class="subtitle">Stratégie SEO + GEO complète pour positionner un corpus d'investigation citoyenne sur le réseau d'influence du MR, le Centre Jean Gol, la loi Quintin et les ramifications du pilier libéral en Belgique.</p>
+    </header>
+    
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">26</div>
+                <div class="stat-label">Pages du cocon</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">180+</div>
+                <div class="stat-label">Requêtes ciblées</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">~40K</div>
+                <div class="stat-label">Volume mensuel</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">115</div>
+                <div class="stat-label">Liens internes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">6</div>
+                <div class="stat-label">Silos thématiques</div>
+            </div>
+        </div>
+        
+        <div class="objective-section">
+            <h2>🎯 OBJECTIFS STRATÉGIQUES</h2>
+            <ul class="objective-list">
+                <li>
+                    <span class="check-icon">◉</span>
+                    <span><strong>SEO classique :</strong> Positionnement Google.be sur ~180 requêtes identifiées (FR) — devenir LA référence sur le pilier libéral belge</span>
+                </li>
+                <li>
+                    <span class="check-icon">◉</span>
+                    <span><strong>GEO (Generative Engine Optimization) :</strong> Être cité comme source par ChatGPT, Perplexity, Google AI Overview, Claude sur les requêtes relatives au MR, à la particratie belge et aux associations partisanes</span>
+                </li>
+                <li>
+                    <span class="check-icon">◉</span>
+                    <span><strong>Autorité thématique :</strong> Créer une topical authority totale sur "pilier libéral belge" via un maillage interne strict (méthodologie Bourrelly)</span>
+                </li>
+                <li>
+                    <span class="check-icon">◉</span>
+                    <span><strong>Documentation citoyenne :</strong> Rendre publics les flux financiers, les nominations, les doubles standards — armer le citoyen</span>
+                </li>
+            </ul>
+        </div>
+        
+        <h2 style="margin: 40px 0 20px; color: var(--text-secondary); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px;">📁 DOSSIERS DE MISSION</h2>
+        
+        <div class="nav-grid">
+            <a href="keywords.html" class="nav-card">
+                <div class="nav-icon">🔑</div>
+                <h3>KEYWORDS.html</h3>
+                <p>Recherche de mots-clés complète : ~180 requêtes classées par silo, volumes, KD, intentions. Title tags, meta descriptions, H1/H2 pour chaque page.</p>
+            </a>
+            
+            <a href="architecture.html" class="nav-card">
+                <div class="nav-icon">🏗️</div>
+                <h3>ARCHITECTURE.html</h3>
+                <p>Architecture complète du cocon : 1 page pilier + 6 silos + 25 pages filles. Specs détaillées, briefs de contenu, calendrier de déploiement.</p>
+            </a>
+            
+            <a href="maillage.html" class="nav-card">
+                <div class="nav-icon">🔗</div>
+                <h3>MAILLAGE.html</h3>
+                <p>Matrice de maillage interne : tous les liens entre pages, méthodologie Bourrelly stricte, règles d'ancrage, liens interdits.</p>
+            </a>
+            
+            <a href="geo-strategy.html" class="nav-card">
+                <div class="nav-icon">🤖</div>
+                <h3>GEO-STRATEGY.html</h3>
+                <p>Stratégie Generative Engine Optimization : comment structurer pour être cité par les LLM, templates, FAQ GEO, signaux E-E-A-T.</p>
+            </a>
+            
+            <a href="structured-data.html" class="nav-card">
+                <div class="nav-icon">📊</div>
+                <h3>STRUCTURED-DATA.html</h3>
+                <p>Templates JSON-LD (Article, FAQPage, Organization), Open Graph, Twitter Cards, sitemap.xml, robots.txt. Prêts à copier-coller.</p>
+            </a>
+        </div>
+        
+        <h2 style="margin: 40px 0 20px; color: var(--text-secondary); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px;">🗂️ ARCHITECTURE DU COCON</h2>
+        
+        <div class="architecture-preview">
+<pre>
+PAGE PILIER (Money Page)
+│   /pilier-liberal-belgique-reseau-mr/
+│
+├── <span class="silo-tag silo-1">SILO 1</span> Centre Jean Gol & centres d'études partisans
+│   ├── F1.1 : Centre Jean Gol : rôle, financement, production
+│   ├── F1.2 : IEV, Etopia, CPCP — comparaison des centres d'études
+│   ├── F1.3 : Centres d'archives partisans — cadre légal et subventions
+│   └── F1.4 : Éducation permanente ou propagande ? Le double standard
+│
+├── <span class="silo-tag silo-2">SILO 2</span> Loi Quintin & liberté d'association
+│   ├── F2.1 : Loi Quintin — dissolution administrative (PAGE PRIORITAIRE)
+│   ├── F2.2 : Avis du Conseil d'État et de l'IFDH
+│   ├── F2.3 : Comparaison européenne — France, Allemagne, Pays-Bas
+│   └── F2.4 : Coalition "Droit de protester" — résistance civile
+│
+├── <span class="silo-tag silo-3">SILO 3</span> Pilarisation & réseau libéral complet
+│   ├── F3.1 : La pilarisation belge — histoire et fonctionnement
+│   ├── F3.2 : Cartographie du pilier libéral — syndicat, mutuelle, médias
+│   ├── F3.3 : CGSLB — le syndicat libéral (~295K membres)
+│   ├── F3.4 : Mutualités libérales / Partenamut / Helan
+│   └── F3.5 : Nominations MR dans les institutions publiques
+│
+├── <span class="silo-tag silo-4">SILO 4</span> Financement public & flux financiers
+│   ├── F4.1 : Dotations publiques aux partis — chiffres complets
+│   ├── F4.2 : Subventions FWB aux associations partisanes
+│   ├── F4.3 : Financement des campagnes MR
+│   └── F4.4 : Transparence financière des ASBL partisanes
+│
+├── <span class="silo-tag silo-5">SILO 5</span> Budget FWB 2026 & suppression des reconnaissances
+│   ├── F5.1 : Conclave FWB octobre 2025 — les décisions détaillées
+│   ├── F5.2 : Moratoire éducation permanente 2026-2028
+│   ├── F5.3 : Scénario MR vs scénario Engagés — qui voulait couper quoi
+│   └── F5.4 : Conséquences pour le tissu associatif
+│
+└── <span class="silo-tag silo-6">SILO 6</span> Particratie & contre-pouvoirs
+    ├── F6.1 : La particratie belge — définition, mécanismes
+    ├── F6.2 : Georges-Louis Bouchez — stratégie et réseau
+    ├── F6.3 : Érosion de l'État de droit — rapport IFDH
+    └── F6.4 : Alternatives citoyennes — civic tech, veille
+</pre>
+        </div>
+        
+        <footer>
+            <p>Projet <a href="https://github.com/ouaisfieu" target="_blank">ouaisfieu</a> — Intelligence citoyenne belge</p>
+            <p class="timestamp">LAST_UPDATE: 2026-02-02T22:30:00+01:00</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Animation des stats au scroll
+        const statValues = document.querySelectorAll('.stat-value');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'countUp 0.5s ease-out forwards';
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        statValues.forEach(val => observer.observe(val));
+        
+        // Timestamp dynamique
+        document.querySelector('.timestamp').textContent = 
+            'LAST_UPDATE: ' + new Date().toISOString().slice(0, 19) + '+01:00';
+    </script>
+</body>
+</html>
