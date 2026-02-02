@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Agir — Quand tu te sens prêt·e</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Porter plainte, signaler, se mobiliser. Uniquement quand tu te sens prêt·e. Voici comment, étape par étape.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,600;1,6..72,300;1,6..72,400&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FFFBF5;--card:#FFFFFF;--coral:#E07A5F;--coral-light:#FFF0EB;--green:#2D6A4F;--green-light:#D8F3DC;--green-pale:#F0FFF4;--blue:#457B9D;--blue-light:#EDF6F9;--gold:#D4A373;--text:#2B2B2B;--text-soft:#5C5C5C;--border:rgba(0,0,0,0.06);--font-serif:'Newsreader',Georgia,serif;--font-sans:'DM Sans',system-ui,sans-serif;--radius:16px;--shadow:0 2px 20px rgba(0,0,0,0.04)}
+*{box-sizing:border-box;margin:0;padding:0}::selection{background:var(--coral-light);color:var(--coral)}
+body{font-family:var(--font-serif);background:var(--bg);color:var(--text);line-height:1.7}
+.help-bar{position:fixed;bottom:0;left:0;right:0;z-index:1000;background:var(--green);color:#fff;padding:10px 20px;display:flex;justify-content:center;align-items:center;gap:24px;flex-wrap:wrap;font-family:var(--font-sans);font-size:0.85rem;box-shadow:0 -4px 20px rgba(0,0,0,0.1)}.help-bar a{color:#fff;text-decoration:none;font-weight:700;padding:4px 14px;border:2px solid rgba(255,255,255,0.4);border-radius:999px;transition:all 0.3s;white-space:nowrap}.help-bar a:hover{background:rgba(255,255,255,0.15)}.help-bar .label{opacity:0.85;font-size:0.8rem}
+.back{display:inline-block;font-family:var(--font-sans);font-size:0.85rem;color:var(--green);text-decoration:none;padding:20px 24px}.back:hover{text-decoration:underline}
+.page-header{text-align:center;padding:20px 24px 50px;max-width:680px;margin:0 auto}.page-header .icon{font-size:3rem;margin-bottom:16px;display:block}.page-header h1{font-family:var(--font-serif);font-size:clamp(1.8rem,4vw,2.6rem);font-weight:300;color:var(--coral);margin-bottom:12px;line-height:1.3}.page-header h1 strong{font-weight:600}.page-header p{font-size:1rem;color:var(--text-soft);max-width:520px;margin:0 auto;font-style:italic}
+.content{max-width:720px;margin:0 auto;padding:0 24px 140px}
+.section{margin-bottom:40px}.section h2{font-family:var(--font-sans);font-size:1.15rem;font-weight:700;color:var(--text);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--coral-light)}.section h2 .emoji{margin-right:6px}
+
+.important-note{background:var(--green-pale);border-radius:var(--radius);padding:24px 28px;margin-bottom:40px;border:1px solid rgba(45,106,79,0.1);text-align:center}
+.important-note p{font-size:1.05rem;color:var(--green);font-weight:500;margin:0}
+
+.action{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px;box-shadow:var(--shadow)}
+.action h3{font-family:var(--font-sans);font-weight:700;font-size:1rem;color:var(--coral);margin-bottom:4px}
+.action .meta{font-family:var(--font-sans);font-size:0.8rem;color:var(--text-soft);margin-bottom:10px;display:flex;gap:12px;flex-wrap:wrap}
+.action .meta span{background:var(--blue-light);padding:2px 8px;border-radius:999px;font-size:0.72rem;color:var(--blue)}
+.action p{font-size:0.92rem;margin-bottom:8px}.action p:last-child{margin-bottom:0}
+.action a.action-link{display:inline-block;font-family:var(--font-sans);font-size:0.85rem;padding:8px 20px;background:var(--coral);color:#fff;text-decoration:none;border-radius:999px;margin-top:8px;transition:all 0.2s;font-weight:500}
+.action a.action-link:hover{background:#c4593d;transform:translateY(-1px)}
+.action a.action-link.secondary{background:none;color:var(--coral);border:2px solid var(--coral)}
+.action a.action-link.secondary:hover{background:var(--coral-light)}
+
+.steps{margin:12px 0;padding-left:0;list-style:none;counter-reset:step}
+.steps li{counter-increment:step;font-size:0.9rem;margin-bottom:10px;padding-left:32px;position:relative}
+.steps li::before{content:counter(step);position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;background:var(--coral-light);color:var(--coral);font-family:var(--font-sans);font-weight:700;font-size:0.75rem;display:flex;align-items:center;justify-content:center}
+
+.gentle{background:var(--green-pale);border-radius:var(--radius);padding:24px 28px;margin:32px 0;border:1px solid rgba(45,106,79,0.1)}.gentle p{font-size:0.95rem;color:var(--text);margin-bottom:10px}.gentle p:last-child{margin-bottom:0}.gentle strong{color:var(--green)}
+.nav-bottom{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:20px 0;border-top:1px solid var(--border);margin-top:40px}.nav-bottom a{font-family:var(--font-sans);font-size:0.85rem;color:var(--green);text-decoration:none}.nav-bottom a:hover{text-decoration:underline}
+footer{text-align:center;padding:20px;font-size:0.8rem;color:var(--text-soft);padding-bottom:80px}footer a{color:var(--green);text-decoration:none}
+@media(max-width:600px){.help-bar{gap:8px;font-size:0.75rem;padding:8px 12px}.help-bar a{padding:3px 10px;font-size:0.75rem}}
+</style>
+</head>
+<body>
+<div class="help-bar"><span class="label">Besoin de parler ?</span><a href="tel:107">📞 107</a><a href="tel:080032123">📞 0800 32 123</a></div>
+<a href="index.html" class="back">← Retour à l'accueil</a>
+
+<header class="page-header">
+    <span class="icon">✊</span>
+    <h1>Agir — quand tu te sens <strong>prêt·e.</strong></h1>
+    <p>Pas avant. Pas sous pression. Seulement quand c'est le bon moment pour toi.</p>
+</header>
+
+<div class="content">
+
+    <div class="important-note">
+        <p>🌿 Prendre soin de toi est la première forme d'action. Tu n'as aucune obligation d'agir au-delà.</p>
+    </div>
+
+    <div class="section">
+        <h2><span class="emoji">📝</span> Porter plainte contre le documentaire</h2>
+
+        <div class="action">
+            <h3>Conseil de Déontologie Journalistique (CDJ)</h3>
+            <div class="meta"><span>Gratuit</span> <span>~2 mois</span> <span>57 % des plaintes déclarées fondées</span></div>
+            <p>Le CDJ examine si le documentaire respecte le code de déontologie journalistique (respect de la dignité, vérification des faits, droit à l'image, équilibre de l'information).</p>
+            <ol class="steps">
+                <li>Va sur le site du CDJ</li>
+                <li>Remplis le formulaire de plainte en ligne</li>
+                <li>Décris ce qui t'a choqué·e — en tes mots, pas besoin de jargon juridique</li>
+                <li>Tu recevras un accusé de réception, puis une décision motivée</li>
+            </ol>
+            <a href="https://www.lfrb.be/plainte" target="_blank" class="action-link">Déposer une plainte au CDJ</a>
+        </div>
+
+        <div class="action">
+            <h3>Conseil Supérieur de l'Audiovisuel (CSA)</h3>
+            <div class="meta"><span>Gratuit</span> <span>Peut sanctionner RTL-TVI</span> <span>100+ plaintes déjà déposées</span></div>
+            <p>Le CSA est le régulateur officiel de l'audiovisuel en Fédération Wallonie-Bruxelles. Il peut sanctionner une chaîne qui ne respecte pas ses obligations (protection de la dignité humaine, information loyale).</p>
+            <a href="https://www.csa.be/formulaire-de-plainte/" target="_blank" class="action-link">Plainte au CSA</a>
+        </div>
+
+        <div class="action">
+            <h3>Unia — Centre interfédéral pour l'égalité des chances</h3>
+            <div class="meta"><span>Gratuit</span> <span>Discrimination / stigmatisation</span></div>
+            <p>Si tu estimes que le documentaire participe à une forme de discrimination envers les personnes en situation de précarité, tu peux faire un signalement à Unia.</p>
+            <a href="https://www.unia.be/fr/signaler" target="_blank" class="action-link secondary">Signaler à Unia</a>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2><span class="emoji">🤝</span> Se mobiliser — à ton rythme</h2>
+
+        <div class="action">
+            <h3>Rejoindre un syndicat</h3>
+            <p>Les trois grands syndicats (CSC, FGTB, CGSLB) ont déposé ensemble un recours constitutionnel contre les mesures Arizona le 29 octobre 2025. Être syndiqué·e, c'est aussi avoir accès à des services juridiques, à une défense en cas de litige avec l'employeur ou l'ONEM, et à une communauté.</p>
+            <p>Tu peux te syndiquer même si tu es au chômage, malade de longue durée, ou sans emploi.</p>
+        </div>
+
+        <div class="action">
+            <h3>Participer (même de loin)</h3>
+            <p>Tu n'as pas besoin de descendre dans la rue si tu n'en as pas la force. Participer, ça peut aussi être :</p>
+            <ol class="steps">
+                <li>Partager cette page avec quelqu'un qui en a besoin</li>
+                <li>Parler de la réalité des chiffres quand quelqu'un répète les clichés du documentaire</li>
+                <li>Écrire à ton·ta député·e pour dire que tu es touché·e par ces politiques</li>
+                <li>Signer les pétitions existantes (vérifier leur crédibilité avant)</li>
+                <li>Simplement refuser de se taire quand on stigmatise la pauvreté devant toi</li>
+            </ol>
+        </div>
+
+        <div class="action">
+            <h3>Contacter ton·ta parlementaire</h3>
+            <p>Tu as le droit d'écrire à n'importe quel·le élu·e. Un email simple, en tes mots, qui dit comment ces politiques t'affectent. Les élu·es lisent (ou leurs assistant·es lisent). Et quand ils reçoivent beaucoup de messages sur le même sujet, ça pèse.</p>
+            <a href="https://www.lachambre.be/kvvcr/showpage.cfm?section=/depute&language=fr&cfm=cvlist54.cfm" target="_blank" class="action-link secondary">Trouver ton·ta député·e</a>
+        </div>
+    </div>
+
+    <div class="gentle">
+        <p>🌿 <strong>Rappel.</strong> Agir n'est pas une obligation. Survivre est déjà une forme de résistance. Se soigner est un acte politique. Demander ses droits est un acte de courage.</p>
+        <p>Si tu ne fais rien d'autre que lire cette page aujourd'hui, c'est déjà bien. Tu as pris du temps pour toi. C'est ça qui compte.</p>
+    </div>
+
+    <nav class="nav-bottom">
+        <a href="lettre-aux-proches.html">← Lettre aux proches</a>
+        <a href="index.html">Retour à l'accueil →</a>
+    </nav>
+</div>
+
+<footer><a href="https://ouaisfi.eu">ouaisfieu</a> · Pas de cookies · Pas de trackers · Pas de jugement</footer>
+</body>
+</html>

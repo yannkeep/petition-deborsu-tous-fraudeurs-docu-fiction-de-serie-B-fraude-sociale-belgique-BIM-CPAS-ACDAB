@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Santé mentale — Numéros, écoute, aide concrète en Belgique</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Toutes les lignes d'écoute gratuites en Belgique, services de santé mentale, psychologues conventionnés, aides CPAS. Tu mérites d'être écouté·e.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,600;1,6..72,300;1,6..72,400&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg:#FFFBF5;--surface:#FFF8EE;--card:#FFFFFF;--coral:#E07A5F;--coral-light:#FFF0EB;
+    --green:#2D6A4F;--green-light:#D8F3DC;--green-pale:#F0FFF4;--blue:#457B9D;--blue-light:#EDF6F9;
+    --gold:#D4A373;--text:#2B2B2B;--text-soft:#5C5C5C;--border:rgba(0,0,0,0.06);
+    --font-serif:'Newsreader',Georgia,serif;--font-sans:'DM Sans',system-ui,sans-serif;
+    --radius:16px;--shadow:0 2px 20px rgba(0,0,0,0.04);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+::selection{background:var(--coral-light);color:var(--coral)}
+body{font-family:var(--font-serif);background:var(--bg);color:var(--text);line-height:1.7}
+
+.help-bar{position:fixed;bottom:0;left:0;right:0;z-index:1000;background:var(--green);color:#fff;padding:10px 20px;display:flex;justify-content:center;align-items:center;gap:24px;flex-wrap:wrap;font-family:var(--font-sans);font-size:0.85rem;box-shadow:0 -4px 20px rgba(0,0,0,0.1)}
+.help-bar a{color:#fff;text-decoration:none;font-weight:700;padding:4px 14px;border:2px solid rgba(255,255,255,0.4);border-radius:999px;transition:all 0.3s;white-space:nowrap}
+.help-bar a:hover{background:rgba(255,255,255,0.15);border-color:#fff}
+.help-bar .label{opacity:0.85;font-size:0.8rem}
+
+.back{display:inline-block;font-family:var(--font-sans);font-size:0.85rem;color:var(--green);text-decoration:none;padding:20px 24px}
+.back:hover{text-decoration:underline}
+
+.page-header{text-align:center;padding:20px 24px 50px;max-width:680px;margin:0 auto}
+.page-header .icon{font-size:3rem;margin-bottom:16px;display:block}
+.page-header h1{font-family:var(--font-serif);font-size:clamp(1.8rem,4vw,2.6rem);font-weight:300;color:var(--coral);margin-bottom:12px;line-height:1.3}
+.page-header h1 strong{font-weight:600}
+.page-header p{font-size:1rem;color:var(--text-soft);max-width:520px;margin:0 auto;font-style:italic}
+
+.content{max-width:720px;margin:0 auto;padding:0 24px 140px}
+
+/* Urgent card */
+.urgent{background:var(--coral-light);border:2px solid var(--coral);border-radius:var(--radius);padding:28px 32px;text-align:center;margin-bottom:40px}
+.urgent h2{font-family:var(--font-sans);color:var(--coral);font-size:1rem;margin-bottom:4px}
+.urgent .num{font-family:var(--font-sans);font-size:2.2rem;font-weight:700;color:var(--coral);text-decoration:none;display:block;margin:8px 0}
+.urgent .num:hover{text-decoration:underline}
+.urgent .det{font-size:0.85rem;color:var(--text-soft)}
+
+/* Section */
+.section{margin-bottom:40px}
+.section h2{font-family:var(--font-sans);font-size:1.15rem;font-weight:700;color:var(--text);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--green-light)}
+.section h2 .emoji{margin-right:6px}
+
+/* Resource cards */
+.resource{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:12px;box-shadow:var(--shadow);transition:all 0.2s}
+.resource:hover{box-shadow:0 4px 24px rgba(0,0,0,0.07)}
+.resource .r-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px}
+.resource .r-name{font-family:var(--font-sans);font-weight:700;font-size:0.95rem;color:var(--green)}
+.resource .r-badge{font-family:var(--font-sans);font-size:0.65rem;font-weight:700;padding:3px 10px;border-radius:999px;white-space:nowrap;flex-shrink:0}
+.badge-gratuit{background:var(--green-light);color:var(--green)}
+.badge-24h{background:var(--coral-light);color:var(--coral)}
+.badge-anonyme{background:var(--blue-light);color:var(--blue)}
+.resource .r-phone{font-family:var(--font-sans);font-size:1.3rem;font-weight:700;color:var(--coral);text-decoration:none;display:block;margin:6px 0}
+.resource .r-phone:hover{text-decoration:underline}
+.resource .r-desc{font-size:0.9rem;color:var(--text-soft);margin-bottom:6px}
+.resource .r-detail{font-size:0.8rem;color:var(--text-soft);font-family:var(--font-sans)}
+.resource .r-link{font-family:var(--font-sans);font-size:0.8rem;color:var(--blue);text-decoration:none}
+.resource .r-link:hover{text-decoration:underline}
+
+/* Gentle note */
+.gentle{background:var(--green-pale);border-radius:var(--radius);padding:24px 28px;margin:32px 0;border:1px solid rgba(45,106,79,0.1)}
+.gentle p{font-size:0.95rem;color:var(--text)}
+.gentle strong{color:var(--green)}
+
+.nav-bottom{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:20px 0;border-top:1px solid var(--border);margin-top:40px}
+.nav-bottom a{font-family:var(--font-sans);font-size:0.85rem;color:var(--green);text-decoration:none}
+.nav-bottom a:hover{text-decoration:underline}
+
+footer{text-align:center;padding:20px;font-size:0.8rem;color:var(--text-soft);padding-bottom:80px}
+footer a{color:var(--green);text-decoration:none}
+
+@media(max-width:600px){
+    .help-bar{gap:8px;font-size:0.75rem;padding:8px 12px}
+    .help-bar a{padding:3px 10px;font-size:0.75rem}
+    .urgent .num{font-size:1.6rem}
+}
+</style>
+</head>
+<body>
+
+<div class="help-bar">
+    <span class="label">Besoin de parler ?</span>
+    <a href="tel:107">📞 107</a>
+    <a href="tel:080032123">📞 0800 32 123</a>
+    <a href="tel:080012341">📞 0800 1234.1</a>
+</div>
+
+<a href="index.html" class="back">← Retour à l'accueil</a>
+
+<header class="page-header">
+    <span class="icon">🫂</span>
+    <h1>Prendre soin de <strong>ta santé mentale</strong></h1>
+    <p>Appeler à l'aide n'est pas un signe de faiblesse. C'est un acte de courage. Voici tout ce qui existe en Belgique pour toi.</p>
+</header>
+
+<div class="content">
+
+    <!-- URGENCE -->
+    <div class="urgent">
+        <h2>Si ça ne va pas du tout maintenant</h2>
+        <a href="tel:107" class="num">📞 107</a>
+        <div class="det">Télé-Accueil · Gratuit · Anonyme · 24h/24 · 7j/7<br>Pas besoin de raison «&nbsp;suffisante&nbsp;» pour appeler.</div>
+    </div>
+
+    <!-- LIGNES D'ÉCOUTE -->
+    <div class="section">
+        <h2><span class="emoji">📞</span> Lignes d'écoute gratuites</h2>
+
+        <div class="resource">
+            <div class="r-header">
+                <div class="r-name">Télé-Accueil</div>
+                <div><span class="r-badge badge-gratuit">Gratuit</span> <span class="r-badge badge-24h">24h/24</span> <span class="r-badge badge-anonyme">Anonyme</span></div>
+            </div>
+            <a href="tel:107" class="r-phone">107</a>
+            <div class="r-desc">Pour parler de tout ce qui pèse. Pas besoin d'être en crise. Juste besoin d'une oreille.</div>
+            <div class="r-detail">Chat aussi disponible : <a href="https://www.sos-amitie.com/chat/" target="_blank" class="r-link">sos-amitie.com/chat</a> (7j/7, 13h-3h)</div>
+        </div>
+
+        <div class="resource">
+            <div class="r-header">
+                <div class="r-name">Centre de Prévention du Suicide</div>
+                <div><span class="r-badge badge-gratuit">Gratuit</span> <span class="r-badge badge-24h">24h/24</span></div>
+            </div>
+            <a href="tel:080032123" class="r-phone">0800 32 123</a>
+            <div class="r-desc">Si tu as des pensées sombres ou si quelqu'un autour de toi t'inquiète. Des professionnel·les formé·es t'écoutent.</div>
+            <a href="https://www.preventionsuicide.be" target="_blank" class="r-link">preventionsuicide.be</a>
+        </div>
+
+        <div class="resource">
+            <div class="r-header">
+                <div class="r-name">Ligne Santé Mentale Bruxelles</div>
+                <div><span class="r-badge badge-gratuit">Gratuit</span> <span class="r-badge badge-anonyme">Anonyme</span></div>
+            </div>
+            <a href="tel:080012341" class="r-phone">0800 1234.1</a>
+            <div class="r-desc">Des bénévoles touché·es par la santé mentale t'écoutent. L'entraide entre pairs.</div>
+            <div class="r-detail">7j/7, 18h-21h + lun-ven 10h-12h</div>
+        </div>
+
+        <div class="resource">
+            <div class="r-header">
+                <div class="r-name">Tele-Onthaal (NL)</div>
+                <div><span class="r-badge badge-gratuit">Gratuit</span> <span class="r-badge badge-24h">24h/24</span></div>
+            </div>
+            <a href="tel:106" class="r-phone">106</a>
+            <div class="r-desc">Nederlandstalige luisterlijn. 24/7 beschikbaar.</div>
+            <a href="https://www.tele-onthaal.be" target="_blank" class="r-link">tele-onthaal.be</a>
+        </div>
+
+        <div class="resource">
+            <div class="r-header">
+                <div class="r-name">Zelfmoordlijn (NL)</div>
+                <div><span class="r-badge badge-gratuit">Gratuit</span> <span class="r-badge badge-24h">24h/24</span></div>
+            </div>
+            <a href="tel:1813" class="r-phone">1813</a>
+            <div class="r-desc">Zelfmoordpreventie. Praten helpt.</div>
+            <a href="https://www.zelfmoord1813.be" target="_blank" class="r-link">zelfmoord1813.be</a>
+        </div>
+
+        <div class="resource">
+            <div class="r-header">
+                <div class="r-name">Community Help Service (EN)</div>
+                <div><span class="r-badge badge-24h">24h/24</span></div>
+            </div>
+            <a href="tel:026484014" class="r-phone">02 648 40 14</a>
+            <div class="r-desc">English-speaking helpline. If French or Dutch isn't your language, you're still welcome.</div>
+            <a href="https://www.chsbelgium.org" target="_blank" class="r-link">chsbelgium.org</a>
+        </div>
+
+        <div class="resource">
+            <div class="r-header">
+                <div class="r-name">Écoute-Enfants</div>
+                <div><span class="r-badge badge-gratuit">Gratuit</span></div>
+            </div>
+            <a href="tel:103" class="r-phone">103</a>
+            <div class="r-desc">Pour les enfants et ados. Tous les jours de 10h à minuit.</div>
+        </div>
+    </div>
+
+    <!-- CONSULTATIONS -->
+    <div class="section">
+        <h2><span class="emoji">🩺</span> Consultations accessibles</h2>
+
+        <div class="resource">
+            <div class="r-header">
+                <div class="r-name">PsyBru — Psychologue de première ligne</div>
+                <div><span class="r-badge badge-gratuit">Gratuit -23 ans</span></div>
+            </div>
+            <div class="r-desc">Psychologues conventionné·es dans toutes les communes de Bruxelles. <strong>Gratuit si tu as moins de 23 ans.</strong> Sinon 11&nbsp;€ par séance (4&nbsp;€ avec statut BIM).</div>
+            <a href="https://www.psybru.be" target="_blank" class="r-link">psybru.be</a>
+        </div>
+
+        <div class="resource">
+            <div class="r-header">
+                <div class="r-name">Services de Santé Mentale (SSM)</div>
+            </div>
+            <div class="r-desc">Équipes pluridisciplinaires (psychologues, psychiatres, assistants sociaux). Tarifs adaptés à tes revenus. Personne ne sera refusé pour des raisons financières.</div>
+            <a href="https://social.brussels/category/1002" target="_blank" class="r-link">Trouver un SSM → social.brussels</a>
+        </div>
+
+        <div class="resource">
+            <div class="r-header">
+                <div class="r-name">Centres de Planning Familial</div>
+            </div>
+            <div class="r-desc">Pas seulement pour la contraception. Les plannings offrent des consultations psychologiques à prix libre ou très réduit. Un lieu d'accueil sans jugement.</div>
+            <a href="https://www.loveattitude.be" target="_blank" class="r-link">Trouver un planning → loveattitude.be</a>
+        </div>
+
+        <div class="resource">
+            <div class="r-header">
+                <div class="r-name">Maisons de l'Adolescence (MADO)</div>
+            </div>
+            <div class="r-desc">Pour les 11-25 ans. Accueil, écoute, orientation. Entretiens gratuits avec un·e psychologue. Bruxelles, Namur, Charleroi, Mons, Liège…</div>
+        </div>
+
+        <div class="resource">
+            <div class="r-header">
+                <div class="r-name">Ton CPAS peut aider</div>
+            </div>
+            <div class="r-desc">Si le coût des consultations est un obstacle, ton CPAS peut intervenir financièrement pour payer un suivi psychologique. C'est un droit, pas une faveur.</div>
+        </div>
+    </div>
+
+    <!-- REMBOURSEMENTS -->
+    <div class="section">
+        <h2><span class="emoji">💶</span> Combien ça coûte (vraiment)</h2>
+
+        <div class="resource">
+            <div class="r-desc">
+                <strong>Psychologue conventionné·e INAMI</strong>&nbsp;: 11&nbsp;€/séance (4&nbsp;€ si BIM). Jusqu'à 8 séances remboursées. Gratuit si -23 ans.<br><br>
+                <strong>Psychiatre conventionné·e</strong>&nbsp;: seul le ticket modérateur reste à ta charge.<br><br>
+                <strong>Mutuelle complémentaire</strong>&nbsp;: la plupart remboursent 10 à 20&nbsp;€/séance en plus (varie selon ta mutuelle).<br><br>
+                <strong>Services de Santé Mentale</strong>&nbsp;: tarif adapté à tes revenus. Aucun refus pour raison financière.<br><br>
+                <strong>CPAS</strong>&nbsp;: peut prendre en charge le coût intégral si nécessaire.
+            </div>
+        </div>
+
+        <div class="gentle">
+            <p>💡 <strong>Le coût ne doit jamais être une raison de ne pas consulter.</strong> Si tu n'as pas les moyens, dis-le à la personne qui t'accueille. Des solutions existent toujours. C'est leur métier de les trouver avec toi.</p>
+        </div>
+    </div>
+
+    <!-- MESSAGE DOUX -->
+    <div class="section">
+        <h2><span class="emoji">🌱</span> Un dernier mot</h2>
+        <div class="gentle">
+            <p>Tu n'as pas besoin d'être «&nbsp;assez mal&nbsp;» pour avoir le droit de demander de l'aide. Tu n'as pas besoin d'avoir «&nbsp;une bonne raison&nbsp;». Tu n'as pas besoin de tout expliquer.</p>
+            <p>Si un documentaire t'a fait du mal, c'est une raison suffisante. Si la pression sociale te pèse, c'est une raison suffisante. Si tu es fatigué·e de te justifier, c'est une raison suffisante.</p>
+            <p><strong>Prendre soin de toi n'enlève rien à personne. C'est un acte de résistance.</strong></p>
+        </div>
+    </div>
+
+    <nav class="nav-bottom">
+        <a href="index.html">← Accueil</a>
+        <a href="tes-droits.html">Tes droits →</a>
+    </nav>
+</div>
+
+<footer>
+    <a href="https://ouaisfi.eu">ouaisfieu</a> · Pas de cookies · Pas de trackers · Pas de jugement<br>
+    Sources&nbsp;: be.brussels, platformbxl.brussels, bruxelles-j.be, tele-accueil.be, preventionsuicide.be
+</footer>
+
+</body>
+</html>
