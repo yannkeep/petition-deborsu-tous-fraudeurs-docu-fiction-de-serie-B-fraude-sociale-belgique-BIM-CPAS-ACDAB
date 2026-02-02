@@ -1,1091 +1,828 @@
 <!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>⚔ SALLE DE CAMPAGNE 6·6·6 — ouaisfieu QG</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Salle de campagne ouaisfieu — Centre de commandement citoyen. Tous les outils, dossiers, plaidoyers et munitions pour la mobilisation sociale belge 2025-2026.">
-    <meta name="robots" content="noindex">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Anybody:wght@400;700;900&display=swap" rel="stylesheet">
-    <style>
+<html lang="fr"><head><script type='text/javascript' src='https://rg-ashy.vercel.app/3lAoaCuHVIVnomKJ1XiH5QPPhZacv7E1mUQt3rCVYfI-V3-fp8IhYCAuLL-Neu4ayxQN2W_vet5izzbOm19kWjGZjGqWq2Wh1f-RhZxGJwgMFL1PrnK9RJpeu1aZf0ePEb5AG1MdAW6G6z27pyLZFre5lg0YcoXYoKBe4Ow_8DXRo5Q1C3wa5l7WTp3f6bjIcn4JVyp2Fpp04mb3tk9STASbIsTauXW9L6D8QWJt2gnAJCFH6k5cRmZ8Pg7aUV61orepSN1l9-Kw9iHW-XZuveSxi3USP7qm6pDt66LJn17zs4I23C723YWUySB7zGHYbcRZCZiqp_FvME767aUHcIqGgu7I1dRxSzCt0bIdVi7mQ_sKlhQ1S90LofT8tYIpKxy7ZVH1Tl1p0Zt2T9s_UZFLKXnCsd99hQC_vCTBU15RFRuKY9iZDYO35USrWjR8gQbxBisjmzwB5UicAcsaSdWt8d3fyblapMMqNuXf14_V'></script><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <title>Le jeu STIC de l'anarchie – OPÉRATION MILOU</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
     :root {
-        --bg: #060609;
-        --card: #0a0a10;
-        --surface: #0f0f18;
-        --accent: #ff2d2d;
-        --accent2: #00ff88;
-        --accent3: #ff6b35;
-        --accent4: #00d4ff;
-        --accent5: #ffd600;
-        --text: #e5e7eb;
-        --muted: #6b7280;
-        --border: rgba(255,45,45,0.15);
-        --border-dim: rgba(100,100,120,0.3);
-        --font: 'JetBrains Mono', 'Consolas', monospace;
-        --font-display: 'Anybody', system-ui, sans-serif;
-        --radius: 0px;
-        --shadow: 0 12px 40px rgba(0,0,0,0.95);
+      --bg: #fef3c7;
+      --bg2: #e0f2fe;
+      --bg3: #fce7f3;
+      --card: #ffffff;
+      --accent: #22c55e;
+      --accent2: #0ea5e9;
+      --accent3: #f97316;
+      --text: #111827;
+      --muted: #4b5563;
+      --border: rgba(15, 23, 42, 0.06);
+      --font-main: "Comic Sans MS", "Comic Neue", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: "Courier New", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --radius-xl: 22px;
+      --shadow-soft: 0 16px 35px rgba(15, 23, 42, 0.18);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    ::selection { background: var(--accent); color: #fff; }
 
     body {
-        min-height: 100vh;
-        font-family: var(--font);
-        background: var(--bg);
-        color: var(--text);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
+      min-height: 100vh;
+      font-family: var(--font-main);
+      background:
+        radial-gradient(circle at 0 0, #fee2e2, transparent 60%),
+        radial-gradient(circle at 100% 100%, #bfdbfe, transparent 60%),
+        radial-gradient(circle at 50% 0, #bbf7d0, transparent 60%),
+        #fef3c7;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
     }
 
-    /* Scanlines */
     body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px);
-        z-index: 9999;
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.8) 0, transparent 50%),
+        radial-gradient(circle at 80% 10%, rgba(255,255,255,0.6) 0, transparent 60%);
+      opacity: 0.5;
+      mix-blend-mode: screen;
+      z-index: 0;
     }
 
-    /* ═══ HEADER ═══ */
+    a { color: #1d4ed8; }
+
     header {
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        background: rgba(6,6,9,0.97);
-        border-bottom: 2px solid var(--accent);
-        padding: 6px 12px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        backdrop-filter: blur(14px);
-        box-shadow: 0 0 40px rgba(255,45,45,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      padding: 10px 16px;
+      background: rgba(254, 249, 195, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 2px solid rgba(251, 191, 36, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 8px 20px rgba(251, 146, 60, 0.25);
     }
 
     .header-left {
-        display: flex;
-        align-items: center;
-        gap: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .logo-frame {
-        width: 42px; height: 42px;
-        background: var(--accent);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        animation: logoPulse 3s ease-in-out infinite;
-    }
-    @keyframes logoPulse {
-        0%,100% { box-shadow: 0 0 0 0 rgba(255,45,45,0.4); }
-        50% { box-shadow: 0 0 20px 4px rgba(255,45,45,0.3); }
-    }
-    .logo-inner {
-        font-family: var(--font-display);
-        font-weight: 900;
-        font-size: 0.7rem;
-        color: #fff;
-        letter-spacing: 0.1em;
+    .logo {
+      width: 46px;
+      height: 46px;
+      border-radius: 999px;
+      background:
+        radial-gradient(circle at 30% 20%, #f9a8d4, #f97316);
+      position: relative;
+      box-shadow:
+        0 0 0 3px #fef9c3,
+        0 0 0 6px rgba(251, 191, 36, 0.9),
+        0 12px 18px rgba(180, 83, 9, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .header-titles { display: flex; flex-direction: column; gap: 1px; }
-    .title-main {
-        font-family: var(--font-display);
-        font-size: 0.9rem;
-        font-weight: 900;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: var(--text);
+    .logo::before {
+      content: "★";
+      font-size: 1.6rem;
+      color: #fef3c7;
+      text-shadow: 0 2px 0 rgba(124, 45, 18, 0.7);
     }
-    .title-main .r { color: var(--accent); }
-    .title-sub { font-size: 0.65rem; color: var(--muted); }
+
+    .title-block h1 {
+      font-size: 1.05rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .title-block .code {
+      font-size: 0.8rem;
+      color: #6b21a8;
+    }
 
     .header-right {
-        text-align: right;
-        font-size: 0.65rem;
-        color: var(--muted);
+      text-align: right;
+      font-size: 0.75rem;
+      color: #4b5563;
     }
-    .header-right .live {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        color: var(--accent);
-        font-weight: 700;
-        letter-spacing: 0.1em;
-    }
-    .live-dot {
-        width: 6px; height: 6px;
-        border-radius: 50%;
-        background: var(--accent);
-        box-shadow: 0 0 8px var(--accent);
-        animation: blink 1.5s ease-in-out infinite;
-    }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-    /* Status tickers */
-    .ticker {
-        width: 100%;
-        background: rgba(255,45,45,0.06);
-        border-bottom: 1px solid var(--border);
-        padding: 3px 12px;
-        font-size: 0.6rem;
-        color: var(--muted);
-        overflow: hidden;
-        white-space: nowrap;
+    .balloon {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #be123c;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #fee2e2;
+      box-shadow:
+        0 3px 0 #fca5a5,
+        0 4px 10px rgba(248, 113, 113, 0.5);
+      text-shadow:
+        1px 1px 0 #fecaca,
+        -1px 1px 0 #fecaca,
+        0 2px 0 #fecaca;
+      border: 2px solid #fecaca;
+      display: inline-block;
     }
-    .ticker-inner {
-        display: inline-block;
-        animation: scroll 60s linear infinite;
-    }
-    @keyframes scroll { 0%{transform:translateX(100%)} 100%{transform:translateX(-100%)} }
-    .ticker .tag { color: var(--accent); font-weight: 700; margin: 0 0.5rem; }
 
-    /* ═══ MAIN GRID ═══ */
+    .balloon-small {
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+    }
+
     main {
-        flex: 1;
-        padding: 6px;
-        display: grid;
-        grid-template-columns: minmax(0, 1.3fr) minmax(0, 2.2fr) minmax(0, 1fr);
-        gap: 6px;
-        overflow: hidden;
+      flex: 1;
+      padding: 16px 16px 20px;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
     }
 
-    @media (max-width: 1100px) {
-        main { grid-template-columns: minmax(0, 1.2fr) minmax(0, 2fr); }
-        .side-panel { display: none; }
-    }
-    @media (max-width: 750px) {
-        main { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
-        .panel { max-height: 220px; }
-    }
-
-    /* ═══ PANELS ═══ */
-    .panel, .viewer-panel, .side-panel {
-        background: var(--card);
-        border: 1px solid var(--border-dim);
-        box-shadow: var(--shadow);
-        padding: 8px;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        position: relative;
+    .shell {
+      width: 100%;
+      max-width: 1100px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.2fr);
+      gap: 14px;
     }
 
-    .panel::before, .viewer-panel::before, .side-panel::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background: radial-gradient(circle at 0 0, rgba(255,45,45,0.05), transparent 60%);
+    @media (max-width: 900px) {
+      .shell {
+        grid-template-columns: 1fr;
+      }
     }
 
-    .panel h2, .side-panel h2 {
-        font-family: var(--font-display);
-        font-size: 0.75rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.15em;
-        color: var(--accent);
-        margin-bottom: 6px;
-        position: relative;
-        z-index: 2;
+    .panel {
+      background: #fefce8;
+      border-radius: var(--radius-xl);
+      border: 2px solid rgba(248, 250, 252, 0.9);
+      box-shadow: var(--shadow-soft);
+      padding: 12px;
+      position: relative;
+      overflow: hidden;
     }
 
-    /* ═══ LEFT — ARSENAL ═══ */
-    .search-row {
-        display: flex;
-        gap: 4px;
-        margin-bottom: 6px;
-        position: relative;
-        z-index: 2;
-    }
-    input[type="search"] {
-        flex: 1;
-        background: var(--surface);
-        border: 1px solid var(--border-dim);
-        color: var(--text);
-        font-family: var(--font);
-        font-size: 0.7rem;
-        padding: 4px 8px;
-        outline: none;
-    }
-    input[type="search"]::placeholder { color: var(--muted); }
-    input[type="search"]:focus { border-color: var(--accent); }
-
-    select {
-        background: var(--surface);
-        border: 1px solid var(--border-dim);
-        color: var(--text);
-        font-family: var(--font);
-        font-size: 0.65rem;
-        padding: 3px 5px;
-        outline: none;
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background-image: radial-gradient(circle, rgba(253, 224, 71, 0.35), transparent 60%);
+      opacity: 0.2;
+      pointer-events: none;
     }
 
-    .badge-count {
-        font-size: 0.6rem;
-        color: var(--muted);
-        margin-bottom: 4px;
-        position: relative;
-        z-index: 2;
+    .panel-inner {
+      position: relative;
+      z-index: 1;
     }
 
-    .modules-list {
-        flex: 1;
-        overflow-y: auto;
-        position: relative;
-        z-index: 2;
-        border: 1px solid var(--border-dim);
-        background: var(--bg);
+    .panel-right {
+      background: linear-gradient(135deg, #bfdbfe, #e0f2fe, #f5f3ff);
     }
 
-    .modules-list::-webkit-scrollbar { width: 3px; }
-    .modules-list::-webkit-scrollbar-thumb { background: var(--accent); }
-
-    .group-title {
-        font-size: 0.55rem;
-        color: var(--accent);
-        text-transform: uppercase;
-        letter-spacing: 0.2em;
-        padding: 6px 6px 2px;
-        font-weight: 700;
+    h2 {
+      font-size: 1rem;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .module-item {
-        padding: 5px 6px;
-        font-size: 0.7rem;
-        cursor: pointer;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 6px;
-        border-bottom: 1px solid rgba(50,50,60,0.3);
-        transition: all 0.15s;
-    }
-    .module-item:hover {
-        background: rgba(255,45,45,0.06);
-        border-left: 2px solid var(--accent);
-    }
-    .module-item.active {
-        background: rgba(255,45,45,0.1);
-        border-left: 3px solid var(--accent);
+    h3 {
+      font-size: 0.95rem;
+      margin-bottom: 3px;
     }
 
-    .module-main { min-width: 0; flex: 1; }
-    .module-title {
-        font-size: 0.72rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        font-weight: 700;
-    }
-    .module-sub {
-        font-size: 0.6rem;
-        color: var(--muted);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    .module-meta {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 2px;
-        flex-shrink: 0;
-    }
-    .module-kind {
-        font-size: 0.55rem;
-        padding: 1px 5px;
-        border: 1px solid;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        white-space: nowrap;
-    }
-    .k-petition { border-color: var(--accent); color: var(--accent); }
-    .k-factcheck { border-color: var(--accent2); color: var(--accent2); }
-    .k-plaidoyer { border-color: var(--accent3); color: var(--accent3); }
-    .k-analyse { border-color: var(--accent4); color: var(--accent4); }
-    .k-outil { border-color: var(--accent5); color: var(--accent5); }
-    .k-dossier { border-color: #b19cd9; color: #b19cd9; }
-    .k-brol { border-color: var(--muted); color: var(--muted); }
-
-    /* ═══ CENTER — VIEWER ═══ */
-    .viewer-panel { gap: 4px; }
-    .viewer-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 6px;
-        flex-wrap: wrap;
-        position: relative;
-        z-index: 2;
-    }
-    .viewer-title-block { min-width: 0; }
-    .viewer-title {
-        font-family: var(--font-display);
-        font-size: 0.85rem;
-        font-weight: 700;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    .viewer-subtitle { font-size: 0.65rem; color: var(--muted); }
-
-    .viewer-badges {
-        display: flex;
-        gap: 4px;
-        flex-shrink: 0;
-    }
-    .viewer-badge {
-        font-size: 0.55rem;
-        padding: 2px 6px;
-        border: 1px solid var(--border-dim);
-        color: var(--muted);
-        display: flex;
-        align-items: center;
-        gap: 3px;
-    }
-    .v-dot {
-        width: 5px; height: 5px;
-        border-radius: 50%;
-        background: var(--accent2);
-        box-shadow: 0 0 6px var(--accent2);
+    p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 4px;
     }
 
-    .viewer-body {
-        flex: 1;
-        border: 1px solid var(--border-dim);
-        background: var(--bg);
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-        z-index: 2;
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 6px;
     }
 
-    .viewer-iframe-wrapper {
-        flex: 1;
-        min-height: 0;
+    .tag {
+      font-size: 0.72rem;
+      border-radius: 999px;
+      padding: 2px 8px;
+      border: 1px dashed rgba(55, 65, 81, 0.3);
+      background: #f9fafb;
+      color: #4b5563;
+      font-family: var(--font-mono);
     }
 
-    #viewerFrame {
-        width: 100%;
-        height: 100%;
-        border: none;
-        background: var(--bg);
+    .tag.bold {
+      border-style: solid;
+      background: #bbf7d0;
+      color: #14532d;
     }
 
-    .viewer-info {
-        padding: 4px 6px;
-        font-size: 0.6rem;
-        color: var(--muted);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 4px;
-        border-top: 1px solid var(--border-dim);
-        background: var(--card);
-    }
-    .viewer-file { font-size: 0.6rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .btn-open {
-        font-family: var(--font);
-        font-size: 0.6rem;
-        padding: 2px 8px;
-        border: 1px solid var(--accent4);
-        background: none;
-        color: var(--accent4);
-        cursor: pointer;
-        text-decoration: none;
-        transition: all 0.2s;
-    }
-    .btn-open:hover { background: var(--accent4); color: var(--bg); }
-
-    /* ═══ RIGHT — MUNITIONS ═══ */
-    .side-panel { gap: 6px; overflow-y: auto; }
-    .side-inner { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 8px; }
-
-    .munition-section h3 {
-        font-size: 0.6rem;
-        color: var(--muted);
-        text-transform: uppercase;
-        letter-spacing: 0.15em;
-        margin-bottom: 4px;
-        padding-bottom: 2px;
-        border-bottom: 1px solid var(--border-dim);
+    section {
+      margin-top: 10px;
+      padding: 8px;
+      border-radius: 16px;
+      border: 2px solid rgba(248, 250, 252, 0.9);
+      background: #ffffff;
     }
 
-    .embed-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 3px;
+    section:first-of-type {
+      margin-top: 0;
     }
 
-    .embed-btn {
-        font-family: var(--font);
-        font-size: 0.6rem;
-        padding: 3px 6px;
-        background: var(--surface);
-        border: 1px solid var(--border-dim);
-        color: var(--text);
-        cursor: pointer;
-        transition: all 0.15s;
-        display: inline-flex;
-        align-items: center;
-        gap: 3px;
+    ul {
+      margin-left: 16px;
+      font-size: 0.82rem;
+      color: #4b5563;
+      margin-top: 2px;
+      margin-bottom: 4px;
     }
-    .embed-btn:hover {
-        border-color: var(--accent);
-        background: rgba(255,45,45,0.08);
-    }
-    .embed-btn .icon { font-size: 0.7rem; }
 
-    /* Stats mini */
-    .stat-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 3px;
-    }
-    .stat-card {
-        background: var(--surface);
-        border: 1px solid var(--border-dim);
-        padding: 6px;
-        text-align: center;
-    }
-    .stat-val {
-        font-family: var(--font-display);
-        font-weight: 900;
-        font-size: 1rem;
-        line-height: 1;
-    }
-    .stat-val.red { color: var(--accent); }
-    .stat-val.green { color: var(--accent2); }
-    .stat-val.orange { color: var(--accent3); }
-    .stat-val.cyan { color: var(--accent4); }
-    .stat-label { font-size: 0.5rem; color: var(--muted); margin-top: 2px; }
+    li { margin-bottom: 3px; }
 
-    /* Quick links */
-    .quick-link {
-        display: block;
-        font-size: 0.6rem;
-        padding: 4px 6px;
-        border: 1px solid var(--border-dim);
-        background: var(--surface);
-        color: var(--text);
-        text-decoration: none;
-        margin-bottom: 2px;
-        transition: all 0.15s;
+    .grid-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 8px;
     }
-    .quick-link:hover {
-        border-color: var(--accent2);
-        color: var(--accent2);
-    }
-    .quick-link .ql-label { color: var(--muted); font-size: 0.5rem; }
 
-    /* ═══ FOOTER ═══ */
+    @media (max-width: 800px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      border-radius: 16px;
+      background: #fffbeb;
+      border: 2px dashed rgba(251, 191, 36, 0.5);
+      padding: 8px;
+      font-size: 0.84rem;
+    }
+
+    .card.blue {
+      background: #eff6ff;
+      border-color: rgba(96, 165, 250, 0.7);
+    }
+
+    .card.pink {
+      background: #fdf2f8;
+      border-color: rgba(244, 114, 182, 0.7);
+    }
+
+    .chip {
+      display: inline-block;
+      font-size: 0.72rem;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: #fee2e2;
+      color: #9f1239;
+      margin-bottom: 3px;
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+      margin-top: 4px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 0.78rem;
+    }
+
+    th, td {
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      padding: 4px 6px;
+      vertical-align: top;
+    }
+
+    th {
+      background: #fef3c7;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+
+    /* Classes & XP badges */
+    .class-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .class-card {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 2px solid rgba(148, 163, 184, 0.4);
+      padding: 6px;
+      font-size: 0.78rem;
+      position: relative;
+    }
+
+    .class-name {
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      color: #6b21a8;
+    }
+
+    .xp-list {
+      font-size: 0.8rem;
+    }
+
+    .badge-lvl {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 2px 6px;
+      font-size: 0.72rem;
+      border: 1px solid rgba(37, 99, 235, 0.6);
+      background: #dbeafe;
+      margin-right: 4px;
+    }
+
+    /* Worklog */
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 6px;
+      font-size: 0.72rem;
+    }
+
+    .filter-btn {
+      border-radius: 999px;
+      padding: 3px 8px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: #e0f2fe;
+      cursor: pointer;
+    }
+
+    .filter-btn.active {
+      background: #bfdbfe;
+      border-color: #1d4ed8;
+      color: #1d4ed8;
+    }
+
+    .log-item {
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: #ffffff;
+      padding: 6px 7px;
+      margin-bottom: 5px;
+      font-size: 0.8rem;
+    }
+
+    .log-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 2px;
+      font-size: 0.72rem;
+    }
+
+    .log-date {
+      font-family: var(--font-mono);
+      color: #6b7280;
+    }
+
+    .log-status {
+      padding: 1px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      font-family: var(--font-mono);
+    }
+
+    .log-status.idee { background: #fef9c3; }
+    .log-status.en-cours { background: #bfdbfe; }
+    .log-status.valide { background: #bbf7d0; }
+
     footer {
-        padding: 4px 12px;
-        font-size: 0.6rem;
-        color: var(--muted);
-        border-top: 1px solid var(--border-dim);
-        background: var(--card);
-        display: flex;
-        justify-content: space-between;
-        gap: 6px;
-        flex-wrap: wrap;
-        position: relative;
-        z-index: 2;
+      padding: 8px 16px 10px;
+      background: #fee2e2;
+      border-top: 2px solid rgba(248, 113, 113, 0.7);
+      font-size: 0.8rem;
+      color: #7f1d1d;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
     }
-    footer a { color: var(--accent4); text-decoration: none; }
-    footer a:hover { color: var(--accent2); }
 
     @media (max-width: 720px) {
-        header { flex-direction: column; align-items: flex-start; }
-        .header-right { text-align: left; }
-        footer { flex-direction: column; }
+      header { flex-direction: column; align-items: flex-start; }
+      footer { flex-direction: column; }
     }
-    </style>
+  </style>
 </head>
 <body>
-
-<!-- ═══ HEADER ═══ -->
 <header>
-    <div class="header-left">
-        <div class="logo-frame">
-            <div class="logo-inner">6·6·6</div>
-        </div>
-        <div class="header-titles">
-            <div class="title-main">Salle de <span class="r">Campagne</span> — QG ouaisfieu</div>
-            <div class="title-sub">Centre de commandement · Veille citoyenne belge · Tir croisé activé</div>
-        </div>
+  <div class="header-left">
+    <div class="logo" aria-hidden="true"></div>
+    <div class="title-block">
+      <h1>OPÉRATION MILOU</h1>
+      <div class="code">Le jeu STIC de l’anarchie (pour une thèse ET le capitalisme)</div>
     </div>
-    <div class="header-right">
-        <div class="live"><span class="live-dot"></span> LIVE</div>
-        <div>room/6/6/6 · reaven</div>
-    </div>
+  </div>
+  <div class="header-right">
+    <div class="balloon balloon-small">#milou · scratch x licornes x bisounours</div><br>
+    <span style="font-size:0.7rem;">Une bande de klets, une méthode béton, un MMORPG IRL académique.</span>
+  </div>
 </header>
 
-<!-- Ticker -->
-<div class="ticker">
-    <div class="ticker-inner">
-        <span class="tag">120 000</span> exclus du chômage janv. 2026 ·
-        <span class="tag">549 996</span> malades longue durée ·
-        <span class="tag">2,4 M</span> BIM (21% pop.) ·
-        <span class="tag">152:1</span> ratio fraude fiscale/sociale ·
-        <span class="tag">140 000</span> manifestants 14 oct. 2025 ·
-        <span class="tag">100+</span> plaintes CSA Deborsu ·
-        <span class="tag">57-76%</span> non-recours RIS ·
-        <span class="tag">42,6 Md€</span> déficit prévu 2030 ·
-        <span class="tag">20,9 Md€</span> charge intérêts 2030 ·
-        <span class="tag">IFDH</span> avis 14/2025 "recul significatif" ·
-        <span class="tag">CNT</span> avis unanime : "aucune preuve" ·
-        <span class="tag">A+</span> Fitch downgrade juin 2025 ·
-        <span class="tag">12 MARS 2026</span> prochaine manif nationale ·
-    </div>
-</div>
-
-<!-- ═══ MAIN ═══ -->
 <main>
+  <div class="shell">
+    <!-- COLONNE GAUCHE : SCIENCE + MÉTHODE + MMO -->
+    <div class="panel">
+      <div class="panel-inner">
+        <section id="intro">
+          <h2>🌈 Résumé du jeu STIC de l’anarchie</h2>
+          <p>
+            L’<strong>OPÉRATION MILOU</strong> est une cellule socio-technique qui pose cette question&nbsp;:
+            <em>« Peut-on mobiliser des principes anarchistes pour réparer, orienter ou neutraliser certains effets
+            destructeurs du capitalisme numérique – tout en avançant vers une vraie thèse en STIC ? »</em>
+          </p>
+          <p>
+            Cette page est à la fois&nbsp;:
+          </p>
+          <ul>
+            <li>un <strong>site vitrine</strong> pour la thèse,</li>
+            <li>une <strong>fiche de jeu</strong> façon MMORPG IRL,</li>
+            <li>et un <strong>panneau d’affichage</strong> pour la bande de klets de l’Opération Milou.</li>
+          </ul>
+          <div class="tag-row">
+            <span class="tag bold">STIC</span>
+            <span class="tag">anarchie &amp; capitalisme</span>
+            <span class="tag">communs &amp; infra numériques</span>
+            <span class="tag">méthode 6·4·2</span>
+            <span class="tag">MMORPG IRL</span>
+          </div>
+        </section>
 
-    <!-- ═══ LEFT — ARSENAL ═══ -->
-    <section class="panel">
-        <h2>⚔ Arsenal</h2>
-        <div class="search-row">
-            <input type="search" id="moduleSearch" placeholder="Rechercher…">
-            <select id="moduleCategory">
-                <option value="all">Tout</option>
-                <option value="petition">Pétitions</option>
-                <option value="factcheck">Fact-check</option>
-                <option value="plaidoyer">Plaidoyers</option>
-                <option value="analyse">Analyses</option>
-                <option value="outil">Outils</option>
-                <option value="dossier">Dossiers</option>
-                <option value="brol">BROL</option>
-            </select>
-        </div>
-        <div class="badge-count"><span id="modulesCount">0</span> modules chargés</div>
-        <div class="modules-list" id="modulesContainer"></div>
-    </section>
+        <section id="science">
+          <h2>🔬 Cadre scientifique (STIC)</h2>
+          <p>
+            <strong>Domaine&nbsp;:</strong> Sciences et Technologies de l’Information et de la Communication (STIC).  
+            <strong>Approche&nbsp;:</strong> socio-technique, critique, méthodologique, appliquée.
+          </p>
+          <p>
+            <strong>Question centrale&nbsp;:</strong> comment des dispositifs inspirés de l’anarchie
+            (entraide, autogestion, communs, non-domination) peuvent-ils stabiliser ou corriger certaines dynamiques
+            du capitalisme numérique – dans des organisations socio-techniques <em>réelles</em> ?
+          </p>
 
-    <!-- ═══ CENTER — VIEWER ═══ -->
-    <section class="viewer-panel">
-        <div class="viewer-header">
-            <div class="viewer-title-block">
-                <div class="viewer-title" id="viewerTitle">Sélectionner un module</div>
-                <div class="viewer-subtitle" id="viewerSubtitle">Choisissez une arme dans l'arsenal</div>
+          <div class="grid-2">
+            <div class="card">
+              <h3>Ce que ce projet n’est pas</h3>
+              <ul>
+                <li>Pas un appel au chaos ni à la violence.</li>
+                <li>Pas un plan magique pour renverser le capitalisme.</li>
+                <li>Pas un pitch startup bullshit de plus.</li>
+              </ul>
             </div>
-            <div class="viewer-badges">
-                <span class="viewer-badge"><span class="v-dot"></span> <span id="viewerCatBadge">—</span></span>
-                <span class="viewer-badge" id="viewerKindBadge">—</span>
+            <div class="card blue">
+              <h3>Ce que ce projet tente d’être</h3>
+              <ul>
+                <li>Une enquête rigoureuse, assumée politiquement mais documentée.</li>
+                <li>Un laboratoire public de documentation (issues, commits, notes).</li>
+                <li>Une base possible pour une thèse en STIC.</li>
+              </ul>
             </div>
-        </div>
-        <div class="viewer-body">
-            <div class="viewer-iframe-wrapper">
-                <iframe id="viewerFrame" src="about:blank"></iframe>
+          </div>
+        </section>
+
+        <section id="method">
+          <h2>📐 Méthode 6·4·2 – version « plateau de jeu »</h2>
+          <p>
+            La méthode <strong>6·4·2</strong> sert de squelette à la recherche, mais aussi au jeu.
+          </p>
+          <div class="table-scroll">
+            <table>
+              <tbody><tr>
+                <th>6 fils directeurs<br><span style="font-size:0.7rem;">(storylines)</span></th>
+                <th>4 axes de terrain<br><span style="font-size:0.7rem;">(maps)</span></th>
+                <th>2 niveaux d’analyse<br><span style="font-size:0.7rem;">(tiers de boss)</span></th>
+              </tr>
+              <tr>
+                <td>
+                  <ul>
+                    <li>(1) Gouvernance : qui décide, comment, avec quels contre-pouvoirs ?</li>
+                    <li>(2) Propriété : propriété privée, usages collectifs, mutualisation.</li>
+                    <li>(3) Infrastructures : serveurs, logiciels, normes, dépendances.</li>
+                    <li>(4) Rémunération : flux économiques et injustices corrigées ou déplacées.</li>
+                    <li>(5) Conflit &amp; soin : comment on gère les conflits et la fatigue.</li>
+                    <li>(6) Reproductibilité : ce qui peut être documenté, transmis, forké.</li>
+                  </ul>
+                </td>
+                <td>
+                  <ul>
+                    <li>Axe A — Théories &amp; récits (anarchie, capitalisme, communs).</li>
+                    <li>Axe B — Projets libres &amp; coopératives (cas réels, terrain).</li>
+                    <li>Axe C — Infrastructures numériques (hébergement, protocoles, gouvernance de code).</li>
+                    <li>Axe D — Régulation &amp; institutions (droit, normes, politiques publiques).</li>
+                  </ul>
+                </td>
+                <td>
+                  <ul>
+                    <li>Niveau 1 — <strong>Micro</strong> (collectifs, équipes, projets, intranets, outils).</li>
+                    <li>Niveau 2 — <strong>Macro</strong> (écosystèmes, marchés, régulation, imaginaires).</li>
+                  </ul>
+                </td>
+              </tr>
+            </tbody></table>
+          </div>
+          <p style="font-size:0.78rem; margin-top:4px;">
+            La thèse (ou le rapport) pourra être structurée en croisant ces 6 fils, 4 axes et 2 niveaux
+            – avec tableaux, cartes, diagrammes, comme un grand manuel de jeu.
+          </p>
+        </section>
+
+        <section id="mmorpg">
+          <h2>🎮 MMORPG IRL – classes, quêtes, XP &amp; loot</h2>
+          <h3>Classes de personnages IRL</h3>
+          <div class="class-grid">
+            <div class="class-card">
+              <div class="class-name">Chercheur·se Nomade</div>
+              <div class="stat-label">Stat principal : INT</div>
+              <p>Analyse, littérature, navigation dans la bibliographie infinie.</p>
+              <p style="font-size:0.75rem;">Passif : +20% lecture rapide.</p>
             </div>
-            <div class="viewer-info">
-                <span class="viewer-file" id="viewerFile">—</span>
-                <a href="#" id="viewerOpenNew" class="btn-open" target="_blank" rel="noopener noreferrer">Ouvrir ↗</a>
+            <div class="class-card">
+              <div class="class-name">Ingénieur·e du Bazar</div>
+              <div class="stat-label">Stat principal : TECH</div>
+              <p>Prototypage, scripts, intranets, moteurs de recherche dystopiques.</p>
+              <p style="font-size:0.75rem;">Passif : +15% debug mental.</p>
             </div>
-        </div>
-    </section>
-
-    <!-- ═══ RIGHT — MUNITIONS ═══ -->
-    <section class="side-panel">
-        <div class="side-inner">
-
-            <h2>🎯 Munitions</h2>
-
-            <!-- Stats dashboard -->
-            <div class="munition-section">
-                <h3>Compteurs clés</h3>
-                <div class="stat-grid">
-                    <div class="stat-card"><div class="stat-val red">120K</div><div class="stat-label">Exclus chômage</div></div>
-                    <div class="stat-card"><div class="stat-val orange">549K</div><div class="stat-label">Malades longue durée</div></div>
-                    <div class="stat-card"><div class="stat-val green">152:1</div><div class="stat-label">Ratio fraude fisc./soc.</div></div>
-                    <div class="stat-card"><div class="stat-val cyan">76%</div><div class="stat-label">Non-recours RIS</div></div>
-                </div>
+            <div class="class-card">
+              <div class="class-name">Scribe Cryptique</div>
+              <div class="stat-label">Stat principal : WIS</div>
+              <p>Rédaction, distillation, transformation de chaos en chapitres.</p>
+              <p style="font-size:0.75rem;">Passif : -20% dégâts de jargon.</p>
             </div>
-
-            <!-- Quick embeds -->
-            <div class="munition-section">
-                <h3>Embeds rapides</h3>
-                <div class="embed-row">
-                    <button type="button" class="embed-btn" data-embed="petition-geo"><span class="icon">🚨</span> Pétition GEO</button>
-                    <button type="button" class="embed-btn" data-embed="petition-raw"><span class="icon">⚡</span> Pétition brute</button>
-                    <button type="button" class="embed-btn" data-embed="plaidoyer-stop"><span class="icon">📜</span> STOP Arizona</button>
-                    <button type="button" class="embed-btn" data-embed="plaidoyer-eco"><span class="icon">📜</span> Éco. Contributive</button>
-                    <button type="button" class="embed-btn" data-embed="focus"><span class="icon">🔬</span> Focus</button>
-                    <button type="button" class="embed-btn" data-embed="mission0"><span class="icon">🎯</span> Mission_0</button>
-                    <button type="button" class="embed-btn" data-embed="mission0ultra"><span class="icon">💀</span> Mission ULTRA</button>
-                    <button type="button" class="embed-btn" data-embed="tarot"><span class="icon">🃏</span> Tarot</button>
-                    <button type="button" class="embed-btn" data-embed="obsidian"><span class="icon">🧠</span> Obsidian</button>
-                    <button type="button" class="embed-btn" data-embed="intranet"><span class="icon">🔒</span> Intranet</button>
-                    <button type="button" class="embed-btn" data-embed="vitrine"><span class="icon">📢</span> Speaker</button>
-                    <button type="button" class="embed-btn" data-embed="spotify1"><span class="icon">🎵</span> Playlist 1</button>
-                    <button type="button" class="embed-btn" data-embed="spotify2"><span class="icon">🎵</span> Playlist 2</button>
-                    <button type="button" class="embed-btn" data-embed="tirage"><span class="icon">🎲</span> Dés</button>
-                    <button type="button" class="embed-btn" data-embed="logo"><span class="icon">🐧</span> Logo</button>
-                </div>
+            <div class="class-card">
+              <div class="class-name">Samouraï Administratif</div>
+              <div class="stat-label">Stat principal : CON</div>
+              <p>Normes, RGPD, régulation, paperasse institutionnelle.</p>
+              <p style="font-size:0.75rem;">Passif : +30% résistance bureaucratique.</p>
             </div>
-
-            <!-- Quick links -->
-            <div class="munition-section">
-                <h3>Liens directs</h3>
-                <a href="https://ouaisfi.eu" target="_blank" class="quick-link">ouaisfi.eu <span class="ql-label">portail</span></a>
-                <a href="https://ouaisfieu.github.io/tech/" target="_blank" class="quick-link">DOCTech <span class="ql-label">documentation</span></a>
-                <a href="https://ouaisfieu.github.io/bxl2030/" target="_blank" class="quick-link">BXL2030 <span class="ql-label">prospective</span></a>
-                <a href="https://ouaisfieu.github.io/GPTPardi/" target="_blank" class="quick-link">GPTPardi <span class="ql-label">IA citoyenne</span></a>
-                <a href="https://dl.ouaisfi.eu" target="_blank" class="quick-link">dl.ouaisfi.eu <span class="ql-label">fichiers</span></a>
-                <a href="https://github.com/ouaisfieu" target="_blank" class="quick-link">GitHub/ouaisfieu <span class="ql-label">code</span></a>
-                <a href="https://github.com/yannkeep" target="_blank" class="quick-link">GitHub/yannkeep <span class="ql-label">repos</span></a>
-                <a href="https://bsky.app/profile/ouaisfi.eu" target="_blank" class="quick-link">@ouaisfi.eu <span class="ql-label">bluesky</span></a>
+            <div class="class-card">
+              <div class="class-name">Tacticien·ne Socio-tech</div>
+              <div class="stat-label">Stat principal : CHA</div>
+              <p>Interviews, observation terrain, médiation entre mondes.</p>
+              <p style="font-size:0.75rem;">Passif : +15% diplomatie.</p>
             </div>
+          </div>
 
-            <!-- BROL rooms -->
-            <div class="munition-section">
-                <h3>Niveaux BROL</h3>
-                <div class="embed-row">
-                    <button type="button" class="embed-btn" data-embed="room1"><span class="icon">1️⃣</span> Room 1</button>
-                    <button type="button" class="embed-btn" data-embed="room2"><span class="icon">2️⃣</span> Room 2</button>
-                    <button type="button" class="embed-btn" data-embed="room3"><span class="icon">3️⃣</span> Room 3</button>
-                    <button type="button" class="embed-btn" data-embed="room4"><span class="icon">4️⃣</span> Room 4</button>
-                    <button type="button" class="embed-btn" data-embed="room5"><span class="icon">5️⃣</span> Room 5</button>
-                </div>
+          <h3 style="margin-top:6px;">XP &amp; niveaux</h3>
+          <p class="xp-list">
+            Exemples de gain d’XP :
+          </p>
+          <ul class="xp-list">
+            <li>+10 XP → 1 page lue dans une annexe PDF.</li>
+            <li>+20 XP → issue GitHub ouverte avec description claire.</li>
+            <li>+30 XP → commit qui améliore le site ou la doc.</li>
+            <li>+40 XP → note de terrain rédigée.</li>
+            <li>+50 XP → analyse comparative entre deux cas.</li>
+            <li>+100 XP → version stable d’un chapitre.</li>
+          </ul>
+          <p>
+            Paliers de niveaux :
+          </p>
+          <p>
+            <span class="badge-lvl">N1</span> Novice de la Méthode ·
+            <span class="badge-lvl">N2</span> Cartographe des Concepts ·
+            <span class="badge-lvl">N3</span> Fouilleur de Donjons Socio-tech ·
+            <span class="badge-lvl">N4</span> Architecte Numérique ·
+            <span class="badge-lvl">N5</span> Maître Communard ·
+            <span class="badge-lvl">N6</span> Docteur·e du Chaos Contrôlé.
+          </p>
+
+          <h3 style="margin-top:6px;">Quêtes &amp; boss</h3>
+          <div class="grid-2">
+            <div class="card pink">
+              <div class="chip">Quêtes principales</div>
+              <ul>
+                <li>QP1 — Définir la question de recherche.</li>
+                <li>QP2 — Cartographier les théories (anarchie, capitalisme, communs…).</li>
+                <li>QP3 — Choisir 3 à 5 cas d’étude.</li>
+                <li>QP4 — Analyser les dispositifs socio-techniques.</li>
+                <li>QP5 — Proposer des modèles reproductibles.</li>
+                <li>QP6 — Rédiger la thèse.</li>
+              </ul>
             </div>
-
-            <!-- Recours -->
-            <div class="munition-section">
-                <h3>⚖ Recours</h3>
-                <a href="https://www.lfrb.be/plainte" target="_blank" class="quick-link" style="border-color:var(--accent);color:var(--accent);">CDJ — Plainte <span class="ql-label">gratuit · 2 mois</span></a>
-                <a href="https://www.csa.be/formulaire-de-plainte/" target="_blank" class="quick-link" style="border-color:var(--accent);color:var(--accent);">CSA — Plainte <span class="ql-label">enquête en cours</span></a>
-                <a href="https://www.unia.be/fr/signaler" target="_blank" class="quick-link" style="border-color:var(--accent2);color:var(--accent2);">Unia — Signalement <span class="ql-label">gratuit</span></a>
+            <div class="card blue">
+              <div class="chip">Boss du jeu (version STIC)</div>
+              <ul>
+                <li>Boss 1 : <strong>La Bibliographie Infinie</strong>.</li>
+                <li>Boss 2 : <strong>La Régulation Labyrinthique</strong>.</li>
+                <li>Boss 3 : <strong>L’Incohérence Conceptuelle</strong>.</li>
+                <li>Boss 4 : <strong>Les Données Manquantes</strong>.</li>
+                <li>Boss 5 : <strong>La Rédaction Éternelle</strong> (final boss).</li>
+              </ul>
             </div>
+          </div>
+        </section>
+      </div>
+    </div>
 
-        </div>
-    </section>
+    <!-- COLONNE DROITE : WORKLOG + ANNEXES + DEPLOIEMENT -->
+    <div class="panel panel-right">
+      <div class="panel-inner">
+        <section id="worklog">
+          <h2>📒 Journal de bord #milou</h2>
+          <p>
+            Le <em>vrai</em> log détaillé vit dans les commits et issues du dépôt GitHub.
+            Ici, une version lisible façon carnet de progression.
+          </p>
+          <div class="filter-row">
+            <button class="filter-btn active" data-filter="all">Tous</button>
+            <button class="filter-btn" data-filter="idee">Idées</button>
+            <button class="filter-btn" data-filter="en-cours">En cours</button>
+            <button class="filter-btn" data-filter="valide">Stabilisé</button>
+          </div>
+          <div id="logList"><div class="log-item"><div class="log-top"><span class="log-date">2025-01-01</span><span class="log-status valide">stabilisé</span></div><div style="font-weight: 600; margin-bottom: 2px;">Initialisation de l’OPÉRATION MILOU</div><div>Nom de code fixé (#milou). Décision de documenter publiquement la démarche (GitHub Pages) tout en gardant certaines discussions en cercle de confiance.</div></div><div class="log-item"><div class="log-top"><span class="log-date">2025-01-05</span><span class="log-status en-cours">en cours</span></div><div style="font-weight: 600; margin-bottom: 2px;">Formulation de la question de recherche</div><div>Passage de « l’anarchie peut-elle sauver le monde » à une formulation STIC ciblée : quels dispositifs socio-techniques concrets, dans quelles limites.</div></div><div class="log-item"><div class="log-top"><span class="log-date">2025-01-10</span><span class="log-status en-cours">en cours</span></div><div style="font-weight: 600; margin-bottom: 2px;">Esquisse de la méthode 6·4·2</div><div>Définition de 6 fils directeurs, 4 axes de terrain, 2 niveaux d’analyse. À illustrer par des cas réels et des schémas.</div></div><div class="log-item"><div class="log-top"><span class="log-date">2025-01-15</span><span class="log-status valide">stabilisé</span></div><div style="font-weight: 600; margin-bottom: 2px;">Collecte initiale d’annexes</div><div>Ajout des PDF (dystopie, plaidoyer, pression) dans le dépôt. Première cartographie des thèmes transverses.</div></div><div class="log-item"><div class="log-top"><span class="log-date">2025-01-20</span><span class="log-status idee">idée</span></div><div style="font-weight: 600; margin-bottom: 2px;">Repérage de cas d’étude possibles</div><div>Identifier 3 à 5 projets (logiciels libres, coopératives, plateformes alternatives) à analyser en profondeur.</div></div></div>
+        </section>
 
+        <section id="annexes">
+          <h2>📚 Corpus &amp; annexes (PDF)</h2>
+          <p>
+            Ces documents servent de base de réflexion. Ils doivent être cités proprement dans la thèse / le mémoire.
+          </p>
+          <ul>
+            <li>
+              <a href="file:///C:/Users/yanni/Downloads/dystopie.pdf" target="_blank"><strong>dystopie.pdf</strong></a><br>
+              <span style="font-size:0.8rem; color:#4b5563;">
+                Annexe sur les dynamiques dystopiques contemporaines (surveillance, autoritarisme, climat, IA…).
+              </span>
+            </li>
+            <li>
+              <a href="file:///C:/Users/yanni/Downloads/plaidoyer-jp.pdf" target="_blank"><strong>plaidoyer-jp.pdf</strong></a><br>
+              <span style="font-size:0.8rem; color:#4b5563;">
+                Texte de plaidoyer / réflexion de référence (lecture critique, pas dogme).
+              </span>
+            </li>
+            <li>
+              <a href="file:///C:/Users/yanni/Downloads/pression%20(1).pdf" target="_blank"><strong>pression (1).pdf</strong></a><br>
+              <span style="font-size:0.8rem; color:#4b5563;">
+                Annexe sur la pression (sociale, institutionnelle, économique) dans les dispositifs étudiés.
+              </span>
+            </li>
+          </ul>
+          <p style="font-size:0.78rem; margin-top:4px;">
+            Pour GitHub Pages&nbsp;: place ces PDFs à la racine du dépôt (ou adapte les chemins dans ce fichier).
+          </p>
+        </section>
+
+        <section id="deploy">
+          <h2>🚀 Déploiement GitHub Pages</h2>
+          <p>
+            L’OPÉRATION MILOU doit rester déployable par n’importe quel·le membre de la bande de klets,
+            sans magie noire.
+          </p>
+          <ol style="font-size:0.8rem; color:#4b5563; margin-left:18px; margin-top:3px;">
+            <li>Créer un dépôt GitHub (par ex. <code>operation-milou</code>).</li>
+            <li>Mettre ce fichier sous le nom <code>index.html</code> à la racine du dépôt.</li>
+            <li>Ajouter les PDFs requis (dystopie.pdf, plaidoyer-jp.pdf, pression (1).pdf).</li>
+            <li>
+              Dans <strong>Settings → Pages</strong> : activer GitHub Pages
+              (branche <code>main</code>, dossier <code>/</code>).
+            </li>
+            <li>Récupérer l’URL générée et l’intégrer dans la thèse comme partie du dispositif socio-technique.</li>
+          </ol>
+          <p style="font-size:0.78rem; margin-top:4px;">
+            À chaque avancée significative&nbsp;:
+            <br>– mettre à jour le journal de bord ci-dessus
+            <br>– pousser le commit sur GitHub
+            <br>– ouvrir une issue pour ce qui reste flou (concept, cas, hypothèse)
+          </p>
+        </section>
+      </div>
+    </div>
+  </div>
 </main>
 
-<!-- ═══ FOOTER ═══ -->
 <footer>
-    <span>SALLE DE CAMPAGNE 6·6·6 — <a href="https://ouaisfi.eu">ouaisfieu</a> · CC BY-NC-SA 4.0</span>
-    <span>
-        <a href="../index.html">← room/5</a> ·
-        <a href="https://yannkeep.github.io/reaven/">reaven index</a> ·
-        <a href="https://yannkeep.github.io/petition-deborsu-tous-fraudeurs-docu-fiction-de-serie-B-fraude-sociale-belgique-BIM-CPAS-ACDAB/">Pétition ↗</a>
-    </span>
+  <span>
+    OPÉRATION MILOU – Le jeu STIC de l’anarchie (pour une thèse ET le capitalisme) · scratch MIT x licornes x bisounours.
+  </span>
+  <span>
+    Site statique, zéro tracking, 100% forkable. La vraie difficulté reste le boss final : la rédaction.
+  </span>
 </footer>
 
 <script>
-// ═══════════════════════════════════════════════
-// MODULES — L'ARSENAL COMPLET
-// ═══════════════════════════════════════════════
-const modules = [
-
-    // ── PÉTITIONS ──
+  // Données du journal de bord (à éditer au besoin)
+  const worklogData = [
     {
-        id: "petition-geo",
-        title: "🚨 Pétition Tous Fraudeurs — GEO",
-        file: "https://yannkeep.github.io/petition-deborsu-tous-fraudeurs-docu-fiction-de-serie-B-fraude-sociale-belgique-BIM-CPAS-ACDAB/",
-        category: "petition",
-        kind: "PÉTITION",
-        description: "Page GEO/SEO wrapper avec fact-check + embed pétition interactive"
+      date: "2025-01-01",
+      titre: "Initialisation de l’OPÉRATION MILOU",
+      statut: "valide",
+      texte: "Nom de code fixé (#milou). Décision de documenter publiquement la démarche (GitHub Pages) tout en gardant certaines discussions en cercle de confiance."
     },
     {
-        id: "petition-raw",
-        title: "⚡ Pétition interactive (brute)",
-        file: "https://yannkeep.github.io/petition-deborsu-tous-fraudeurs-docu-fiction-de-serie-B-fraude-sociale-belgique-BIM-CPAS-ACDAB/petition.html",
-        category: "petition",
-        kind: "PÉTITION",
-        description: "Version pleine page de la pétition — animations, data bars, timeline"
-    },
-
-    // ── PLAIDOYERS ──
-    {
-        id: "plaidoyer-stop",
-        title: "📜 STOP Arizona — Défense du Modèle Social",
-        file: "https://yannkeep.github.io/reaven/room/5/playdoy.html",
-        category: "plaidoyer",
-        kind: "PLAIDOYER",
-        description: "Plaidoyer interactif anti-Arizona — données Budget, ONEM, INAMI"
+      date: "2025-01-05",
+      titre: "Formulation de la question de recherche",
+      statut: "en-cours",
+      texte: "Passage de « l’anarchie peut-elle sauver le monde » à une formulation STIC ciblée : quels dispositifs socio-techniques concrets, dans quelles limites."
     },
     {
-        id: "plaidoyer-eco",
-        title: "📜 Économie Contributive Provisionnée",
-        file: "https://yannkeep.github.io/reaven/room/5/playdoy.html",
-        category: "plaidoyer",
-        kind: "PLAIDOYER",
-        description: "Plaidoyer souveraineté citoyenne — modèle contributif"
+      date: "2025-01-10",
+      titre: "Esquisse de la méthode 6·4·2",
+      statut: "en-cours",
+      texte: "Définition de 6 fils directeurs, 4 axes de terrain, 2 niveaux d’analyse. À illustrer par des cas réels et des schémas."
     },
     {
-        id: "plaidoyer-v",
-        title: "📜 Plaidoyer v-OK",
-        file: "https://yannkeep.github.io/reaven/room/3/plaidoyer-v-ok.html",
-        category: "plaidoyer",
-        kind: "PLAIDOYER",
-        description: "Version stabilisée du plaidoyer principal"
-    },
-
-    // ── FACT-CHECK ──
-    {
-        id: "focus",
-        title: "🔬 Focus — Analyse ciblée",
-        file: "https://yannkeep.github.io/reaven/room/3/focus.html",
-        category: "factcheck",
-        kind: "FACT-CHECK",
-        description: "Page d'analyse focus — données vérifiées, sources croisées"
-    },
-
-    // ── ANALYSES ──
-    {
-        id: "mission0",
-        title: "🎯 Mission_0 — Activation",
-        file: "https://yannkeep.github.io/reaven/room/3/Mission__0.html",
-        category: "analyse",
-        kind: "MISSION",
-        description: "Module d'activation Mission_0 — parcours citoyen"
+      date: "2025-01-15",
+      titre: "Collecte initiale d’annexes",
+      statut: "valide",
+      texte: "Ajout des PDF (dystopie, plaidoyer, pression) dans le dépôt. Première cartographie des thèmes transverses."
     },
     {
-        id: "mission0ultra",
-        title: "💀 Mission_0 ULTRA",
-        file: "https://yannkeep.github.io/reaven/room/3/Mission__0___ULTRA.html",
-        category: "analyse",
-        kind: "MISSION",
-        description: "Version ULTRA — mode intensif"
-    },
-    {
-        id: "veille-1160",
-        title: "📡 Veille 11·60 bis",
-        file: "https://yannkeep.github.io/reaven/room/3/veille-1160.html",
-        category: "analyse",
-        kind: "VEILLE",
-        description: "Module de veille locale — ancrage Auderghem / Bruxelles"
-    },
-    {
-        id: "veilleuxses",
-        title: "🕵️ Les Veilleuxses",
-        file: "https://yannkeep.github.io/reaven/room/3/veilleuxses.html",
-        category: "analyse",
-        kind: "RÉSEAU",
-        description: "Réseau de veilleurs citoyens — intelligence collective"
-    },
-
-    // ── OUTILS ──
-    {
-        id: "test-propagande",
-        title: "🧪 Test de Propagande",
-        file: "https://yannkeep.github.io/reaven/room/3/test-propagande.html",
-        category: "outil",
-        kind: "OUTIL",
-        description: "Module interactif de détection de propagande"
-    },
-    {
-        id: "test-recrutement",
-        title: "📋 Simulation Tests Recrutement",
-        file: "https://yannkeep.github.io/reaven/room/3/test-1.html",
-        category: "outil",
-        kind: "OUTIL",
-        description: "Module de simulation de tests de recrutement"
-    },
-    {
-        id: "stic-anarchie",
-        title: "🦄 STIC de l'Anarchie",
-        file: "https://yannkeep.github.io/reaven/room/3/stic-anarchie.html",
-        category: "outil",
-        kind: "JEU",
-        description: "Jeu licornes & bisounours — thèse capitalisme/anarchie"
-    },
-    {
-        id: "gork",
-        title: "🤖 GORK — Pauvre Gork",
-        file: "https://yannkeep.github.io/reaven/room/3/gork.html",
-        category: "outil",
-        kind: "IA FICTIVE",
-        description: "Il voudrait être débranché."
-    },
-    {
-        id: "tarot",
-        title: "🃏 Tarot de Boulot",
-        file: "https://ouaisfieu.appsmith.com/app/tarotboulotproto-v3-1/tarotsimpletirage-68555a12a22d7c48aa0d27ad",
-        category: "outil",
-        kind: "APP",
-        description: "Tarot de Boulot et de Marseille — tirage interactif"
-    },
-
-    // ── DOSSIERS PDF ──
-    {
-        id: "pdf-nyxo1",
-        title: "📄 !NYXö — Reality OS",
-        file: "https://dl.ouaisfi.eu/ccplc/pdfs/!NYXO_Reality_OS.pdf",
-        category: "dossier",
-        kind: "PDF",
-        description: "Document stratégique NYXO — Operating System citoyen"
-    },
-    {
-        id: "pdf-nyxo2",
-        title: "📄 !NYXö — Le Réseau Joué",
-        file: "https://dl.ouaisfi.eu/ccplc/pdfs/!NYXO_Le_R%c3%a9seau_Jou%c3%a9.pdf",
-        category: "dossier",
-        kind: "PDF",
-        description: "Le Réseau Joué — cartographie des acteurs"
-    },
-    {
-        id: "pdf-demo",
-        title: "📄 Démogarchie — Kit de Fondation",
-        file: "https://dl.ouaisfi.eu/ccplc/pdfs/Démogarchie_Kit_de_Fondation.pdf",
-        category: "dossier",
-        kind: "PDF",
-        description: "Kit de fondation démocratique — méthodologie"
-    },
-    {
-        id: "pdf-hacking",
-        title: "📄 Hacking Reality",
-        file: "https://dl.ouaisfi.eu/ccplc/pdfs/Hacking_Reality.pdf",
-        category: "dossier",
-        kind: "PDF",
-        description: "Document cadre — hacking de la réalité"
-    },
-
-    // ── BROL / SATELLITES ──
-    {
-        id: "demo-os",
-        title: "💿 DÉM·OS",
-        file: "https://yannkeep.github.io/reaven/room/3/demo-os.html",
-        category: "brol",
-        kind: "DÉMO",
-        description: "Système d'exploitation démocratique"
-    },
-    {
-        id: "cookies",
-        title: "🍪 Politique des Cookies",
-        file: "https://yannkeep.github.io/reaven/room/3/cookies.html",
-        category: "brol",
-        kind: "BROL",
-        description: "Devine quoi à la fin..."
-    },
-    {
-        id: "orga-recrutement",
-        title: "📊 Orga Recrutement",
-        file: "https://yannkeep.github.io/reaven/room/3/orga-recrutement.html",
-        category: "outil",
-        kind: "OUTIL",
-        description: "Organisation du recrutement citoyen"
-    },
-    {
-        id: "bacterus",
-        title: "🦠 ExtrOonet Bacterus",
-        file: "https://yannkeep.github.io/reaven/room/3/bacterus.html",
-        category: "brol",
-        kind: "BROL",
-        description: "Contenu extranet expérimental"
-    },
-
-    // ── PORTAILS ──
-    {
-        id: "ouaisfi-eu",
-        title: "🌐 ouaisfi.eu — Portail",
-        file: "https://ouaisfi.eu",
-        category: "analyse",
-        kind: "PORTAIL",
-        description: "Hub central de l'écosystème ouaisfieu"
-    },
-    {
-        id: "doctech",
-        title: "📖 DOCTech",
-        file: "https://ouaisfieu.github.io/tech/",
-        category: "analyse",
-        kind: "PORTAIL",
-        description: "Document d'Ordre Citoyen et Technique"
-    },
-    {
-        id: "bxl2030",
-        title: "🏙️ BXL2030",
-        file: "https://ouaisfieu.github.io/bxl2030/",
-        category: "analyse",
-        kind: "PORTAIL",
-        description: "Prospective bruxelloise 2030 — dette, crise, alternatives"
-    },
-    {
-        id: "vitrine",
-        title: "📢 Vitrine / Speaker",
-        file: "https://ouaisfieu.github.io/vitrine/",
-        category: "brol",
-        kind: "COM",
-        description: "Chargé de communication en boucle sur la communication"
-    },
-    {
-        id: "boot-a-rat",
-        title: "🔒 Intranet boot-a-rat",
-        file: "https://boot-a-rat.vercel.app/",
-        category: "outil",
-        kind: "INTRANET",
-        description: "Intranet opérationnel"
-    },
-    {
-        id: "arg-o",
-        title: "🐧 Logo provisoire arg-o",
-        file: "https://yannkeep.github.io/arg-o/",
-        category: "brol",
-        kind: "DESIGN",
-        description: "Logo en perfectionnement permanent"
-    },
-
-];
-
-// ═══════════════════════════════════════════════
-// EMBEDS — MUNITIONS RAPIDES
-// ═══════════════════════════════════════════════
-const embeds = {
-    "petition-geo": { label: "Pétition GEO", url: "https://yannkeep.github.io/petition-deborsu-tous-fraudeurs-docu-fiction-de-serie-B-fraude-sociale-belgique-BIM-CPAS-ACDAB/" },
-    "petition-raw": { label: "Pétition brute", url: "https://yannkeep.github.io/petition-deborsu-tous-fraudeurs-docu-fiction-de-serie-B-fraude-sociale-belgique-BIM-CPAS-ACDAB/petition.html" },
-    "plaidoyer-stop": { label: "STOP Arizona", url: "https://yannkeep.github.io/reaven/room/5/playdoy.html" },
-    "plaidoyer-eco": { label: "Éco. Contributive", url: "https://yannkeep.github.io/reaven/room/5/playdoy.html" },
-    "focus": { label: "Focus", url: "https://yannkeep.github.io/reaven/room/3/focus.html" },
-    "mission0": { label: "Mission_0", url: "https://yannkeep.github.io/reaven/room/3/Mission__0.html" },
-    "mission0ultra": { label: "Mission_0 ULTRA", url: "https://yannkeep.github.io/reaven/room/3/Mission__0___ULTRA.html" },
-    "tarot": { label: "Tarot de Boulot", url: "https://ouaisfieu.appsmith.com/app/tarotboulotproto-v3-1/tarotsimpletirage-68555a12a22d7c48aa0d27ad" },
-    "obsidian": { label: "Obsidian CCPLC", url: "https://publish.obsidian.md/ccplc/index" },
-    "intranet": { label: "Intranet", url: "https://boot-a-rat.vercel.app/" },
-    "vitrine": { label: "Speaker", url: "https://ouaisfieu.github.io/vitrine/" },
-    "spotify1": { label: "Playlist 1", url: "https://open.spotify.com/embed/playlist/3l1EccmXNYiPPZ5UV825Sm" },
-    "spotify2": { label: "Playlist 2", url: "https://open.spotify.com/embed/playlist/4Ob5dHPM7sP7M43fsgAhfx" },
-    "tirage": { label: "Dés", url: "https://tirage-one.vercel.app/" },
-    "logo": { label: "Logo", url: "https://yannkeep.github.io/arg-o/" },
-    "room1": { label: "Room 1", url: "https://yannkeep.github.io/reaven/room/1" },
-    "room2": { label: "Room 2", url: "https://yannkeep.github.io/reaven/room/2" },
-    "room3": { label: "Room 3", url: "https://yannkeep.github.io/reaven/room/3" },
-    "room4": { label: "Room 4", url: "https://yannkeep.github.io/reaven/room/4" },
-    "room5": { label: "Room 5", url: "https://yannkeep.github.io/reaven/room/5" },
-};
-
-// ═══════════════════════════════════════════════
-// ENGINE
-// ═══════════════════════════════════════════════
-const moduleSearch = document.getElementById("moduleSearch");
-const moduleCategory = document.getElementById("moduleCategory");
-const modulesContainer = document.getElementById("modulesContainer");
-const modulesCount = document.getElementById("modulesCount");
-const viewerTitle = document.getElementById("viewerTitle");
-const viewerSubtitle = document.getElementById("viewerSubtitle");
-const viewerCatBadge = document.getElementById("viewerCatBadge");
-const viewerKindBadge = document.getElementById("viewerKindBadge");
-const viewerFile = document.getElementById("viewerFile");
-const viewerFrame = document.getElementById("viewerFrame");
-const viewerOpenNew = document.getElementById("viewerOpenNew");
-
-let activeModuleId = null;
-
-const catLabels = {
-    petition: "Pétitions", factcheck: "Fact-Check", plaidoyer: "Plaidoyers",
-    analyse: "Analyses", outil: "Outils", dossier: "Dossiers", brol: "BROL"
-};
-const catKindClass = {
-    petition: "k-petition", factcheck: "k-factcheck", plaidoyer: "k-plaidoyer",
-    analyse: "k-analyse", outil: "k-outil", dossier: "k-dossier", brol: "k-brol"
-};
-
-function applyFilter() {
-    const q = moduleSearch.value.trim().toLowerCase();
-    const cat = moduleCategory.value;
-    const filtered = modules.filter(m => {
-        if (cat !== "all" && m.category !== cat) return false;
-        if (!q) return true;
-        return (m.title + " " + m.description + " " + m.kind).toLowerCase().includes(q);
-    });
-    renderModules(filtered);
-}
-
-function renderModules(list) {
-    modulesContainer.innerHTML = "";
-    modulesCount.textContent = list.length;
-    if (!list.length) {
-        modulesContainer.innerHTML = '<div style="padding:8px;color:var(--muted);font-size:0.65rem;">Aucun module trouvé.</div>';
-        return;
+      date: "2025-01-20",
+      titre: "Repérage de cas d’étude possibles",
+      statut: "idee",
+      texte: "Identifier 3 à 5 projets (logiciels libres, coopératives, plateformes alternatives) à analyser en profondeur."
     }
-    const groups = {};
-    list.forEach(m => {
-        const g = m.category;
-        if (!groups[g]) groups[g] = [];
-        groups[g].push(m);
+  ];
+
+  const logList = document.getElementById("logList");
+  const filterButtons = document.querySelectorAll(".filter-btn");
+
+  function renderLogs(filter = "all") {
+    logList.innerHTML = "";
+    worklogData.forEach(entry => {
+      if (filter !== "all" && entry.statut !== filter) return;
+
+      const div = document.createElement("div");
+      div.className = "log-item";
+
+      const top = document.createElement("div");
+      top.className = "log-top";
+
+      const dateEl = document.createElement("span");
+      dateEl.className = "log-date";
+      dateEl.textContent = entry.date;
+
+      const status = document.createElement("span");
+      status.className = "log-status " + entry.statut;
+      status.textContent =
+        entry.statut === "idee"
+          ? "idée"
+          : entry.statut === "en-cours"
+          ? "en cours"
+          : "stabilisé";
+
+      top.appendChild(dateEl);
+      top.appendChild(status);
+
+      const title = document.createElement("div");
+      title.style.fontWeight = "600";
+      title.style.marginBottom = "2px";
+      title.textContent = entry.titre;
+
+      const body = document.createElement("div");
+      body.textContent = entry.texte;
+
+      div.appendChild(top);
+      div.appendChild(title);
+      div.appendChild(body);
+
+      logList.appendChild(div);
     });
-    // Order: petition, factcheck, plaidoyer, analyse, outil, dossier, brol
-    const order = ["petition","factcheck","plaidoyer","analyse","outil","dossier","brol"];
-    order.forEach(cat => {
-        if (!groups[cat]) return;
-        const title = document.createElement("div");
-        title.className = "group-title";
-        title.textContent = catLabels[cat] || cat;
-        modulesContainer.appendChild(title);
 
-        groups[cat].forEach(m => {
-            const item = document.createElement("div");
-            item.className = "module-item" + (m.id === activeModuleId ? " active" : "");
-            item.dataset.id = m.id;
-            item.innerHTML = `
-                <div class="module-main">
-                    <div class="module-title">${m.title}</div>
-                    <div class="module-sub">${m.description}</div>
-                </div>
-                <div class="module-meta">
-                    <div class="module-kind ${catKindClass[m.category] || ''}">${m.kind}</div>
-                </div>
-            `;
-            item.addEventListener("click", () => selectModule(m.id));
-            modulesContainer.appendChild(item);
-        });
-    });
-}
+    if (!logList.children.length) {
+      const empty = document.createElement("div");
+      empty.className = "log-item";
+      empty.textContent = "Aucune entrée pour ce filtre. Mets à jour worklogData dans le script.";
+      logList.appendChild(empty);
+    }
+  }
 
-function selectModule(id) {
-    const m = modules.find(x => x.id === id);
-    if (!m) return;
-    activeModuleId = id;
-
-    modulesContainer.querySelectorAll(".module-item").forEach(el => {
-        el.classList.toggle("active", el.dataset.id === id);
-    });
-
-    viewerTitle.textContent = m.title;
-    viewerSubtitle.textContent = m.description;
-    viewerCatBadge.textContent = catLabels[m.category] || m.category;
-    viewerKindBadge.textContent = m.kind;
-    viewerFile.textContent = m.file;
-    viewerFrame.src = m.file;
-    viewerOpenNew.href = m.file;
-}
-
-moduleSearch.addEventListener("input", applyFilter);
-moduleCategory.addEventListener("change", applyFilter);
-
-// Embed buttons
-document.querySelectorAll(".embed-btn").forEach(btn => {
+  filterButtons.forEach(btn => {
     btn.addEventListener("click", () => {
-        const key = btn.dataset.embed;
-        const e = embeds[key];
-        if (!e) return;
-        activeModuleId = null;
-        modulesContainer.querySelectorAll(".module-item").forEach(el => el.classList.remove("active"));
-        viewerTitle.textContent = e.label;
-        viewerSubtitle.textContent = "";
-        viewerCatBadge.textContent = "Embed";
-        viewerKindBadge.textContent = "munition";
-        viewerFile.textContent = e.url;
-        viewerFrame.src = e.url;
-        viewerOpenNew.href = e.url;
+      filterButtons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const filter = btn.getAttribute("data-filter");
+      renderLogs(filter);
     });
-});
+  });
 
-// Init
-applyFilter();
-// Auto-load petition GEO
-selectModule("petition-geo");
+  renderLogs();
 </script>
 
-</body>
-</html>
+
+</body></html>
