@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Briefing Team Alpha: Opération Transparence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    
+    <!-- Chosen Palette: Warm Neutrals (Stone/Amber) -->
+    <!-- Application Structure Plan:
+         1. Header: Mission identity and status (Immersion).
+         2. Executive Summary (Le Briefing): Textual context setting the scene for the "Docu-fiction".
+         3. Intelligence Dashboard (Les Données): Interactive charts breaking down social fraud types and trends. Goal: Quantitative understanding.
+         4. Investigation Board (Preuves & Indices): Filterable list of "clues" (Audio, Doc, Video). Goal: Exploration of qualitative content.
+         5. Timeline (Chronologie): Interactive log of events. Goal: Narrative flow.
+         6. Action Plan: Next steps for the user.
+    -->
+    <!-- Visualization & Content Choices:
+         - Fraud Distribution (Doughnut Chart): To show the proportion of different fraud types (Domicile vs Work). Interaction: Legend toggle.
+         - Fraud Evolution (Line Chart): To show the trend of detected cases over time. Interaction: Hover details.
+         - Evidence Filter (JS DOM Manipulation): To sort through the chaotic "briefing" materials easily.
+         - Justification: These tools allow the user to act as an "analyst" processing the briefing data.
+         - CONFIRMATION: NO SVG graphics used (FontAwesome JS used for icons). NO Mermaid JS used.
+    -->
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f5f4; /* Stone-100 */
+            color: #1c1917; /* Stone-900 */
+        }
+
+        h1, h2, h3, .mono-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #e7e5e4;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .active-tab {
+            background-color: #d97706; /* Amber-600 */
+            color: white;
+            border-color: #d97706;
+        }
+
+        .evidence-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 100%;
+            background-color: #d6d3d1;
+            z-index: 0;
+        }
+    </style>
+</head>
+<body class="bg-[#f5f5f4] min-h-screen flex flex-col">
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-[#e7e5e4] border-b border-[#d6d3d1] shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold tracking-tighter text-stone-800 mono-font">
+                        <i class="fas fa-folder-open mr-2 text-amber-600"></i>TEAM<span class="text-amber-600">ALPHA</span>
+                    </span>
+                    <span class="ml-4 px-2 py-1 text-xs font-bold bg-stone-200 text-stone-600 rounded border border-stone-300 hidden sm:inline-block">
+                        DOSSIER #DB-2024
+                    </span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="scrollToSection('briefing')" class="text-stone-600 hover:text-amber-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">Briefing</button>
+                    <button onclick="scrollToSection('intel')" class="text-stone-600 hover:text-amber-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">Données</button>
+                    <button onclick="scrollToSection('evidence')" class="text-stone-600 hover:text-amber-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">Preuves</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- Hero / Status Section -->
+        <section id="status" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="md:col-span-3 bg-white p-6 rounded-lg shadow-sm border-l-4 border-amber-500">
+                <h1 class="text-3xl md:text-4xl font-bold text-stone-900 mb-2">Opération: "Tous Fraudeurs ?"</h1>
+                <p class="text-lg text-stone-600">Bienvenue, Agent. Le sujet Deborsu et la problématique de la fraude sociale belge nécessitent votre analyse immédiate.</p>
+            </div>
+            <div class="bg-stone-800 text-stone-100 p-6 rounded-lg shadow-sm flex flex-col justify-center items-center text-center">
+                <span class="text-xs uppercase tracking-widest text-stone-400 mb-1">Niveau d'Alerte</span>
+                <span class="text-3xl font-bold text-amber-500 mono-font">CODE ORANGE</span>
+                <span class="text-xs mt-2 text-stone-400">Enquête en cours</span>
+            </div>
+        </section>
+
+        <!-- Briefing Section -->
+        <section id="briefing" class="space-y-6">
+            <div class="border-b border-stone-300 pb-2 mb-4">
+                <h2 class="text-2xl font-bold text-stone-800 flex items-center">
+                    <i class="fas fa-file-alt mr-3 text-stone-500"></i>Le Briefing
+                </h2>
+            </div>
+            <div class="bg-white p-8 rounded-xl shadow-sm border border-stone-200">
+                <p class="text-stone-700 leading-relaxed mb-4">
+                    <strong>Objectif de la mission :</strong> Clarifier la frontière floue entre l'optimisation sociale et la fraude pure et simple. Dans ce "docu-fiction de série B", nous suivons les traces d'un système complexe – CPAS, statuts BIM, allocations de chômage – qui semble parfois encourager les dérives.
+                </p>
+                <p class="text-stone-700 leading-relaxed mb-4">
+                    Notre cible principale, désignée sous le nom de code <strong>"Deborsu"</strong>, sert de fil conducteur pour explorer les failles du système belge. S'agit-il d'un véritable fraudeur ou d'une victime d'un système kafkaïen ? C'est à la Team Alpha de trancher.
+                </p>
+                <div class="mt-6 bg-amber-50 p-4 rounded border-l-4 border-amber-500">
+                    <h4 class="font-bold text-amber-800 mb-1"><i class="fas fa-exclamation-triangle mr-2"></i>Directive Alpha</h4>
+                    <p class="text-sm text-amber-900">
+                        Analysez les données ci-dessous. Ne vous fiez pas aux apparences. La fraude sociale n'est pas toujours là où on l'attend.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Intel / Data Section -->
+        <section id="intel" class="space-y-6">
+            <div class="border-b border-stone-300 pb-2 mb-4">
+                <h2 class="text-2xl font-bold text-stone-800 flex items-center">
+                    <i class="fas fa-chart-pie mr-3 text-stone-500"></i>Analyse des Données
+                </h2>
+                <p class="text-sm text-stone-500 mt-1">Données contextuelles sur la fraude sociale (Simulation basée sur les rapports de mission).</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Chart 1: Fraud Types -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <h3 class="text-lg font-semibold text-stone-800 mb-4 text-center">Répartition des Infractions Détectées</h3>
+                    <div class="chart-container">
+                        <canvas id="fraudTypeChart"></canvas>
+                    </div>
+                    <p class="text-xs text-center text-stone-500 mt-4 italic">Source: Est. Rapport Annuel ONSS (Simulé)</p>
+                    <div class="mt-4 text-sm text-stone-600 bg-stone-50 p-3 rounded">
+                        <strong>Note de l'analyste :</strong> La domiciliation fictive reste le vecteur principal pour l'obtention indue d'allocations majorées (BIM).
+                    </div>
+                </div>
+
+                <!-- Chart 2: Trends -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <h3 class="text-lg font-semibold text-stone-800 mb-4 text-center">Évolution du "Préjudice Estimé" (en M€)</h3>
+                    <div class="chart-container">
+                        <canvas id="fraudTrendChart"></canvas>
+                    </div>
+                    <div class="flex justify-center mt-4 space-x-2">
+                        <button onclick="updateTrend('all')" class="px-3 py-1 text-xs bg-stone-200 hover:bg-stone-300 rounded transition">Global</button>
+                        <button onclick="updateTrend('social')" class="px-3 py-1 text-xs bg-stone-200 hover:bg-stone-300 rounded transition">Cotisations</button>
+                        <button onclick="updateTrend('benefits')" class="px-3 py-1 text-xs bg-stone-200 hover:bg-stone-300 rounded transition">Allocations</button>
+                    </div>
+                    <div class="mt-4 text-sm text-stone-600 bg-stone-50 p-3 rounded">
+                        <strong>Observation :</strong> Une hausse significative est corrélée avec les nouvelles méthodes de croisement de données (Data Mining).
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Stats Grid -->
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-white p-4 rounded-lg shadow-sm border-t-4 border-red-500 text-center">
+                <div class="text-3xl font-bold text-stone-800 mono-font">245M€</div>
+                <div class="text-xs text-stone-500 uppercase mt-1">Récupérés (2023)</div>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-sm border-t-4 border-orange-500 text-center">
+                <div class="text-3xl font-bold text-stone-800 mono-font">12,400</div>
+                <div class="text-xs text-stone-500 uppercase mt-1">Enquêtes Ouvertes</div>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-sm border-t-4 border-yellow-500 text-center">
+                <div class="text-3xl font-bold text-stone-800 mono-font">18%</div>
+                <div class="text-xs text-stone-500 uppercase mt-1">Travail au Noir</div>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-sm border-t-4 border-green-500 text-center">
+                <div class="text-3xl font-bold text-stone-800 mono-font">98%</div>
+                <div class="text-xs text-stone-500 uppercase mt-1">Taux de Condamnation</div>
+            </div>
+        </section>
+
+        <!-- Evidence Room / Interactive List -->
+        <section id="evidence" class="space-y-6">
+            <div class="border-b border-stone-300 pb-2 mb-4">
+                <h2 class="text-2xl font-bold text-stone-800 flex items-center">
+                    <i class="fas fa-search mr-3 text-stone-500"></i>Salle des Preuves
+                </h2>
+                <p class="text-sm text-stone-500 mt-1">Explorez les éléments du dossier Deborsu. Filtrez par type de preuve.</p>
+            </div>
+
+            <!-- Filters -->
+            <div class="flex flex-wrap gap-2 mb-6">
+                <button onclick="filterEvidence('all')" id="btn-all" class="filter-btn active-tab px-4 py-2 rounded-full border border-stone-300 text-sm font-medium transition-all">Tout</button>
+                <button onclick="filterEvidence('document')" id="btn-document" class="filter-btn bg-white text-stone-600 px-4 py-2 rounded-full border border-stone-300 hover:bg-stone-50 text-sm font-medium transition-all">Documents</button>
+                <button onclick="filterEvidence('audio')" id="btn-audio" class="filter-btn bg-white text-stone-600 px-4 py-2 rounded-full border border-stone-300 hover:bg-stone-50 text-sm font-medium transition-all">Enregistrements</button>
+                <button onclick="filterEvidence('temoignage')" id="btn-temoignage" class="filter-btn bg-white text-stone-600 px-4 py-2 rounded-full border border-stone-300 hover:bg-stone-50 text-sm font-medium transition-all">Témoignages</button>
+            </div>
+
+            <!-- Evidence Grid -->
+            <div id="evidence-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Items injected via JS -->
+            </div>
+        </section>
+
+        <!-- Timeline Section -->
+        <section id="timeline-section" class="space-y-6 pb-12">
+            <div class="border-b border-stone-300 pb-2 mb-4">
+                <h2 class="text-2xl font-bold text-stone-800 flex items-center">
+                    <i class="fas fa-history mr-3 text-stone-500"></i>Chronologie de l'Enquête
+                </h2>
+            </div>
+            
+            <div class="relative py-8">
+                <div class="timeline-line hidden md:block"></div>
+                
+                <div class="space-y-8" id="timeline-container">
+                    <!-- Timeline items injected via JS -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-stone-800 text-stone-400 py-8 border-t border-stone-700">
+        <div class="container mx-auto px-4 text-center">
+            <p class="mb-2 mono-font">TEAM ALPHA // CLASSIFIED // BRIEFING END</p>
+            <p class="text-xs">Cette interface est une représentation interactive basée sur un dossier de docu-fiction. Les données sont simulées pour les besoins de l'immersion.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- State Management ---
+        const state = {
+            activeFilter: 'all',
+            currentTrend: 'all'
+        };
+
+        // --- Data Store ---
+        
+        // Evidence Data
+        const evidenceData = [
+            {
+                id: 1,
+                type: 'document',
+                title: 'Rapport CPAS - Zone B',
+                desc: 'Analyse des demandes d\'allocations suspectes dans le quartier nord. Forte corrélation avec des adresses fictives.',
+                icon: 'fa-file-contract',
+                status: 'Vérifié'
+            },
+            {
+                id: 2,
+                type: 'audio',
+                title: 'Interception Téléphonique #44',
+                desc: 'Conversation entre le sujet "D" et un comptable non agréé discutant de "structures offshore" au Luxembourg.',
+                icon: 'fa-microphone',
+                status: 'À analyser'
+            },
+            {
+                id: 3,
+                type: 'temoignage',
+                title: 'Déposition Anonyme',
+                desc: '"Ils venaient tous les lundis avec des liasses de cash pour payer les ouvriers du chantier..."',
+                icon: 'fa-user-secret',
+                status: 'Critique'
+            },
+            {
+                id: 4,
+                type: 'document',
+                title: 'Relevés Bancaires',
+                desc: 'Mouvements de fonds inexpliqués ne correspondant pas aux revenus déclarés du statut BIM.',
+                icon: 'fa-university',
+                status: 'Vérifié'
+            },
+            {
+                id: 5,
+                type: 'video',
+                title: 'Surveillance Drone',
+                desc: 'Footage montrant une activité commerciale non déclarée dans l\'entrepôt B.',
+                icon: 'fa-video',
+                status: 'Nouveau'
+            },
+            {
+                id: 6,
+                type: 'temoignage',
+                title: 'Note de Service Interne',
+                desc: 'Avertissement sur les nouvelles méthodes de fraude aux cotisations ONSS.',
+                icon: 'fa-envelope-open-text',
+                status: 'Archivé'
+            }
+        ];
+
+        // Timeline Data
+        const timelineEvents = [
+            {
+                date: '12 Octobre 2023',
+                title: 'Ouverture du Dossier',
+                desc: 'Le signalement initial est reçu via la plateforme Point de Contact Fraude Sociale.',
+                side: 'left'
+            },
+            {
+                date: '05 Novembre 2023',
+                title: 'Surveillance Mise en Place',
+                desc: 'L\'équipe Alpha déploie des moyens techniques autour du domicile présumé du sujet.',
+                side: 'right'
+            },
+            {
+                date: '15 Janvier 2024',
+                title: 'Le Tournant "Deborsu"',
+                desc: 'Identification d\'un réseau plus large impliquant plusieurs sociétés écrans.',
+                side: 'left'
+            },
+            {
+                date: 'Aujourd\'hui',
+                title: 'Phase d\'Intervention',
+                desc: 'Briefing final avant l\'opération de contrôle coordonnée.',
+                side: 'right'
+            }
+        ];
+
+        // --- Core Functions ---
+
+        function initDashboard() {
+            renderEvidence();
+            renderTimeline();
+            initCharts();
+        }
+
+        // Navigation Scroll
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- Visualization Logic (Chart.js) ---
+
+        function initCharts() {
+            // Chart 1: Fraud Types (Doughnut)
+            const ctx1 = document.getElementById('fraudTypeChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Travail au Noir', 'Domiciliation Fictive', 'Fraude aux Allocations', 'Fraude Cotisations'],
+                    datasets: [{
+                        data: [35, 25, 20, 20],
+                        backgroundColor: [
+                            '#d97706', // Amber 600
+                            '#78716c', // Stone 500
+                            '#a8a29e', // Stone 400
+                            '#e7e5e4'  // Stone 200
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { family: 'Inter', size: 11 },
+                                boxWidth: 12
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: Trends (Line) - stored in a variable to allow updates
+            const ctx2 = document.getElementById('fraudTrendChart').getContext('2d');
+            window.trendChart = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: ['2019', '2020', '2021', '2022', '2023'],
+                    datasets: [{
+                        label: 'Préjudice Global',
+                        data: [150, 165, 180, 210, 245],
+                        borderColor: '#d97706',
+                        backgroundColor: 'rgba(217, 119, 6, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            grid: { color: '#f5f5f4' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#292524',
+                            titleFont: { family: 'Inter' },
+                            bodyFont: { family: 'Inter' },
+                            padding: 10,
+                            cornerRadius: 4
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateTrend(type) {
+            // Simulated data updates
+            const chart = window.trendChart;
+            let newData = [];
+            let newLabel = '';
+
+            if (type === 'all') {
+                newData = [150, 165, 180, 210, 245];
+                newLabel = 'Préjudice Global';
+            } else if (type === 'social') {
+                newData = [80, 85, 90, 110, 125];
+                newLabel = 'Cotisations Perdues';
+            } else if (type === 'benefits') {
+                newData = [70, 80, 90, 100, 120];
+                newLabel = 'Allocations Indues';
+            }
+
+            chart.data.datasets[0].data = newData;
+            chart.data.datasets[0].label = newLabel;
+            chart.update();
+        }
+
+        // --- Evidence Room Logic ---
+
+        function filterEvidence(type) {
+            state.activeFilter = type;
+            
+            // Update UI buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active-tab', 'bg-amber-600', 'text-white');
+                btn.classList.add('bg-white', 'text-stone-600');
+            });
+            
+            const activeBtn = document.getElementById(`btn-${type}`);
+            activeBtn.classList.remove('bg-white', 'text-stone-600');
+            activeBtn.classList.add('active-tab');
+
+            renderEvidence();
+        }
+
+        function renderEvidence() {
+            const grid = document.getElementById('evidence-grid');
+            grid.innerHTML = '';
+
+            const filtered = state.activeFilter === 'all' 
+                ? evidenceData 
+                : evidenceData.filter(item => item.type === state.activeFilter || (item.type === 'video' && state.activeFilter === 'document')); // simplifying for demo
+
+            filtered.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'evidence-item bg-white p-5 rounded-lg border border-stone-200 transition duration-300';
+                
+                // Color coding for status
+                let statusColor = 'bg-stone-100 text-stone-600';
+                if(item.status === 'Critique') statusColor = 'bg-red-100 text-red-700';
+                if(item.status === 'Vérifié') statusColor = 'bg-green-100 text-green-700';
+                if(item.status === 'À analyser') statusColor = 'bg-amber-100 text-amber-700';
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="p-2 bg-stone-50 rounded-md">
+                            <i class="fas ${item.icon} text-stone-500 text-xl"></i>
+                        </div>
+                        <span class="text-xs font-bold uppercase px-2 py-1 rounded ${statusColor}">${item.status}</span>
+                    </div>
+                    <h4 class="font-bold text-stone-800 mb-2">${item.title}</h4>
+                    <p class="text-sm text-stone-600">${item.desc}</p>
+                    <button class="mt-4 w-full py-2 text-xs font-bold text-stone-500 hover:text-amber-600 border border-stone-200 rounded hover:border-amber-600 transition">
+                        EXAMINER
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // --- Timeline Logic ---
+
+        function renderTimeline() {
+            const container = document.getElementById('timeline-container');
+            container.innerHTML = '';
+
+            timelineEvents.forEach((event, index) => {
+                const item = document.createElement('div');
+                item.className = `relative flex justify-between items-center w-full ${index % 2 === 0 ? 'flex-row-reverse' : ''}`;
+                
+                // Content classes based on side
+                const contentClasses = index % 2 === 0 ? 'text-left md:text-left' : 'text-left md:text-right';
+                const marginClasses = index % 2 === 0 ? 'mr-auto md:ml-8 md:mr-0' : 'ml-auto md:mr-8 md:ml-0';
+
+                item.innerHTML = `
+                    <div class="order-1 w-5/12 hidden md:block"></div>
+                    <div class="z-20 flex items-center order-1 bg-stone-200 shadow-xl w-4 h-4 rounded-full border-2 border-white"></div>
+                    <div class="order-1 w-full md:w-5/12 ${marginClasses} p-4 bg-white rounded-lg shadow-sm border border-stone-200 hover:border-amber-400 transition cursor-pointer">
+                        <span class="text-xs font-bold text-amber-600 tracking-wide uppercase">${event.date}</span>
+                        <h3 class="font-bold text-stone-800 text-lg mt-1 mb-2">${event.title}</h3>
+                        <p class="text-sm text-stone-600 leading-snug">
+                            ${event.desc}
+                        </p>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', initDashboard);
+
+    </script>
+</body>
+</html>
