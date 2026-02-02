@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Cyberdeck Audio Player</title>
+    <title>Cyberdeck Audio Player - Fixed</title>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -10,7 +10,6 @@
             --neon-cyan: #00ffff;
             --bg-color: #111;
             --cassette-body: #222;
-            --tape-dark: #000;
         }
 
         body {
@@ -22,29 +21,20 @@
             margin: 0;
             font-family: 'VT323', monospace;
             overflow: hidden;
-            /* Effet de grille rétro en fond */
-            background-image: 
-                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 2px, 3px 100%;
+            user-select: none; /* Empêche la sélection de texte accidentelle */
         }
 
-        /* Conteneur principal */
         .cyber-player {
             position: relative;
             width: 350px;
             background: var(--cassette-body);
             border-radius: 15px;
             padding: 20px;
-            box-shadow: 
-                0 0 20px rgba(0, 255, 255, 0.2),
-                inset 0 0 30px rgba(0,0,0,0.8);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2), inset 0 0 30px rgba(0,0,0,0.8);
             border: 2px solid #333;
-            transform-style: preserve-3d;
-            perspective: 1000px;
         }
 
-        /* Écran LCD du haut */
+        /* --- ÉCRAN --- */
         .lcd-screen {
             background: #0a0a0a;
             border: 2px solid #444;
@@ -56,117 +46,67 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            height: 40px;
             position: relative;
-            overflow: hidden;
-        }
-
-        .lcd-screen::after {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 2;
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
         }
 
         .track-info {
             font-size: 1.2rem;
             white-space: nowrap;
             overflow: hidden;
-            width: 180px;
+            width: 100%;
         }
 
-        .scrolling-text {
-            display: inline-block;
-            animation: scroll-text 10s linear infinite;
-        }
-
-        @keyframes scroll-text {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
-
-        /* Visualiseur Audio (Barres) */
-        .visualizer {
-            display: flex;
-            gap: 2px;
-            height: 20px;
-            align-items: flex-end;
-        }
-
-        .bar {
-            width: 4px;
-            background: var(--neon-pink);
-            height: 5px;
-            transition: height 0.1s ease;
-            box-shadow: 0 0 5px var(--neon-pink);
-        }
-
-        /* Fenêtre de la Cassette */
+        /* --- CASSETTE --- */
         .cassette-window {
-            background: #eee;
+            background: radial-gradient(circle, #444 0%, #111 100%);
             height: 120px;
             border-radius: 10px;
             position: relative;
-            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            border: 10px solid #111;
-            background: radial-gradient(circle, #444 0%, #111 100%);
+            border: 8px solid #151515;
+            margin-bottom: 20px;
         }
 
-        /* Les bobines de la cassette */
         .reel {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             border: 4px solid #fff;
-            position: relative;
-            margin: 0 10px;
-            background: 
-                radial-gradient(circle at center, transparent 30%, #333 31%, #333 40%, transparent 41%),
-                conic-gradient(from 0deg, transparent 0deg 30deg, #fff 30deg 60deg, transparent 60deg 90deg, #fff 90deg 120deg, transparent 120deg 150deg, #fff 150deg 180deg, transparent 180deg 210deg, #fff 210deg 240deg, transparent 240deg 270deg, #fff 270deg 300deg, transparent 300deg 330deg, #fff 330deg 360deg);
+            margin: 0 15px;
+            /* Motif de la bobine */
+            background: conic-gradient(from 0deg, transparent 0deg 30deg, #eee 30deg 60deg, transparent 60deg 90deg, #eee 90deg 120deg, transparent 120deg 150deg, #eee 150deg 180deg, transparent 180deg 210deg, #eee 210deg 240deg, transparent 240deg 270deg, #eee 270deg 300deg, transparent 300deg 330deg, #eee 330deg 360deg);
+            box-shadow: inset 0 0 20px #000;
         }
 
-        .reel.left { animation: spin 0s linear infinite; }
-        .reel.right { animation: spin 0s linear infinite; }
+        /* Animation uniquement quand la classe .playing est active */
+        .cyber-player.playing .reel {
+            animation: spin 2s linear infinite;
+        }
 
         @keyframes spin {
             100% { transform: rotate(360deg); }
         }
 
-        /* La bande magnétique entre les bobines */
-        .tape-connector {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 40px;
-            background: #111;
-            clip-path: polygon(10% 0, 90% 0, 100% 100%, 0% 100%);
-            z-index: 10;
-        }
-
-        /* Contrôles */
+        /* --- CONTROLES --- */
         .controls {
-            margin-top: 25px;
             display: flex;
             flex-direction: column;
             gap: 15px;
+            position: relative;
+            z-index: 100; /* FORCE LES BOUTONS AU DESSUS */
         }
 
         .progress-container {
             width: 100%;
-            height: 6px;
+            height: 10px;
             background: #333;
-            border-radius: 3px;
-            position: relative;
+            border-radius: 5px;
             cursor: pointer;
             overflow: hidden;
+            border: 1px solid #555;
         }
 
         .progress-bar {
@@ -174,6 +114,7 @@
             background: var(--neon-cyan);
             width: 0%;
             box-shadow: 0 0 10px var(--neon-cyan);
+            pointer-events: none; /* Le clic passe à travers vers le container */
             transition: width 0.1s linear;
         }
 
@@ -184,16 +125,15 @@
         }
 
         .btn {
-            background: #333;
-            border: 1px solid #555;
-            color: #888;
+            background: #2a2a2a;
+            border: 2px solid #555;
+            color: #aaa;
             font-family: 'VT323', monospace;
-            font-size: 1.2rem;
-            padding: 10px 20px;
+            font-size: 1.4rem;
+            padding: 8px 24px;
             cursor: pointer;
             border-radius: 4px;
-            transition: all 0.2s;
-            text-transform: uppercase;
+            transition: 0.1s;
             box-shadow: 0 4px 0 #000;
         }
 
@@ -203,65 +143,30 @@
         }
 
         .btn.play-btn {
-            color: var(--neon-pink);
             border-color: var(--neon-pink);
-            text-shadow: 0 0 5px var(--neon-pink);
-            box-shadow: 0 0 10px var(--neon-pink), 0 4px 0 #400040;
-        }
-        
-        .btn.play-btn:active {
-            box-shadow: 0 0 10px var(--neon-pink), 0 0 0 #400040;
+            color: var(--neon-pink);
+            text-shadow: 0 0 8px var(--neon-pink);
         }
 
-        /* État de lecture activé */
-        .cyber-player.playing .reel {
-            animation-duration: 2s;
-        }
-        
-        .time-display {
+        .status-msg {
             text-align: center;
-            color: #666;
-            font-size: 0.9rem;
-            margin-top: 5px;
-        }
-
-        /* Glitch effect on hover title */
-        .sticker {
-            position: absolute;
-            top: -10px;
-            left: 20px;
-            background: #f0f;
-            color: #fff;
-            padding: 2px 10px;
             font-size: 0.8rem;
-            transform: rotate(-2deg);
-            box-shadow: 2px 2px 0 #000;
-            z-index: 20;
+            color: #666;
+            margin-top: 10px;
+            min-height: 1.2em;
         }
     </style>
 </head>
 <body>
 
 <div class="cyber-player" id="player">
-    <div class="sticker">OUAISFI.EU // 2026</div>
-    
     <div class="lcd-screen">
-        <div class="track-info">
-            <span class="scrolling-text">Party On Game Over - CCPLC Test-O Podcast</span>
-        </div>
-        <div class="visualizer" id="visualizer">
-            <div class="bar" style="height: 40%"></div>
-            <div class="bar" style="height: 70%"></div>
-            <div class="bar" style="height: 30%"></div>
-            <div class="bar" style="height: 80%"></div>
-            <div class="bar" style="height: 50%"></div>
-        </div>
+        <div class="track-info">Party On Game Over.mp3</div>
     </div>
 
     <div class="cassette-window">
-        <div class="reel left"></div>
-        <div class="tape-connector"></div>
-        <div class="reel right"></div>
+        <div class="reel"></div>
+        <div class="reel"></div>
     </div>
 
     <div class="controls">
@@ -269,113 +174,91 @@
             <div class="progress-bar" id="progress-bar"></div>
         </div>
         
-        <div class="time-display">
-            <span id="currTime">00:00</span> / <span id="durTime">00:00</span>
-        </div>
-
         <div class="buttons">
-            <button class="btn" id="prev">|&lt;</button>
-            <button class="btn play-btn" id="play">PLAY</button>
-            <button class="btn" id="next">&gt;|</button>
+            <button class="btn" onclick="audio.currentTime -= 10">RW</button>
+            <button class="btn play-btn" id="playBtn">PLAY</button>
+            <button class="btn" onclick="audio.currentTime += 10">FF</button>
         </div>
+        <div class="status-msg" id="status">Prêt.</div>
     </div>
 
-    <audio id="audio" crossorigin="anonymous" src="https://dl.ouaisfi.eu/ccplc/test-o/party-on-game-over.mp3"></audio>
+    <audio id="audio" preload="metadata">
+        <source src="https://dl.ouaisfi.eu/ccplc/test-o/party-on-game-over.mp3" type="audio/mpeg">
+        Ton navigateur est trop vieux pour le rétrogeek.
+    </audio>
 </div>
 
 <script>
     const player = document.getElementById('player');
-    const playBtn = document.getElementById('play');
+    const playBtn = document.getElementById('playBtn');
     const audio = document.getElementById('audio');
-    const progressContainer = document.getElementById('progress-container');
     const progressBar = document.getElementById('progress-bar');
-    const currTime = document.getElementById('currTime');
-    const durTime = document.getElementById('durTime');
-    const visualizerBars = document.querySelectorAll('.bar');
+    const progressContainer = document.getElementById('progress-container');
+    const statusText = document.getElementById('status');
 
-    // Visualizer simulation interval
-    let vizInterval;
-
-    // Play/Pause logic
+    // 1. Fonction de lecture sécurisée
     function togglePlay() {
         if (audio.paused) {
-            audio.play();
-            player.classList.add('playing');
-            playBtn.innerText = 'PAUSE';
-            playBtn.style.borderColor = 'var(--neon-cyan)';
-            playBtn.style.color = 'var(--neon-cyan)';
-            playBtn.style.textShadow = '0 0 5px var(--neon-cyan)';
-            startVisualizer();
+            let playPromise = audio.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    // La lecture a commencé
+                    player.classList.add('playing');
+                    playBtn.innerText = 'PAUSE';
+                    playBtn.style.color = 'var(--neon-cyan)';
+                    playBtn.style.borderColor = 'var(--neon-cyan)';
+                    statusText.innerText = "Lecture en cours...";
+                })
+                .catch(error => {
+                    // Erreur attrapée ici
+                    console.error("Erreur de lecture:", error);
+                    statusText.innerText = "Erreur: Vérifiez la connexion ou le fichier.";
+                });
+            }
         } else {
             audio.pause();
             player.classList.remove('playing');
             playBtn.innerText = 'PLAY';
-            playBtn.style.borderColor = 'var(--neon-pink)';
             playBtn.style.color = 'var(--neon-pink)';
-            playBtn.style.textShadow = '0 0 5px var(--neon-pink)';
-            stopVisualizer();
+            playBtn.style.borderColor = 'var(--neon-pink)';
+            statusText.innerText = "Pause.";
         }
     }
 
-    // Update Progress Bar
-    function updateProgress(e) {
-        const { duration, currentTime } = e.srcElement;
-        const progressPercent = (currentTime / duration) * 100;
-        progressBar.style.width = `${progressPercent}%`;
-        
-        // Time display
-        currTime.innerText = formatTime(currentTime);
-        durTime.innerText = isNaN(duration) ? "00:00" : formatTime(duration);
-    }
-
-    // Set Progress on Click
-    function setProgress(e) {
-        const width = this.clientWidth;
-        const clickX = e.offsetX;
-        const duration = audio.duration;
-        audio.currentTime = (clickX / width) * duration;
-    }
-
-    // Helper: Format Time
-    function formatTime(time) {
-        const min = Math.floor(time / 60);
-        const sec = Math.floor(time % 60);
-        return `${min < 10 ? '0' + min : min}:${sec < 10 ? '0' + sec : sec}`;
-    }
-
-    // Fake Visualizer Logic (Robust against CORS)
-    function startVisualizer() {
-        vizInterval = setInterval(() => {
-            visualizerBars.forEach(bar => {
-                const height = Math.floor(Math.random() * 80) + 10;
-                bar.style.height = `${height}%`;
-            });
-        }, 100);
-    }
-
-    function stopVisualizer() {
-        clearInterval(vizInterval);
-        visualizerBars.forEach(bar => {
-            bar.style.height = '10%';
-        });
-    }
-
-    // Event Listeners
-    playBtn.addEventListener('click', togglePlay);
-    audio.addEventListener('timeupdate', updateProgress);
-    progressContainer.addEventListener('click', setProgress);
-    
-    // Load duration when metadata loads
-    audio.addEventListener('loadedmetadata', () => {
-        durTime.innerText = formatTime(audio.duration);
+    // 2. Gestion de la barre de progression
+    audio.addEventListener('timeupdate', (e) => {
+        const { duration, currentTime } = e.target;
+        // Eviter la division par zéro
+        if(duration > 0) {
+            const progressPercent = (currentTime / duration) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+        }
     });
 
-    // Auto reset at end
-    audio.addEventListener('ended', () => {
-        player.classList.remove('playing');
-        playBtn.innerText = 'REPLAY';
-        stopVisualizer();
-        progressBar.style.width = '0%';
+    // 3. Clic sur la barre de progression
+    progressContainer.addEventListener('click', (e) => {
+        const width = progressContainer.clientWidth;
+        const clickX = e.offsetX;
+        const duration = audio.duration;
+        if(duration) {
+            audio.currentTime = (clickX / width) * duration;
+        }
+    });
+
+    // 4. Écouteurs d'événements
+    playBtn.addEventListener('click', togglePlay);
+
+    // DEBUG : Vérifier si le fichier charge
+    audio.addEventListener('loadeddata', () => {
+        statusText.innerText = "Cassette chargée. Appuyez sur PLAY.";
+        console.log("Audio chargé avec succès.");
+    });
+
+    audio.addEventListener('error', (e) => {
+        console.error("Erreur Audio:", e);
+        statusText.innerText = "Erreur de chargement (Check Console)";
+        statusText.style.color = "red";
     });
 
 </script>
