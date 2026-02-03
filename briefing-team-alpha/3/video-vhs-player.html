@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VHS PLAYBACK — Archivage Vidéo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap');
+        
+        :root {
+            --vhs-blue: #0066cc;
+            --static-gray: #808080;
+            --tape-black: #1a1a1a;
+            --lcd-green: #90ee90;
+            --osd-white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1a 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            font-family: 'VT323', monospace;
+        }
+
+        .vhs-player {
+            width: 100%;
+            max-width: 800px;
+            background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            border: 3px solid #333;
+        }
+
+        .brand-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .brand-logo {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.6rem;
+            color: #888;
+            letter-spacing: 2px;
+        }
+
+        .model-number {
+            font-size: 0.7rem;
+            color: #555;
+        }
+
+        /* TV SCREEN */
+        .tv-frame {
+            background: #111;
+            border: 8px solid #222;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .screen-container {
+            position: relative;
+            aspect-ratio: 16/9;
+            background: #000;
+        }
+
+        /* VHS EFFECTS OVERLAY */
+        .vhs-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .scanlines {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0,0,0,0.2) 0px,
+                rgba(0,0,0,0.2) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+        }
+
+        .static-noise {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            mix-blend-mode: overlay;
+        }
+
+        .tracking-glitch {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: rgba(255,255,255,0.3);
+            display: none;
+        }
+
+        .playing .tracking-glitch {
+            display: block;
+            animation: tracking-roll 4s infinite;
+        }
+
+        @keyframes tracking-roll {
+            0%, 85%, 100% { top: -10%; opacity: 0; }
+            88% { top: 20%; opacity: 0.6; }
+            92% { top: 50%; opacity: 0.4; }
+            95% { top: 80%; opacity: 0; }
+        }
+
+        .color-shift {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, 
+                rgba(255,0,0,0.02) 0%, 
+                transparent 50%, 
+                rgba(0,255,255,0.02) 100%
+            );
+        }
+
+        /* OSD OVERLAYS */
+        .osd {
+            position: absolute;
+            font-family: 'VT323', monospace;
+            color: var(--osd-white);
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.8);
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        .osd-top-left {
+            top: 15px; left: 15px;
+            font-size: 1.5rem;
+        }
+
+        .osd-top-right {
+            top: 15px; right: 15px;
+            text-align: right;
+        }
+
+        .osd-bottom-left {
+            bottom: 15px; left: 15px;
+        }
+
+        .osd-bottom-right {
+            bottom: 15px; right: 15px;
+            text-align: right;
+        }
+
+        .osd-play-icon {
+            font-size: 2rem;
+            color: var(--lcd-green);
+        }
+
+        .osd-rec {
+            color: #ff0000;
+            animation: rec-blink 1s infinite;
+        }
+
+        @keyframes rec-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .osd-counter {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 1rem;
+            color: var(--lcd-green);
+            text-shadow: 0 0 10px var(--lcd-green);
+        }
+
+        .osd-date {
+            font-size: 1.2rem;
+            color: #ff6600;
+        }
+
+        .osd-label {
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-bottom: 3px;
+        }
+
+        /* VIDEO ELEMENT */
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .video-wrapper video,
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* BLUE SCREEN */
+        .blue-screen {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: var(--vhs-blue);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.5rem;
+            z-index: 5;
+        }
+
+        .blue-screen.hidden { display: none; }
+
+        /* TAPE DECK */
+        .tape-deck {
+            background: #111;
+            border: 2px solid #333;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .tape-window {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            padding: 15px;
+            background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+            border-radius: 4px;
+        }
+
+        .tape-reel {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, #333 0deg, #1a1a1a 60deg, #333 120deg, #1a1a1a 180deg, #333 240deg, #1a1a1a 300deg, #333 360deg);
+            border: 3px solid #444;
+            position: relative;
+        }
+
+        .tape-reel::before {
+            content: "";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 15px; height: 15px;
+            background: #555;
+            border-radius: 50%;
+        }
+
+        .playing .tape-reel {
+            animation: reel-spin 1.5s linear infinite;
+        }
+
+        @keyframes reel-spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        .tape-label {
+            background: #f5f5dc;
+            padding: 8px 20px;
+            border-radius: 3px;
+            text-align: center;
+        }
+
+        .tape-label-title {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.45rem;
+            color: #333;
+        }
+
+        .tape-label-sub {
+            font-size: 0.65rem;
+            color: #666;
+            margin-top: 3px;
+        }
+
+        /* PROGRESS */
+        .progress-section {
+            margin-top: 15px;
+        }
+
+        .progress-bg {
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--vhs-blue), #00aaff);
+            width: 0%;
+            border-radius: 4px;
+        }
+
+        .progress-times {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 1rem;
+            color: #888;
+        }
+
+        /* CONTROLS */
+        .controls-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .vcr-btn {
+            width: 60px;
+            height: 45px;
+            background: linear-gradient(180deg, #444 0%, #222 100%);
+            border: 2px solid #555;
+            border-radius: 5px;
+            color: #aaa;
+            font-family: 'VT323', monospace;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            transition: all 0.1s ease;
+        }
+
+        .vcr-btn:hover {
+            background: linear-gradient(180deg, #555 0%, #333 100%);
+            color: #fff;
+        }
+
+        .vcr-btn:active {
+            transform: scale(0.95);
+        }
+
+        .vcr-btn.play-btn {
+            width: 80px;
+            background: linear-gradient(180deg, #1a4a8a 0%, #0a2a5a 100%);
+            border-color: #2a5a9a;
+            color: #8af;
+        }
+
+        .vcr-btn.active {
+            background: linear-gradient(180deg, #2a6a2a 0%, #1a4a1a 100%);
+            border-color: #3a8a3a;
+            color: var(--lcd-green);
+        }
+
+        .btn-icon { font-size: 1.2rem; }
+        .btn-label { font-size: 0.5rem; letter-spacing: 1px; }
+
+        /* VOLUME */
+        .secondary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding: 0 10px;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .vol-label {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .vol-slider {
+            -webkit-appearance: none;
+            width: 100px;
+            height: 6px;
+            background: #333;
+            border-radius: 3px;
+        }
+
+        .vol-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: #888;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .channel-display {
+            background: #111;
+            border: 1px solid #333;
+            padding: 5px 15px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.5rem;
+            color: var(--lcd-green);
+        }
+
+        /* PLAYLIST */
+        .playlist-section {
+            margin-top: 15px;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 5px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .playlist-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid #222;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .playlist-item:hover {
+            background: rgba(0, 102, 204, 0.1);
+        }
+
+        .playlist-item.active {
+            background: rgba(0, 102, 204, 0.2);
+            border-left: 3px solid var(--vhs-blue);
+        }
+
+        .item-thumb {
+            width: 60px;
+            height: 34px;
+            background: #333;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .item-info { flex: 1; }
+        .item-title { font-size: 1rem; color: #ccc; }
+        .item-meta { font-size: 0.75rem; color: #666; margin-top: 2px; }
+        .item-duration { font-size: 0.85rem; color: #888; }
+
+        .player-footer {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #444;
+        }
+
+        @media (max-width: 600px) {
+            .osd { font-size: 0.8rem; }
+            .osd-counter { font-size: 0.7rem; }
+            .vcr-btn { width: 50px; height: 40px; }
+            .vcr-btn.play-btn { width: 65px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="vhs-player" id="player">
+    <div class="brand-row">
+        <div class="brand-logo">OUAISFI VIDEO</div>
+        <div class="model-number">VCR-2026</div>
+    </div>
+
+    <div class="tv-frame">
+        <div class="screen-container">
+            <div class="video-wrapper">
+                <iframe id="videoFrame" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            
+            <div class="blue-screen" id="blueScreen">
+                <div>NO SIGNAL</div>
+                <div style="font-size: 1rem; margin-top: 10px;">PLAY ▶ TO START</div>
+            </div>
+
+            <div class="vhs-overlay">
+                <div class="scanlines"></div>
+                <div class="static-noise"></div>
+                <div class="tracking-glitch"></div>
+                <div class="color-shift"></div>
+            </div>
+
+            <div class="osd osd-top-left">
+                <span class="osd-play-icon" id="osdPlay">⏸</span>
+            </div>
+            <div class="osd osd-top-right">
+                <div class="osd-label">REC <span class="osd-rec">●</span></div>
+                <div class="osd-date" id="osdDate">03/02/2026</div>
+            </div>
+            <div class="osd osd-bottom-left">
+                <div class="osd-label">COUNTER</div>
+                <div class="osd-counter" id="osdCounter">00:00:00</div>
+            </div>
+            <div class="osd osd-bottom-right">
+                <div class="osd-label">SP</div>
+                <div style="color: var(--lcd-green);">HI-FI STEREO</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tape-deck">
+        <div class="tape-window">
+            <div class="tape-reel"></div>
+            <div class="tape-label">
+                <div class="tape-label-title" id="tapeTitle">VEILLE CITOYENNE</div>
+                <div class="tape-label-sub">VOL. 1 — 2026</div>
+            </div>
+            <div class="tape-reel"></div>
+        </div>
+    </div>
+
+    <div class="progress-section">
+        <div class="progress-bg" id="progressBar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-times">
+            <span id="timeCurrent">00:00</span>
+            <span id="timeTotal">00:00</span>
+        </div>
+    </div>
+
+    <div class="controls-row">
+        <button class="vcr-btn" id="btnRew"><span class="btn-icon">⏪</span><span class="btn-label">REW</span></button>
+        <button class="vcr-btn play-btn" id="btnPlay"><span class="btn-icon">▶</span><span class="btn-label">PLAY</span></button>
+        <button class="vcr-btn" id="btnStop"><span class="btn-icon">⏹</span><span class="btn-label">STOP</span></button>
+        <button class="vcr-btn" id="btnFwd"><span class="btn-icon">⏩</span><span class="btn-label">FF</span></button>
+        <button class="vcr-btn" id="btnNext"><span class="btn-icon">⏏</span><span class="btn-label">NEXT</span></button>
+    </div>
+
+    <div class="secondary-row">
+        <div class="volume-control">
+            <span class="vol-label">TRACKING</span>
+            <input type="range" class="vol-slider" id="volumeSlider" min="0" max="100" value="80">
+        </div>
+        <div class="channel-display">CH 03</div>
+    </div>
+
+    <div class="playlist-section" id="playlistContainer"></div>
+
+    <div class="player-footer">
+        <span>© 2026 CCPLC — FORK • HACK • SPREAD</span>
+        <span>CC BY-NC 4.0</span>
+    </div>
+</div>
+
+<script>
+const playlist = [
+    { 
+        title: "INTRODUCTION — VEILLE CITOYENNE", 
+        source: "CCPLC", 
+        videoId: "dQw4w9WgXcQ",
+        duration: "3:32"
+    },
+    { 
+        title: "DÉBRIEFING MISSION ALPHA", 
+        source: "RÉSEAU 11·60", 
+        videoId: "dQw4w9WgXcQ",
+        duration: "5:15"
+    },
+    { 
+        title: "DOCUMENTAIRE — FRAUDE SOCIALE", 
+        source: "CELLULE INVESTIGATION", 
+        videoId: "dQw4w9WgXcQ",
+        duration: "12:47"
+    }
+];
+
+const player = document.getElementById('player');
+const videoFrame = document.getElementById('videoFrame');
+const blueScreen = document.getElementById('blueScreen');
+const btnPlay = document.getElementById('btnPlay');
+const osdPlay = document.getElementById('osdPlay');
+const osdCounter = document.getElementById('osdCounter');
+const tapeTitle = document.getElementById('tapeTitle');
+const progressFill = document.getElementById('progressFill');
+
+let currentTrack = 0;
+let isPlaying = false;
+let simulatedTime = 0;
+let timeInterval = null;
+
+function renderPlaylist() {
+    const container = document.getElementById('playlistContainer');
+    container.innerHTML = '';
+    playlist.forEach((v, i) => {
+        const item = document.createElement('div');
+        item.className = `playlist-item ${i === currentTrack ? 'active' : ''}`;
+        item.innerHTML = `
+            <div class="item-thumb">📼</div>
+            <div class="item-info">
+                <div class="item-title">${v.title}</div>
+                <div class="item-meta">${v.source}</div>
+            </div>
+            <div class="item-duration">${v.duration}</div>
+        `;
+        item.onclick = () => { currentTrack = i; loadVideo(i); play(); };
+        container.appendChild(item);
+    });
+}
+
+function loadVideo(i) {
+    const v = playlist[i];
+    tapeTitle.textContent = v.title.substring(0, 20);
+    document.querySelectorAll('.playlist-item').forEach((el, idx) => el.classList.toggle('active', idx === i));
+    // Don't load iframe until play
+}
+
+function play() {
+    const v = playlist[currentTrack];
+    videoFrame.src = `https://www.youtube.com/embed/${v.videoId}?autoplay=1&rel=0`;
+    blueScreen.classList.add('hidden');
+    isPlaying = true;
+    player.classList.add('playing');
+    btnPlay.classList.add('active');
+    btnPlay.querySelector('.btn-icon').textContent = '❚❚';
+    osdPlay.textContent = '▶';
+    
+    // Simulate time counter
+    if (timeInterval) clearInterval(timeInterval);
+    timeInterval = setInterval(() => {
+        simulatedTime++;
+        const h = Math.floor(simulatedTime / 3600);
+        const m = Math.floor((simulatedTime % 3600) / 60);
+        const s = simulatedTime % 60;
+        osdCounter.textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    }, 1000);
+}
+
+function stop() {
+    videoFrame.src = '';
+    blueScreen.classList.remove('hidden');
+    isPlaying = false;
+    player.classList.remove('playing');
+    btnPlay.classList.remove('active');
+    btnPlay.querySelector('.btn-icon').textContent = '▶';
+    osdPlay.textContent = '⏸';
+    if (timeInterval) clearInterval(timeInterval);
+}
+
+btnPlay.onclick = () => isPlaying ? stop() : play();
+document.getElementById('btnStop').onclick = stop;
+document.getElementById('btnNext').onclick = () => { 
+    currentTrack = (currentTrack + 1) % playlist.length; 
+    loadVideo(currentTrack); 
+    if (isPlaying) play(); 
+    else { stop(); loadVideo(currentTrack); }
+};
+document.getElementById('btnRew').onclick = () => { simulatedTime = Math.max(0, simulatedTime - 30); };
+document.getElementById('btnFwd').onclick = () => { simulatedTime += 30; };
+
+renderPlaylist();
+loadVideo(0);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUNKER BROADCAST — Transmission Souterraine</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&family=Courier+Prime:wght@700&display=swap');
+        
+        :root {
+            --bunker-green: #00ff00;
+            --bunker-amber: #ffaa00;
+            --bunker-red: #ff3300;
+            --concrete: #3a3a3a;
+            --rust: #8b4513;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #1a1a1a;
+            min-height: 100vh;
+            font-family: 'VT323', monospace;
+            color: var(--bunker-green);
+        }
+
+        /* CONCRETE TEXTURE */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .bunker-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* WARNING HEADER */
+        .warning-header {
+            background: repeating-linear-gradient(
+                45deg,
+                var(--bunker-amber) 0px,
+                var(--bunker-amber) 10px,
+                #000 10px,
+                #000 20px
+            );
+            padding: 3px;
+            margin-bottom: 20px;
+        }
+
+        .warning-inner {
+            background: #000;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .warning-text {
+            font-size: 1.3rem;
+            color: var(--bunker-amber);
+            letter-spacing: 3px;
+            animation: flicker 0.5s infinite;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            92% { opacity: 0.8; }
+            94% { opacity: 0.4; }
+            96% { opacity: 0.9; }
+        }
+
+        .access-code {
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.8rem;
+            color: var(--bunker-green);
+        }
+
+        /* MAIN CONSOLE */
+        .main-console {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 20px;
+        }
+
+        /* SIDE PANEL */
+        .side-panel {
+            background: linear-gradient(180deg, var(--concrete) 0%, #2a2a2a 100%);
+            border: 3px solid #4a4a4a;
+            padding: 15px;
+            position: relative;
+        }
+
+        .side-panel::before {
+            content: "";
+            position: absolute;
+            top: 5px; left: 5px;
+            right: 5px; bottom: 5px;
+            border: 1px solid #555;
+            pointer-events: none;
+        }
+
+        .panel-section {
+            margin-bottom: 20px;
+        }
+
+        .section-label {
+            font-size: 0.8rem;
+            color: var(--bunker-amber);
+            border-bottom: 1px solid #555;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        /* RADAR */
+        .radar-container {
+            width: 150px;
+            height: 150px;
+            background: #0a0a0a;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            position: relative;
+            border: 3px solid #333;
+            overflow: hidden;
+        }
+
+        .radar-grid {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: 
+                radial-gradient(circle at center, transparent 0%, transparent 30%, rgba(0,255,0,0.1) 30%, rgba(0,255,0,0.1) 31%, transparent 31%),
+                radial-gradient(circle at center, transparent 0%, transparent 60%, rgba(0,255,0,0.1) 60%, rgba(0,255,0,0.1) 61%, transparent 61%),
+                radial-gradient(circle at center, transparent 0%, transparent 90%, rgba(0,255,0,0.1) 90%),
+                linear-gradient(0deg, transparent 49.5%, rgba(0,255,0,0.1) 49.5%, rgba(0,255,0,0.1) 50.5%, transparent 50.5%),
+                linear-gradient(90deg, transparent 49.5%, rgba(0,255,0,0.1) 49.5%, rgba(0,255,0,0.1) 50.5%, transparent 50.5%);
+        }
+
+        .radar-sweep {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 50%; height: 2px;
+            background: linear-gradient(90deg, var(--bunker-green), transparent);
+            transform-origin: left center;
+            animation: radar-rotate 4s linear infinite;
+            box-shadow: 0 0 20px var(--bunker-green);
+        }
+
+        @keyframes radar-rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .radar-blip {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--bunker-green);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--bunker-green);
+            animation: blip-fade 4s infinite;
+        }
+
+        @keyframes blip-fade {
+            0%, 10% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* STATUS LIGHTS */
+        .status-lights {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .status-light {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+        }
+
+        .light-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #333;
+            border: 2px solid #555;
+        }
+
+        .light-indicator.green {
+            background: var(--bunker-green);
+            box-shadow: 0 0 10px var(--bunker-green);
+        }
+
+        .light-indicator.amber {
+            background: var(--bunker-amber);
+            box-shadow: 0 0 10px var(--bunker-amber);
+        }
+
+        .light-indicator.red {
+            background: var(--bunker-red);
+            box-shadow: 0 0 10px var(--bunker-red);
+            animation: alert-blink 0.5s infinite;
+        }
+
+        @keyframes alert-blink {
+            50% { opacity: 0.3; }
+        }
+
+        /* TRANSMISSION LIST */
+        .transmission-slot {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            padding: 8px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .transmission-slot:hover {
+            border-color: var(--bunker-green);
+            background: rgba(0, 255, 0, 0.05);
+        }
+
+        .transmission-slot.active {
+            border-color: var(--bunker-green);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+        }
+
+        .slot-id {
+            font-size: 0.7rem;
+            color: var(--bunker-amber);
+        }
+
+        .slot-name {
+            font-size: 0.9rem;
+            margin-top: 3px;
+        }
+
+        /* MAIN SCREEN */
+        .main-screen {
+            background: var(--concrete);
+            border: 4px solid #4a4a4a;
+            padding: 15px;
+            position: relative;
+        }
+
+        .screen-frame {
+            background: #000;
+            border: 3px solid #333;
+            position: relative;
+        }
+
+        .video-display {
+            aspect-ratio: 16/9;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-display iframe,
+        .video-display video {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* SCREEN EFFECTS */
+        .screen-scanlines {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0,0,0,0.2) 0px,
+                rgba(0,0,0,0.2) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .screen-vignette {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.5) 100%);
+            pointer-events: none;
+            z-index: 11;
+        }
+
+        /* OSD */
+        .screen-osd {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 20;
+            padding: 15px;
+        }
+
+        .osd-corner {
+            position: absolute;
+            font-size: 0.9rem;
+        }
+
+        .osd-tl { top: 15px; left: 15px; }
+        .osd-tr { top: 15px; right: 15px; text-align: right; }
+        .osd-bl { bottom: 15px; left: 15px; }
+        .osd-br { bottom: 15px; right: 15px; text-align: right; }
+
+        .osd-label {
+            font-size: 0.7rem;
+            color: var(--bunker-amber);
+        }
+
+        .osd-value {
+            color: var(--bunker-green);
+            text-shadow: 0 0 10px var(--bunker-green);
+        }
+
+        /* CONTROLS */
+        .control-deck {
+            margin-top: 15px;
+            padding: 15px;
+            background: #2a2a2a;
+            border: 2px solid #4a4a4a;
+        }
+
+        .progress-section {
+            margin-bottom: 15px;
+        }
+
+        .progress-track {
+            height: 10px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            cursor: pointer;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--bunker-green);
+            width: 0%;
+            box-shadow: 0 0 10px var(--bunker-green);
+        }
+
+        .progress-times {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.9rem;
+        }
+
+        .button-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .bunker-btn {
+            width: 60px;
+            height: 50px;
+            background: linear-gradient(180deg, #4a4a4a 0%, #2a2a2a 100%);
+            border: 3px solid #5a5a5a;
+            color: #888;
+            font-family: 'VT323', monospace;
+            font-size: 1.5rem;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.1s ease;
+        }
+
+        .bunker-btn::before {
+            content: "";
+            position: absolute;
+            top: 2px; left: 2px;
+            right: 2px; bottom: 2px;
+            border: 1px solid #666;
+        }
+
+        .bunker-btn:hover {
+            background: linear-gradient(180deg, #5a5a5a 0%, #3a3a3a 100%);
+            color: var(--bunker-green);
+        }
+
+        .bunker-btn:active {
+            transform: translateY(2px);
+        }
+
+        .bunker-btn.play-btn {
+            width: 80px;
+            border-color: var(--bunker-green);
+            color: var(--bunker-green);
+        }
+
+        .bunker-btn.play-btn.active {
+            background: var(--bunker-green);
+            color: #000;
+            box-shadow: 0 0 20px var(--bunker-green);
+        }
+
+        .btn-label {
+            font-size: 0.5rem;
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* FOOTER */
+        .bunker-footer {
+            margin-top: 20px;
+            padding: 15px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #555;
+        }
+
+        .footer-encryption {
+            color: var(--bunker-green);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 700px) {
+            .main-console {
+                grid-template-columns: 1fr;
+            }
+            .side-panel {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bunker-container" id="player">
+    <!-- WARNING -->
+    <div class="warning-header">
+        <div class="warning-inner">
+            <span class="warning-text">⚠ ZONE SÉCURISÉE — ACCÈS RESTREINT</span>
+            <span class="access-code">CODE: ALPHA-7X-2026</span>
+        </div>
+    </div>
+
+    <div class="main-console">
+        <!-- SIDE PANEL -->
+        <div class="side-panel">
+            <!-- RADAR -->
+            <div class="panel-section">
+                <div class="section-label">DÉTECTION</div>
+                <div class="radar-container">
+                    <div class="radar-grid"></div>
+                    <div class="radar-sweep"></div>
+                    <div class="radar-blip" style="top: 30%; left: 60%;"></div>
+                    <div class="radar-blip" style="top: 70%; left: 40%; animation-delay: 1s;"></div>
+                </div>
+            </div>
+
+            <!-- STATUS -->
+            <div class="panel-section">
+                <div class="section-label">SYSTÈMES</div>
+                <div class="status-lights">
+                    <div class="status-light">
+                        <div class="light-indicator green"></div>
+                        <span>RÉSEAU</span>
+                    </div>
+                    <div class="status-light">
+                        <div class="light-indicator green"></div>
+                        <span>CRYPTO</span>
+                    </div>
+                    <div class="status-light">
+                        <div class="light-indicator amber" id="streamLight"></div>
+                        <span>STREAM</span>
+                    </div>
+                    <div class="status-light">
+                        <div class="light-indicator green"></div>
+                        <span>BACKUP</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRANSMISSIONS -->
+            <div class="panel-section">
+                <div class="section-label">TRANSMISSIONS</div>
+                <div id="transmissionSlots"></div>
+            </div>
+        </div>
+
+        <!-- MAIN SCREEN -->
+        <div class="main-screen">
+            <div class="screen-frame">
+                <div class="video-display">
+                    <iframe id="videoFrame" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    <div class="screen-scanlines"></div>
+                    <div class="screen-vignette"></div>
+                    
+                    <div class="screen-osd">
+                        <div class="osd-corner osd-tl">
+                            <div class="osd-label">SIGNAL</div>
+                            <div class="osd-value" id="signalStatus">STANDBY</div>
+                        </div>
+                        <div class="osd-corner osd-tr">
+                            <div class="osd-label">ENCRYPTED</div>
+                            <div class="osd-value">AES-256</div>
+                        </div>
+                        <div class="osd-corner osd-bl">
+                            <div class="osd-label">DURÉE</div>
+                            <div class="osd-value" id="osdDuration">00:00:00</div>
+                        </div>
+                        <div class="osd-corner osd-br">
+                            <div class="osd-label">CANAL</div>
+                            <div class="osd-value" id="osdChannel">CH-01</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-deck">
+                <div class="progress-section">
+                    <div class="progress-track" id="progressBar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-times">
+                        <span id="timeCurrent">00:00</span>
+                        <span id="timeTotal">00:00</span>
+                    </div>
+                </div>
+
+                <div class="button-row">
+                    <button class="bunker-btn" id="btnPrev">⏮<span class="btn-label">PRÉC</span></button>
+                    <button class="bunker-btn" id="btnRew">⏪<span class="btn-label">-10s</span></button>
+                    <button class="bunker-btn play-btn" id="btnPlay">▶<span class="btn-label">PLAY</span></button>
+                    <button class="bunker-btn" id="btnFwd">⏩<span class="btn-label">+10s</span></button>
+                    <button class="bunker-btn" id="btnNext">⏭<span class="btn-label">SUIV</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bunker-footer">
+        <span>© 2026 CCPLC — RÉSEAU SOUTERRAIN</span>
+        <span class="footer-encryption">🔒 TRANSMISSION CHIFFRÉE</span>
+        <span>ouaisfi.eu | CC BY-NC 4.0</span>
+    </div>
+</div>
+
+<script>
+const transmissions = [
+    { id: "CH-01", name: "BRIEFING ALPHA", videoId: "dQw4w9WgXcQ" },
+    { id: "CH-02", name: "DOCUMENTATION", videoId: "dQw4w9WgXcQ" },
+    { id: "CH-03", name: "ALERTE SOCIALE", videoId: "dQw4w9WgXcQ" }
+];
+
+let currentTx = 0;
+let isPlaying = false;
+let playTime = 0;
+
+const videoFrame = document.getElementById('videoFrame');
+const btnPlay = document.getElementById('btnPlay');
+const signalStatus = document.getElementById('signalStatus');
+const osdDuration = document.getElementById('osdDuration');
+const osdChannel = document.getElementById('osdChannel');
+const streamLight = document.getElementById('streamLight');
+const progressFill = document.getElementById('progressFill');
+
+function renderSlots() {
+    const container = document.getElementById('transmissionSlots');
+    container.innerHTML = '';
+    transmissions.forEach((tx, i) => {
+        const slot = document.createElement('div');
+        slot.className = `transmission-slot ${i === currentTx ? 'active' : ''}`;
+        slot.innerHTML = `
+            <div class="slot-id">${tx.id}</div>
+            <div class="slot-name">${tx.name}</div>
+        `;
+        slot.onclick = () => selectTx(i);
+        container.appendChild(slot);
+    });
+}
+
+function selectTx(index) {
+    currentTx = index;
+    const tx = transmissions[index];
+    osdChannel.textContent = tx.id;
+    document.querySelectorAll('.transmission-slot').forEach((el, i) => el.classList.toggle('active', i === index));
+}
+
+function formatTime(s) {
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = Math.floor(s % 60);
+    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
+
+function play() {
+    const tx = transmissions[currentTx];
+    videoFrame.src = `https://www.youtube.com/embed/${tx.videoId}?autoplay=1&rel=0`;
+    isPlaying = true;
+    btnPlay.classList.add('active');
+    btnPlay.innerHTML = '❚❚<span class="btn-label">PAUSE</span>';
+    signalStatus.textContent = 'EN LIGNE';
+    streamLight.classList.remove('amber');
+    streamLight.classList.add('green');
+}
+
+function stop() {
+    videoFrame.src = '';
+    isPlaying = false;
+    btnPlay.classList.remove('active');
+    btnPlay.innerHTML = '▶<span class="btn-label">PLAY</span>';
+    signalStatus.textContent = 'STANDBY';
+    streamLight.classList.remove('green');
+    streamLight.classList.add('amber');
+}
+
+setInterval(() => {
+    if (isPlaying) {
+        playTime++;
+        osdDuration.textContent = formatTime(playTime);
+        document.getElementById('timeCurrent').textContent = formatTime(playTime);
+        const progress = (playTime % 300) / 300 * 100;
+        progressFill.style.width = `${progress}%`;
+    }
+}, 1000);
+
+btnPlay.onclick = () => isPlaying ? stop() : play();
+document.getElementById('btnPrev').onclick = () => { selectTx((currentTx - 1 + transmissions.length) % transmissions.length); };
+document.getElementById('btnNext').onclick = () => { selectTx((currentTx + 1) % transmissions.length); };
+document.getElementById('btnRew').onclick = () => { playTime = Math.max(0, playTime - 10); };
+document.getElementById('btnFwd').onclick = () => { playTime += 10; };
+
+document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') { e.preventDefault(); isPlaying ? stop() : play(); }
+});
+
+renderSlots();
+</script>
+
+</body>
+</html>

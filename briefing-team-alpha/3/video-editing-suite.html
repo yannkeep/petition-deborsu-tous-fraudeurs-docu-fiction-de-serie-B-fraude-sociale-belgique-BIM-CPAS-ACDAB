@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDITING SUITE — Station de Montage</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600&display=swap');
+        
+        :root {
+            --bg-dark: #1a1a1a;
+            --bg-panel: #252525;
+            --bg-input: #2a2a2a;
+            --accent-blue: #3b82f6;
+            --accent-green: #22c55e;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-purple: #8b5cf6;
+            --text-primary: #e5e5e5;
+            --text-secondary: #888;
+            --border-color: #3a3a3a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg-dark);
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-primary);
+        }
+
+        /* EDITOR LAYOUT */
+        .editor-container {
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            height: 100vh;
+        }
+
+        /* TOOLBAR */
+        .toolbar {
+            background: #1f1f1f;
+            border-bottom: 1px solid var(--border-color);
+            padding: 8px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .app-logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--accent-blue);
+            letter-spacing: 1px;
+        }
+
+        .project-name {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            padding: 5px 12px;
+            background: var(--bg-input);
+            border-radius: 4px;
+        }
+
+        .toolbar-center {
+            display: flex;
+            gap: 5px;
+        }
+
+        .tool-btn {
+            width: 36px;
+            height: 36px;
+            background: var(--bg-input);
+            border: 1px solid transparent;
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .tool-btn:hover {
+            background: var(--bg-panel);
+            color: var(--text-primary);
+            border-color: var(--border-color);
+        }
+
+        .tool-btn.active {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .render-btn {
+            background: var(--accent-green);
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .render-btn:hover {
+            background: #16a34a;
+        }
+
+        /* MAIN AREA */
+        .main-area {
+            display: grid;
+            grid-template-columns: 250px 1fr 280px;
+            gap: 1px;
+            background: var(--border-color);
+        }
+
+        /* PANELS */
+        .panel {
+            background: var(--bg-panel);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        /* MEDIA BROWSER */
+        .media-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            margin-bottom: 5px;
+        }
+
+        .media-item:hover {
+            background: var(--bg-input);
+        }
+
+        .media-item.active {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid var(--accent-blue);
+        }
+
+        .media-thumb {
+            width: 50px;
+            height: 28px;
+            background: #333;
+            border-radius: 3px;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .media-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .media-name {
+            font-size: 0.8rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .media-meta {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        /* PREVIEW MONITOR */
+        .preview-panel {
+            background: #111;
+        }
+
+        .preview-monitor {
+            background: #000;
+            aspect-ratio: 16/9;
+            position: relative;
+            margin: 10px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .preview-monitor iframe,
+        .preview-monitor video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .preview-timecode {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            padding: 5px 15px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            color: var(--accent-green);
+        }
+
+        .preview-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+        }
+
+        .preview-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .preview-btn:hover {
+            background: var(--bg-panel);
+            color: white;
+        }
+
+        .preview-btn.play-btn {
+            width: 50px;
+            height: 50px;
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .preview-btn.play-btn:hover {
+            background: #2563eb;
+        }
+
+        /* INSPECTOR */
+        .inspector-section {
+            margin-bottom: 20px;
+        }
+
+        .inspector-title {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .inspector-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .inspector-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .inspector-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            background: var(--bg-input);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .inspector-slider {
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        /* TIMELINE */
+        .timeline-area {
+            background: #1a1a1a;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .timeline-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .timeline-tools {
+            display: flex;
+            gap: 5px;
+        }
+
+        .zoom-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .zoom-slider {
+            width: 100px;
+            -webkit-appearance: none;
+            height: 4px;
+            background: var(--bg-input);
+            border-radius: 2px;
+        }
+
+        .zoom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* TIMELINE RULER */
+        .timeline-ruler {
+            height: 25px;
+            background: var(--bg-input);
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .ruler-mark {
+            position: absolute;
+            bottom: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+            transform: translateX(-50%);
+        }
+
+        .ruler-mark::before {
+            content: "";
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            width: 1px;
+            height: 8px;
+            background: var(--border-color);
+        }
+
+        /* PLAYHEAD */
+        .playhead {
+            position: absolute;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            background: var(--accent-red);
+            z-index: 50;
+            left: 15%;
+        }
+
+        .playhead::before {
+            content: "";
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            width: 12px;
+            height: 12px;
+            background: var(--accent-red);
+            clip-path: polygon(50% 100%, 0 0, 100% 0);
+        }
+
+        /* TRACKS */
+        .timeline-tracks {
+            flex: 1;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .track {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            min-height: 50px;
+        }
+
+        .track-header {
+            width: 150px;
+            background: var(--bg-panel);
+            padding: 10px;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .track-color {
+            width: 4px;
+            height: 30px;
+            border-radius: 2px;
+        }
+
+        .track-video .track-color { background: var(--accent-blue); }
+        .track-audio .track-color { background: var(--accent-green); }
+        .track-text .track-color { background: var(--accent-orange); }
+
+        .track-name {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .track-content {
+            flex: 1;
+            position: relative;
+            background: var(--bg-dark);
+            padding: 5px;
+        }
+
+        /* CLIPS */
+        .clip {
+            position: absolute;
+            top: 5px;
+            height: 40px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            font-size: 0.7rem;
+            color: white;
+            cursor: move;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .clip-video {
+            background: linear-gradient(135deg, var(--accent-blue) 0%, #1d4ed8 100%);
+        }
+
+        .clip-audio {
+            background: linear-gradient(135deg, var(--accent-green) 0%, #15803d 100%);
+        }
+
+        .clip-text {
+            background: linear-gradient(135deg, var(--accent-orange) 0%, #d97706 100%);
+        }
+
+        /* WAVEFORM */
+        .waveform {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0.3;
+        }
+
+        .waveform-bar {
+            position: absolute;
+            bottom: 50%;
+            width: 2px;
+            background: white;
+            transform-origin: bottom;
+        }
+
+        /* FOOTER */
+        .editor-footer {
+            background: var(--bg-panel);
+            border-top: 1px solid var(--border-color);
+            padding: 8px 15px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        .footer-stats {
+            display: flex;
+            gap: 20px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .main-area {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto;
+            }
+            .panel:first-child, .panel:last-child {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="editor-container" id="player">
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <div class="app-logo">OUAISFI EDIT</div>
+            <div class="project-name">📁 Briefing_TeamAlpha_v3.proj</div>
+        </div>
+        <div class="toolbar-center">
+            <button class="tool-btn active" title="Select">🖱️</button>
+            <button class="tool-btn" title="Cut">✂️</button>
+            <button class="tool-btn" title="Trim">📐</button>
+            <button class="tool-btn" title="Text">T</button>
+        </div>
+        <div class="toolbar-right">
+            <span style="font-size: 0.8rem; color: var(--text-secondary);">Sauvegarde auto: 2 min</span>
+            <button class="render-btn">⚡ EXPORTER</button>
+        </div>
+    </div>
+
+    <!-- MAIN AREA -->
+    <div class="main-area">
+        <!-- MEDIA BROWSER -->
+        <div class="panel">
+            <div class="panel-header">
+                <span>Média</span>
+                <button class="tool-btn" style="width: 24px; height: 24px; font-size: 0.8rem;">+</button>
+            </div>
+            <div class="panel-content" id="mediaBrowser"></div>
+        </div>
+
+        <!-- PREVIEW -->
+        <div class="preview-panel">
+            <div class="preview-monitor" id="previewMonitor">
+                <iframe id="videoFrame" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <div class="preview-timecode" id="timecode">00:00:00:00</div>
+            </div>
+            <div class="preview-controls">
+                <button class="preview-btn" id="btnStart">⏮</button>
+                <button class="preview-btn" id="btnBack">⏪</button>
+                <button class="preview-btn play-btn" id="btnPlay">▶</button>
+                <button class="preview-btn" id="btnForward">⏩</button>
+                <button class="preview-btn" id="btnEnd">⏭</button>
+            </div>
+        </div>
+
+        <!-- INSPECTOR -->
+        <div class="panel">
+            <div class="panel-header">Inspecteur</div>
+            <div class="panel-content">
+                <div class="inspector-section">
+                    <div class="inspector-title">Clip sélectionné</div>
+                    <div class="inspector-row">
+                        <span class="inspector-label">Nom</span>
+                        <span class="inspector-value" id="inspectorName">Briefing_Alpha.mp4</span>
+                    </div>
+                    <div class="inspector-row">
+                        <span class="inspector-label">Durée</span>
+                        <span class="inspector-value">00:03:24:12</span>
+                    </div>
+                    <div class="inspector-row">
+                        <span class="inspector-label">Résolution</span>
+                        <span class="inspector-value">1920×1080</span>
+                    </div>
+                </div>
+                <div class="inspector-section">
+                    <div class="inspector-title">Effets</div>
+                    <div class="inspector-row">
+                        <span class="inspector-label">Opacité</span>
+                        <span class="inspector-value">100%</span>
+                    </div>
+                    <input type="range" class="inspector-slider" value="100">
+                    <div class="inspector-row" style="margin-top: 10px;">
+                        <span class="inspector-label">Vitesse</span>
+                        <span class="inspector-value">1.0×</span>
+                    </div>
+                    <input type="range" class="inspector-slider" value="50">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TIMELINE -->
+    <div class="timeline-area">
+        <div class="timeline-toolbar">
+            <div class="timeline-tools">
+                <button class="tool-btn">🔗</button>
+                <button class="tool-btn">🔇</button>
+                <button class="tool-btn">🔒</button>
+            </div>
+            <div class="zoom-control">
+                <span style="font-size: 0.7rem; color: var(--text-secondary);">Zoom</span>
+                <input type="range" class="zoom-slider" id="zoomSlider" value="50">
+            </div>
+        </div>
+
+        <div class="timeline-ruler">
+            <div class="ruler-mark" style="left: 0%;">00:00</div>
+            <div class="ruler-mark" style="left: 25%;">00:30</div>
+            <div class="ruler-mark" style="left: 50%;">01:00</div>
+            <div class="ruler-mark" style="left: 75%;">01:30</div>
+            <div class="ruler-mark" style="left: 100%;">02:00</div>
+            <div class="playhead" id="playhead"></div>
+        </div>
+
+        <div class="timeline-tracks">
+            <div class="track track-video">
+                <div class="track-header">
+                    <div class="track-color"></div>
+                    <div class="track-name">V1 - Vidéo</div>
+                </div>
+                <div class="track-content">
+                    <div class="clip clip-video" style="left: 5%; width: 35%;">📹 Briefing_Alpha.mp4</div>
+                    <div class="clip clip-video" style="left: 42%; width: 25%;">📹 Interview_01.mp4</div>
+                </div>
+            </div>
+            <div class="track track-audio">
+                <div class="track-header">
+                    <div class="track-color"></div>
+                    <div class="track-name">A1 - Audio</div>
+                </div>
+                <div class="track-content">
+                    <div class="clip clip-audio" style="left: 5%; width: 60%;">
+                        🎵 Voix_principale
+                        <div class="waveform" id="waveform1"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="track track-text">
+                <div class="track-header">
+                    <div class="track-color"></div>
+                    <div class="track-name">T1 - Titres</div>
+                </div>
+                <div class="track-content">
+                    <div class="clip clip-text" style="left: 5%; width: 15%;">T INTRO</div>
+                    <div class="clip clip-text" style="left: 70%; width: 20%;">T CONCLUSION</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="editor-footer">
+        <div class="footer-stats">
+            <span>Durée: 02:15:30</span>
+            <span>FPS: 30</span>
+            <span>Codec: H.264</span>
+        </div>
+        <span>© 2026 CCPLC — ouaisfi.eu</span>
+    </div>
+</div>
+
+<script>
+const mediaFiles = [
+    { name: "Briefing_Alpha.mp4", type: "video", duration: "3:24", videoId: "dQw4w9WgXcQ" },
+    { name: "Interview_Expert.mp4", type: "video", duration: "5:12", videoId: "dQw4w9WgXcQ" },
+    { name: "Documentation.mp4", type: "video", duration: "8:45", videoId: "dQw4w9WgXcQ" },
+    { name: "Voix_Off.wav", type: "audio", duration: "2:30", videoId: null },
+    { name: "Musique_Fond.mp3", type: "audio", duration: "4:00", videoId: null }
+];
+
+let currentMedia = 0;
+let isPlaying = false;
+let timeCounter = 0;
+
+const mediaBrowser = document.getElementById('mediaBrowser');
+const videoFrame = document.getElementById('videoFrame');
+const timecode = document.getElementById('timecode');
+const btnPlay = document.getElementById('btnPlay');
+const playhead = document.getElementById('playhead');
+const inspectorName = document.getElementById('inspectorName');
+
+// Render media browser
+function renderMedia() {
+    mediaBrowser.innerHTML = '';
+    mediaFiles.forEach((m, i) => {
+        const item = document.createElement('div');
+        item.className = `media-item ${i === currentMedia ? 'active' : ''}`;
+        item.innerHTML = `
+            <div class="media-thumb">${m.type === 'video' ? '🎬' : '🎵'}</div>
+            <div class="media-info">
+                <div class="media-name">${m.name}</div>
+                <div class="media-meta">${m.duration} • ${m.type}</div>
+            </div>
+        `;
+        item.onclick = () => selectMedia(i);
+        mediaBrowser.appendChild(item);
+    });
+}
+
+function selectMedia(index) {
+    currentMedia = index;
+    const m = mediaFiles[index];
+    inspectorName.textContent = m.name;
+    document.querySelectorAll('.media-item').forEach((el, i) => el.classList.toggle('active', i === index));
+    
+    if (m.videoId) {
+        videoFrame.src = `https://www.youtube.com/embed/${m.videoId}?enablejsapi=1`;
+    }
+}
+
+function formatTimecode(seconds) {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = Math.floor(seconds % 60);
+    const f = Math.floor((seconds % 1) * 30);
+    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}:${String(f).padStart(2,'0')}`;
+}
+
+function togglePlay() {
+    isPlaying = !isPlaying;
+    btnPlay.textContent = isPlaying ? '❚❚' : '▶';
+}
+
+let playInterval = setInterval(() => {
+    if (isPlaying) {
+        timeCounter += 0.033;
+        timecode.textContent = formatTimecode(timeCounter);
+        const pos = (timeCounter / 120) * 100;
+        playhead.style.left = `${Math.min(pos, 100)}%`;
+    }
+}, 33);
+
+// Generate waveform
+function generateWaveform(container) {
+    const el = document.getElementById(container);
+    if (!el) return;
+    for (let i = 0; i < 50; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'waveform-bar';
+        bar.style.left = `${i * 2}%`;
+        bar.style.height = `${Math.random() * 40 + 10}%`;
+        el.appendChild(bar);
+    }
+}
+
+btnPlay.onclick = togglePlay;
+document.getElementById('btnStart').onclick = () => { timeCounter = 0; };
+document.getElementById('btnEnd').onclick = () => { timeCounter = 120; };
+document.getElementById('btnBack').onclick = () => { timeCounter = Math.max(0, timeCounter - 5); };
+document.getElementById('btnForward').onclick = () => { timeCounter += 5; };
+
+document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+});
+
+renderMedia();
+generateWaveform('waveform1');
+selectMedia(0);
+</script>
+
+</body>
+</html>

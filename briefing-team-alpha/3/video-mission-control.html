@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MISSION CONTROL — Centre de Commandement</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+        
+        :root {
+            --mission-blue: #00a8ff;
+            --mission-green: #00ff88;
+            --mission-orange: #ff8800;
+            --mission-red: #ff3333;
+            --panel-bg: #0a1628;
+            --panel-border: #1a3a5a;
+            --text-dim: #4a6a8a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #050a15;
+            min-height: 100vh;
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--mission-blue);
+            overflow-x: hidden;
+        }
+
+        /* GRID BACKGROUND */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: 
+                linear-gradient(rgba(0, 168, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 168, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+        }
+
+        /* MISSION CONTROL LAYOUT */
+        .mission-control {
+            padding: 15px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* HEADER */
+        .control-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            margin-bottom: 15px;
+        }
+
+        .mission-badge {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .badge-icon {
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--mission-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .badge-text {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .badge-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+        }
+
+        .badge-subtitle {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+        }
+
+        .mission-clock {
+            text-align: right;
+        }
+
+        .clock-label {
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+        }
+
+        .clock-time {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--mission-green);
+            text-shadow: 0 0 20px var(--mission-green);
+        }
+
+        .status-indicators {
+            display: flex;
+            gap: 20px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-led {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #333;
+        }
+
+        .status-led.green {
+            background: var(--mission-green);
+            box-shadow: 0 0 10px var(--mission-green);
+        }
+
+        .status-led.orange {
+            background: var(--mission-orange);
+            box-shadow: 0 0 10px var(--mission-orange);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0.5; }
+        }
+
+        .status-text {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+        }
+
+        /* MAIN GRID */
+        .control-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr 280px;
+            gap: 15px;
+        }
+
+        /* PANELS */
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            position: relative;
+        }
+
+        .panel::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 3px;
+            background: linear-gradient(90deg, transparent, var(--mission-blue), transparent);
+        }
+
+        .panel-header {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--panel-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+        }
+
+        .panel-status {
+            font-size: 0.6rem;
+            padding: 3px 8px;
+            border-radius: 3px;
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--mission-green);
+        }
+
+        .panel-content {
+            padding: 15px;
+        }
+
+        /* TELEMETRY */
+        .telemetry-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(26, 58, 90, 0.5);
+        }
+
+        .telemetry-label {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+        }
+
+        .telemetry-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            color: var(--mission-green);
+        }
+
+        .telemetry-value.warning {
+            color: var(--mission-orange);
+        }
+
+        /* PROGRESS BARS */
+        .progress-item {
+            margin-bottom: 15px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            margin-bottom: 5px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #1a2a3a;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-fill.blue { background: var(--mission-blue); }
+        .progress-fill.green { background: var(--mission-green); }
+        .progress-fill.orange { background: var(--mission-orange); }
+
+        /* MAIN SCREEN */
+        .main-screen {
+            grid-column: 2;
+        }
+
+        .screen-wrapper {
+            background: #000;
+            aspect-ratio: 16/9;
+            position: relative;
+            border: 2px solid var(--panel-border);
+        }
+
+        .screen-wrapper iframe,
+        .screen-wrapper video {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* SCREEN OVERLAY */
+        .screen-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .overlay-corner {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 2px solid var(--mission-blue);
+        }
+
+        .corner-tl { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+        .corner-tr { top: 10px; right: 10px; border-left: none; border-bottom: none; }
+        .corner-bl { bottom: 10px; left: 10px; border-right: none; border-top: none; }
+        .corner-br { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+
+        .overlay-data {
+            position: absolute;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+        }
+
+        .data-top {
+            top: 15px;
+            left: 50px;
+            color: var(--mission-blue);
+        }
+
+        .data-bottom {
+            bottom: 15px;
+            right: 50px;
+            color: var(--mission-green);
+            text-align: right;
+        }
+
+        /* CONTROLS */
+        .control-section {
+            margin-top: 15px;
+        }
+
+        .control-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .ctrl-btn {
+            width: 50px;
+            height: 50px;
+            background: var(--panel-bg);
+            border: 2px solid var(--panel-border);
+            color: var(--text-dim);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            clip-path: polygon(10% 0, 90% 0, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0 90%, 0 10%);
+        }
+
+        .ctrl-btn:hover {
+            border-color: var(--mission-blue);
+            color: var(--mission-blue);
+            box-shadow: 0 0 15px rgba(0, 168, 255, 0.3);
+        }
+
+        .ctrl-btn.play-btn {
+            width: 70px;
+            height: 70px;
+            border-color: var(--mission-green);
+            color: var(--mission-green);
+        }
+
+        .ctrl-btn.play-btn:hover {
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .ctrl-btn.play-btn.active {
+            background: var(--mission-green);
+            color: #000;
+        }
+
+        /* TIMELINE */
+        .timeline-section {
+            margin-top: 15px;
+            padding: 15px;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+        }
+
+        .timeline-bar {
+            height: 6px;
+            background: #1a2a3a;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .timeline-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--mission-blue), var(--mission-green));
+            width: 0%;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            top: -5px;
+            width: 16px;
+            height: 16px;
+            background: var(--mission-green);
+            transform: translateX(-50%) rotate(45deg);
+            cursor: pointer;
+        }
+
+        .timeline-times {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.8rem;
+        }
+
+        /* PLAYLIST */
+        .transmission-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .transmission-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid var(--panel-border);
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .transmission-item:hover {
+            background: rgba(0, 168, 255, 0.1);
+        }
+
+        .transmission-item.active {
+            background: rgba(0, 255, 136, 0.1);
+            border-left: 3px solid var(--mission-green);
+        }
+
+        .transmission-id {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            color: var(--mission-blue);
+            margin-right: 15px;
+            min-width: 50px;
+        }
+
+        .transmission-info {
+            flex: 1;
+        }
+
+        .transmission-title {
+            font-size: 0.8rem;
+            color: var(--mission-blue);
+        }
+
+        .transmission-meta {
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            margin-top: 3px;
+        }
+
+        /* FOOTER */
+        .control-footer {
+            margin-top: 15px;
+            padding: 15px;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1000px) {
+            .control-grid {
+                grid-template-columns: 1fr;
+            }
+            .panel:first-child, .panel:last-child {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="mission-control" id="player">
+    <!-- HEADER -->
+    <div class="control-header">
+        <div class="mission-badge">
+            <div class="badge-icon">🛰️</div>
+            <div class="badge-text">
+                <div class="badge-title">MISSION CONTROL</div>
+                <div class="badge-subtitle">CCPLC BROADCAST NETWORK</div>
+            </div>
+        </div>
+        <div class="status-indicators">
+            <div class="status-item">
+                <div class="status-led green"></div>
+                <span class="status-text">SYSTÈME</span>
+            </div>
+            <div class="status-item">
+                <div class="status-led green"></div>
+                <span class="status-text">RÉSEAU</span>
+            </div>
+            <div class="status-item">
+                <div class="status-led orange" id="streamLed"></div>
+                <span class="status-text">STREAM</span>
+            </div>
+        </div>
+        <div class="mission-clock">
+            <div class="clock-label">MISSION ELAPSED TIME</div>
+            <div class="clock-time" id="missionClock">00:00:00</div>
+        </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="control-grid">
+        <!-- LEFT PANEL - TELEMETRY -->
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title">TÉLÉMÉTRIE</span>
+                <span class="panel-status">NOMINAL</span>
+            </div>
+            <div class="panel-content">
+                <div class="telemetry-row">
+                    <span class="telemetry-label">ALTITUDE</span>
+                    <span class="telemetry-value">408 km</span>
+                </div>
+                <div class="telemetry-row">
+                    <span class="telemetry-label">VÉLOCITÉ</span>
+                    <span class="telemetry-value">7.66 km/s</span>
+                </div>
+                <div class="telemetry-row">
+                    <span class="telemetry-label">BITRATE</span>
+                    <span class="telemetry-value warning">4.2 Mbps</span>
+                </div>
+                <div class="telemetry-row">
+                    <span class="telemetry-label">LATENCE</span>
+                    <span class="telemetry-value">42 ms</span>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span>BUFFER</span>
+                            <span>78%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill blue" style="width: 78%;"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span>SIGNAL</span>
+                            <span>92%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill green" style="width: 92%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CENTER - MAIN SCREEN -->
+        <div class="main-screen">
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">TRANSMISSION PRINCIPALE</span>
+                    <span class="panel-status" id="liveStatus">STANDBY</span>
+                </div>
+                <div class="panel-content" style="padding: 0;">
+                    <div class="screen-wrapper">
+                        <iframe id="videoFrame" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        <div class="screen-overlay">
+                            <div class="overlay-corner corner-tl"></div>
+                            <div class="overlay-corner corner-tr"></div>
+                            <div class="overlay-corner corner-bl"></div>
+                            <div class="overlay-corner corner-br"></div>
+                            <div class="overlay-data data-top">
+                                <div>TX-01 | 1080p60</div>
+                                <div id="overlayTitle">BRIEFING_ALPHA</div>
+                            </div>
+                            <div class="overlay-data data-bottom">
+                                <div id="overlayTime">T+00:00:00</div>
+                                <div>ENCRYPTED</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTROLS -->
+            <div class="control-section">
+                <div class="control-row">
+                    <button class="ctrl-btn" id="btnPrev">⏮</button>
+                    <button class="ctrl-btn" id="btnRew">⏪</button>
+                    <button class="ctrl-btn play-btn" id="btnPlay">▶</button>
+                    <button class="ctrl-btn" id="btnFwd">⏩</button>
+                    <button class="ctrl-btn" id="btnNext">⏭</button>
+                </div>
+            </div>
+
+            <!-- TIMELINE -->
+            <div class="timeline-section">
+                <div class="timeline-bar" id="timelineBar">
+                    <div class="timeline-fill" id="timelineFill"></div>
+                    <div class="timeline-marker" id="timelineMarker" style="left: 0%;"></div>
+                </div>
+                <div class="timeline-times">
+                    <span id="timeCurrent">T+00:00:00</span>
+                    <span id="timeTotal">02:15:30</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL - TRANSMISSIONS -->
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title">TRANSMISSIONS</span>
+            </div>
+            <div class="panel-content" style="padding: 0;">
+                <div class="transmission-list" id="transmissionList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="control-footer">
+        <span>© 2026 CCPLC — CENTRE DE COMMANDEMENT CITOYEN</span>
+        <span>ouaisfi.eu | CC BY-NC 4.0</span>
+    </div>
+</div>
+
+<script>
+const transmissions = [
+    { id: "TX-01", title: "BRIEFING TEAM ALPHA", meta: "PRIORITÉ HAUTE • 3:24", videoId: "dQw4w9WgXcQ" },
+    { id: "TX-02", title: "ANALYSE PARTICRATIE", meta: "DOCUMENTATION • 8:45", videoId: "dQw4w9WgXcQ" },
+    { id: "TX-03", title: "SIGNAL D'ALERTE", meta: "URGENCE • 2:15", videoId: "dQw4w9WgXcQ" }
+];
+
+let currentTx = 0;
+let isPlaying = false;
+let missionTime = 0;
+
+const player = document.getElementById('player');
+const videoFrame = document.getElementById('videoFrame');
+const btnPlay = document.getElementById('btnPlay');
+const missionClock = document.getElementById('missionClock');
+const overlayTitle = document.getElementById('overlayTitle');
+const overlayTime = document.getElementById('overlayTime');
+const liveStatus = document.getElementById('liveStatus');
+const streamLed = document.getElementById('streamLed');
+const timelineFill = document.getElementById('timelineFill');
+const timelineMarker = document.getElementById('timelineMarker');
+const timeCurrent = document.getElementById('timeCurrent');
+
+function renderTransmissions() {
+    const container = document.getElementById('transmissionList');
+    container.innerHTML = '';
+    transmissions.forEach((tx, i) => {
+        const item = document.createElement('div');
+        item.className = `transmission-item ${i === currentTx ? 'active' : ''}`;
+        item.innerHTML = `
+            <span class="transmission-id">${tx.id}</span>
+            <div class="transmission-info">
+                <div class="transmission-title">${tx.title}</div>
+                <div class="transmission-meta">${tx.meta}</div>
+            </div>
+        `;
+        item.onclick = () => selectTx(i);
+        container.appendChild(item);
+    });
+}
+
+function selectTx(index) {
+    currentTx = index;
+    const tx = transmissions[index];
+    overlayTitle.textContent = tx.title.replace(/ /g, '_').toUpperCase();
+    document.querySelectorAll('.transmission-item').forEach((el, i) => el.classList.toggle('active', i === index));
+}
+
+function formatTime(seconds) {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = Math.floor(seconds % 60);
+    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+function play() {
+    const tx = transmissions[currentTx];
+    videoFrame.src = `https://www.youtube.com/embed/${tx.videoId}?autoplay=1&rel=0`;
+    isPlaying = true;
+    btnPlay.classList.add('active');
+    btnPlay.textContent = '❚❚';
+    liveStatus.textContent = 'LIVE';
+    liveStatus.style.background = 'rgba(0, 255, 136, 0.2)';
+    streamLed.classList.remove('orange');
+    streamLed.classList.add('green');
+}
+
+function stop() {
+    videoFrame.src = '';
+    isPlaying = false;
+    btnPlay.classList.remove('active');
+    btnPlay.textContent = '▶';
+    liveStatus.textContent = 'STANDBY';
+    liveStatus.style.background = 'rgba(255, 136, 0, 0.2)';
+    streamLed.classList.remove('green');
+    streamLed.classList.add('orange');
+}
+
+// Mission clock update
+setInterval(() => {
+    if (isPlaying) {
+        missionTime++;
+        missionClock.textContent = formatTime(missionTime);
+        overlayTime.textContent = `T+${formatTime(missionTime)}`;
+        timeCurrent.textContent = `T+${formatTime(missionTime)}`;
+        
+        const progress = (missionTime % 300) / 300 * 100;
+        timelineFill.style.width = `${progress}%`;
+        timelineMarker.style.left = `${progress}%`;
+    }
+}, 1000);
+
+btnPlay.onclick = () => isPlaying ? stop() : play();
+document.getElementById('btnPrev').onclick = () => { selectTx((currentTx - 1 + transmissions.length) % transmissions.length); };
+document.getElementById('btnNext').onclick = () => { selectTx((currentTx + 1) % transmissions.length); };
+document.getElementById('btnRew').onclick = () => { missionTime = Math.max(0, missionTime - 10); };
+document.getElementById('btnFwd').onclick = () => { missionTime += 10; };
+
+document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') { e.preventDefault(); isPlaying ? stop() : play(); }
+});
+
+renderTransmissions();
+selectTx(0);
+</script>
+
+</body>
+</html>

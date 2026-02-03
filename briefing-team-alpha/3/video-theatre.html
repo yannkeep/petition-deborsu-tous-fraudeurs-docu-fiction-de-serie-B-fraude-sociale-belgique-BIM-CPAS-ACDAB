@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THÉÂTRE CITOYEN — Grande Salle</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Cormorant+Garamond:wght@400;600&display=swap');
+        
+        :root {
+            --velvet-red: #8b0000;
+            --gold: #d4af37;
+            --cream: #f5f0e5;
+            --dark-wood: #2a1810;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--dark-wood);
+            min-height: 100vh;
+            font-family: 'Cormorant Garamond', serif;
+            color: var(--cream);
+            overflow-x: hidden;
+        }
+
+        /* THEATRE CONTAINER */
+        .theatre-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ORNATE HEADER */
+        .theatre-header {
+            background: linear-gradient(180deg, #1a0f0a 0%, var(--dark-wood) 100%);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px solid var(--gold);
+            position: relative;
+        }
+
+        .header-ornament {
+            position: absolute;
+            font-size: 1.5rem;
+            color: var(--gold);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .header-ornament.left { left: 30px; }
+        .header-ornament.right { right: 30px; }
+
+        .theatre-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gold);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            letter-spacing: 8px;
+        }
+
+        .theatre-subtitle {
+            font-size: 1rem;
+            color: var(--cream);
+            letter-spacing: 5px;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+
+        /* STAGE AREA */
+        .stage-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px;
+            position: relative;
+            background: 
+                radial-gradient(ellipse at center top, rgba(212, 175, 55, 0.1) 0%, transparent 50%);
+        }
+
+        /* CURTAINS */
+        .curtains {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .curtain {
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                var(--velvet-red) 0%,
+                #a01010 20%,
+                var(--velvet-red) 40%,
+                #6a0000 60%,
+                var(--velvet-red) 80%,
+                #a01010 100%
+            );
+            position: relative;
+            transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        .curtain::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                180deg,
+                transparent 0px,
+                transparent 20px,
+                rgba(0,0,0,0.1) 20px,
+                rgba(0,0,0,0.1) 40px
+            );
+        }
+
+        .curtain-left {
+            transform-origin: left;
+        }
+
+        .curtain-right {
+            transform-origin: right;
+        }
+
+        .curtains.open .curtain-left {
+            transform: translateX(-95%);
+        }
+
+        .curtains.open .curtain-right {
+            transform: translateX(95%);
+        }
+
+        /* VALANCE */
+        .valance {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(180deg, var(--velvet-red) 0%, #6a0000 100%);
+            z-index: 101;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            padding-bottom: 10px;
+        }
+
+        .valance-fringe {
+            display: flex;
+            gap: 15px;
+        }
+
+        .fringe {
+            width: 8px;
+            height: 20px;
+            background: var(--gold);
+            border-radius: 0 0 4px 4px;
+        }
+
+        /* STAGE FRAME */
+        .stage-frame {
+            width: 100%;
+            max-width: 900px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .frame-top {
+            height: 20px;
+            background: linear-gradient(180deg, var(--gold) 0%, #b8960f 100%);
+            border-radius: 10px 10px 0 0;
+        }
+
+        .frame-sides {
+            display: flex;
+        }
+
+        .frame-side {
+            width: 20px;
+            background: linear-gradient(90deg, var(--gold) 0%, #b8960f 100%);
+        }
+
+        .frame-side.right {
+            background: linear-gradient(90deg, #b8960f 0%, var(--gold) 100%);
+        }
+
+        .stage-screen {
+            flex: 1;
+            background: #000;
+            aspect-ratio: 16/9;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stage-screen iframe,
+        .stage-screen video {
+            width: 100%;
+            height: 100%;
+        }
+
+        .frame-bottom {
+            height: 20px;
+            background: linear-gradient(180deg, #b8960f 0%, var(--gold) 100%);
+            border-radius: 0 0 10px 10px;
+        }
+
+        /* NOW PLAYING */
+        .now-playing {
+            text-align: center;
+            margin-top: 25px;
+            z-index: 10;
+        }
+
+        .play-label {
+            font-size: 0.8rem;
+            letter-spacing: 5px;
+            color: var(--gold);
+            opacity: 0.8;
+        }
+
+        .play-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            margin-top: 10px;
+            color: var(--cream);
+        }
+
+        .play-info {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.6);
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        /* CONTROLS */
+        .control-area {
+            background: linear-gradient(180deg, var(--dark-wood) 0%, #1a0f0a 100%);
+            padding: 25px;
+            border-top: 3px solid var(--gold);
+        }
+
+        .control-inner {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* PROGRESS */
+        .progress-section {
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 3px;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gold);
+            width: 0%;
+            border-radius: 3px;
+        }
+
+        .progress-times {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* BUTTONS */
+        .button-row {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .theatre-btn {
+            width: 55px;
+            height: 55px;
+            background: transparent;
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            color: var(--gold);
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theatre-btn:hover {
+            background: rgba(212, 175, 55, 0.1);
+            transform: scale(1.05);
+        }
+
+        .theatre-btn.play-btn {
+            width: 75px;
+            height: 75px;
+            font-size: 1.8rem;
+        }
+
+        .theatre-btn.play-btn.active {
+            background: var(--gold);
+            color: var(--dark-wood);
+        }
+
+        /* PROGRAMME */
+        .programme-section {
+            margin-top: 25px;
+        }
+
+        .programme-title {
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: var(--gold);
+            margin-bottom: 15px;
+            letter-spacing: 3px;
+        }
+
+        .programme-list {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .programme-item {
+            background: rgba(212, 175, 55, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 15px 20px;
+            min-width: 180px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .programme-item:hover {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .programme-item.active {
+            border-color: var(--gold);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+
+        .item-act {
+            font-size: 0.7rem;
+            color: var(--gold);
+            letter-spacing: 3px;
+        }
+
+        .item-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            margin-top: 5px;
+        }
+
+        .item-duration {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+            margin-top: 5px;
+        }
+
+        /* FOOTER */
+        .theatre-footer {
+            background: #0a0505;
+            padding: 15px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.3);
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .theatre-footer a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .theatre-title { font-size: 1.5rem; letter-spacing: 3px; }
+            .header-ornament { display: none; }
+            .play-title { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="theatre-container" id="player">
+    <!-- HEADER -->
+    <div class="theatre-header">
+        <span class="header-ornament left">❧</span>
+        <div class="theatre-title">THÉÂTRE CITOYEN</div>
+        <div class="theatre-subtitle">— Grande Salle —</div>
+        <span class="header-ornament right">❧</span>
+    </div>
+
+    <!-- STAGE -->
+    <div class="stage-area">
+        <!-- CURTAINS -->
+        <div class="curtains" id="curtains">
+            <div class="curtain curtain-left"></div>
+            <div class="curtain curtain-right"></div>
+        </div>
+
+        <div class="valance">
+            <div class="valance-fringe">
+                <div class="fringe"></div>
+                <div class="fringe"></div>
+                <div class="fringe"></div>
+                <div class="fringe"></div>
+                <div class="fringe"></div>
+                <div class="fringe"></div>
+                <div class="fringe"></div>
+            </div>
+        </div>
+
+        <!-- STAGE FRAME -->
+        <div class="stage-frame">
+            <div class="frame-top"></div>
+            <div class="frame-sides">
+                <div class="frame-side"></div>
+                <div class="stage-screen">
+                    <iframe id="videoFrame" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                </div>
+                <div class="frame-side right"></div>
+            </div>
+            <div class="frame-bottom"></div>
+        </div>
+
+        <!-- NOW PLAYING -->
+        <div class="now-playing">
+            <div class="play-label">ACTUELLEMENT À L'AFFICHE</div>
+            <div class="play-title" id="playTitle">Briefing Team Alpha</div>
+            <div class="play-info" id="playInfo">Documentaire en trois actes</div>
+        </div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="control-area">
+        <div class="control-inner">
+            <div class="progress-section">
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-times">
+                    <span id="timeCurrent">00:00</span>
+                    <span id="timeTotal">00:00</span>
+                </div>
+            </div>
+
+            <div class="button-row">
+                <button class="theatre-btn" id="btnPrev">⏮</button>
+                <button class="theatre-btn" id="btnRew">⏪</button>
+                <button class="theatre-btn play-btn" id="btnPlay">▶</button>
+                <button class="theatre-btn" id="btnFwd">⏩</button>
+                <button class="theatre-btn" id="btnNext">⏭</button>
+            </div>
+
+            <!-- PROGRAMME -->
+            <div class="programme-section">
+                <div class="programme-title">— PROGRAMME —</div>
+                <div class="programme-list" id="programmeList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="theatre-footer">
+        © 2026 CCPLC — <a href="https://ouaisfi.eu" target="_blank">ouaisfi.eu</a> — CC BY-NC 4.0
+    </div>
+</div>
+
+<script>
+const programme = [
+    { act: "ACTE I", name: "Briefing Team Alpha", info: "Documentaire", duration: "3:24", videoId: "dQw4w9WgXcQ" },
+    { act: "ACTE II", name: "Particratie Belge", info: "Analyse", duration: "8:45", videoId: "dQw4w9WgXcQ" },
+    { act: "ACTE III", name: "Le Réveil Citoyen", info: "Conclusion", duration: "5:30", videoId: "dQw4w9WgXcQ" }
+];
+
+let currentAct = 0;
+let isPlaying = false;
+let playTime = 0;
+
+const curtains = document.getElementById('curtains');
+const videoFrame = document.getElementById('videoFrame');
+const btnPlay = document.getElementById('btnPlay');
+const playTitle = document.getElementById('playTitle');
+const playInfo = document.getElementById('playInfo');
+const progressFill = document.getElementById('progressFill');
+const programmeList = document.getElementById('programmeList');
+
+function renderProgramme() {
+    programmeList.innerHTML = '';
+    programme.forEach((p, i) => {
+        const item = document.createElement('div');
+        item.className = `programme-item ${i === currentAct ? 'active' : ''}`;
+        item.innerHTML = `
+            <div class="item-act">${p.act}</div>
+            <div class="item-name">${p.name}</div>
+            <div class="item-duration">${p.duration}</div>
+        `;
+        item.onclick = () => selectAct(i);
+        programmeList.appendChild(item);
+    });
+}
+
+function selectAct(index) {
+    currentAct = index;
+    const p = programme[index];
+    playTitle.textContent = p.name;
+    playInfo.textContent = p.info;
+    document.querySelectorAll('.programme-item').forEach((el, i) => el.classList.toggle('active', i === index));
+}
+
+function formatTime(s) {
+    return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+}
+
+function play() {
+    const p = programme[currentAct];
+    videoFrame.src = `https://www.youtube.com/embed/${p.videoId}?autoplay=1&rel=0`;
+    curtains.classList.add('open');
+    isPlaying = true;
+    btnPlay.classList.add('active');
+    btnPlay.textContent = '❚❚';
+}
+
+function pause() {
+    isPlaying = false;
+    btnPlay.classList.remove('active');
+    btnPlay.textContent = '▶';
+}
+
+function stop() {
+    videoFrame.src = '';
+    curtains.classList.remove('open');
+    pause();
+    playTime = 0;
+}
+
+setInterval(() => {
+    if (isPlaying) {
+        playTime++;
+        document.getElementById('timeCurrent').textContent = formatTime(playTime);
+        const progress = (playTime % 300) / 300 * 100;
+        progressFill.style.width = `${progress}%`;
+    }
+}, 1000);
+
+btnPlay.onclick = () => isPlaying ? pause() : play();
+document.getElementById('btnPrev').onclick = () => { selectAct((currentAct - 1 + programme.length) % programme.length); };
+document.getElementById('btnNext').onclick = () => { selectAct((currentAct + 1) % programme.length); };
+document.getElementById('btnRew').onclick = () => { playTime = Math.max(0, playTime - 10); };
+document.getElementById('btnFwd').onclick = () => { playTime += 10; };
+
+document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') { e.preventDefault(); isPlaying ? pause() : play(); }
+});
+
+renderProgramme();
+</script>
+
+</body>
+</html>

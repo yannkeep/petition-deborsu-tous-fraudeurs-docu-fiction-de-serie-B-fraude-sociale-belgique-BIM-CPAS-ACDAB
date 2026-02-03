@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGNAL HIJACK — Transmission Pirate</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
+        
+        :root {
+            --glitch-cyan: #00ffff;
+            --glitch-magenta: #ff00ff;
+            --glitch-yellow: #ffff00;
+            --static-gray: #888;
+            --bg-dark: #0a0a0a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg-dark);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            font-family: 'VT323', monospace;
+            overflow: hidden;
+        }
+
+        /* STATIC BACKGROUND */
+        .static-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* MAIN CONTAINER */
+        .hijack-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        /* WARNING BANNER */
+        .warning-banner {
+            background: repeating-linear-gradient(
+                45deg,
+                #ff0000,
+                #ff0000 10px,
+                #000 10px,
+                #000 20px
+            );
+            padding: 3px;
+            margin-bottom: 15px;
+        }
+
+        .warning-inner {
+            background: #000;
+            padding: 10px 20px;
+            text-align: center;
+        }
+
+        .warning-text {
+            font-size: 1.2rem;
+            color: #ff0000;
+            letter-spacing: 5px;
+            animation: warning-flash 0.5s infinite;
+        }
+
+        @keyframes warning-flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* TV UNIT */
+        .tv-unit {
+            background: linear-gradient(180deg, #333 0%, #1a1a1a 100%);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+        }
+
+        /* SCREEN */
+        .tv-screen {
+            background: #000;
+            aspect-ratio: 4/3;
+            position: relative;
+            overflow: hidden;
+            border: 4px solid #222;
+        }
+
+        /* VIDEO */
+        .video-layer {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+        }
+
+        .video-layer video,
+        .video-layer iframe {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* GLITCH EFFECTS */
+        .glitch-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .glitch-line {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: rgba(255,255,255,0.3);
+            display: none;
+        }
+
+        .playing .glitch-line {
+            display: block;
+            animation: glitch-scan 0.1s infinite;
+        }
+
+        @keyframes glitch-scan {
+            0% { top: 0%; opacity: 0; }
+            20% { opacity: 0.8; }
+            50% { top: 50%; }
+            80% { opacity: 0.5; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        .rgb-shift {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            mix-blend-mode: screen;
+            opacity: 0;
+        }
+
+        .playing .rgb-shift {
+            animation: rgb-glitch 3s infinite;
+        }
+
+        @keyframes rgb-glitch {
+            0%, 95%, 100% { opacity: 0; }
+            96% { opacity: 0.5; transform: translateX(-3px); background: var(--glitch-cyan); }
+            97% { transform: translateX(3px); background: var(--glitch-magenta); }
+            98% { transform: translateX(-2px); background: var(--glitch-yellow); }
+        }
+
+        /* STATIC NOISE */
+        .static-noise {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0;
+            pointer-events: none;
+            z-index: 15;
+        }
+
+        .static-noise.active {
+            opacity: 0.3;
+            animation: static-flicker 0.05s infinite;
+        }
+
+        @keyframes static-flicker {
+            0% { opacity: 0.2; }
+            50% { opacity: 0.4; }
+            100% { opacity: 0.2; }
+        }
+
+        /* SCANLINES */
+        .scanlines {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0,0,0,0.2) 0px,
+                rgba(0,0,0,0.2) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        /* HIJACK MESSAGE */
+        .hijack-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 25;
+            display: none;
+        }
+
+        .no-signal .hijack-message {
+            display: block;
+            animation: message-glitch 0.1s infinite;
+        }
+
+        @keyframes message-glitch {
+            0%, 100% { transform: translate(-50%, -50%); }
+            25% { transform: translate(-52%, -48%); }
+            50% { transform: translate(-48%, -52%); }
+            75% { transform: translate(-51%, -49%); }
+        }
+
+        .hijack-title {
+            font-size: 2rem;
+            color: var(--glitch-cyan);
+            text-shadow: 
+                3px 0 var(--glitch-magenta),
+                -3px 0 var(--glitch-yellow);
+            letter-spacing: 5px;
+            margin-bottom: 15px;
+        }
+
+        .hijack-subtitle {
+            font-size: 1rem;
+            color: #fff;
+            letter-spacing: 3px;
+        }
+
+        /* OSD */
+        .osd-layer {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 30;
+            padding: 15px;
+        }
+
+        .osd-top {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .osd-box {
+            background: rgba(0,0,0,0.7);
+            padding: 5px 10px;
+            font-size: 0.9rem;
+        }
+
+        .osd-hijack {
+            color: #ff0000;
+            animation: osd-blink 0.3s infinite;
+        }
+
+        @keyframes osd-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .osd-freq {
+            color: var(--glitch-cyan);
+        }
+
+        .osd-bottom {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            right: 15px;
+        }
+
+        .osd-title {
+            background: rgba(0,0,0,0.8);
+            padding: 10px 15px;
+            color: #fff;
+            font-size: 1.2rem;
+            border-left: 4px solid var(--glitch-cyan);
+        }
+
+        /* NO SIGNAL BARS */
+        .no-signal-bars {
+            position: absolute;
+            bottom: 30%;
+            left: 0;
+            right: 0;
+            display: none;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .no-signal .no-signal-bars {
+            display: flex;
+        }
+
+        .color-bar {
+            width: 40px;
+            height: 80px;
+        }
+
+        .color-bar:nth-child(1) { background: #fff; }
+        .color-bar:nth-child(2) { background: #ff0; }
+        .color-bar:nth-child(3) { background: #0ff; }
+        .color-bar:nth-child(4) { background: #0f0; }
+        .color-bar:nth-child(5) { background: #f0f; }
+        .color-bar:nth-child(6) { background: #f00; }
+        .color-bar:nth-child(7) { background: #00f; }
+
+        /* CONTROL PANEL */
+        .control-panel {
+            background: #111;
+            padding: 15px;
+            margin-top: 15px;
+            border: 2px solid #333;
+        }
+
+        .controls-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .playback-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .ctrl-btn {
+            width: 45px;
+            height: 40px;
+            background: #1a1a1a;
+            border: 2px solid #444;
+            color: #666;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .ctrl-btn:hover {
+            border-color: var(--glitch-cyan);
+            color: var(--glitch-cyan);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+
+        .ctrl-btn.play-btn {
+            width: 60px;
+            border-color: var(--glitch-magenta);
+            color: var(--glitch-magenta);
+        }
+
+        .ctrl-btn.play-btn.active {
+            background: var(--glitch-magenta);
+            color: #000;
+            box-shadow: 0 0 20px var(--glitch-magenta);
+        }
+
+        /* PROGRESS */
+        .progress-section {
+            flex: 1;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #222;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--glitch-cyan), var(--glitch-magenta));
+            width: 0%;
+            box-shadow: 0 0 10px var(--glitch-cyan);
+        }
+
+        .progress-times {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 0.8rem;
+            color: #555;
+        }
+
+        /* OPTIONS */
+        .options-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .opt-btn {
+            background: transparent;
+            border: 1px solid #333;
+            color: #555;
+            padding: 8px 12px;
+            font-family: 'VT323', monospace;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .opt-btn:hover, .opt-btn.active {
+            border-color: var(--glitch-yellow);
+            color: var(--glitch-yellow);
+        }
+
+        /* TRANSMISSION LOG */
+        .transmission-log {
+            margin-top: 15px;
+            background: #0a0a0a;
+            border: 1px solid #222;
+            padding: 10px;
+            max-height: 100px;
+            overflow-y: auto;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem;
+        }
+
+        .log-entry {
+            margin-bottom: 3px;
+            color: var(--glitch-cyan);
+        }
+
+        .log-entry .timestamp {
+            color: #555;
+        }
+
+        .log-entry .error {
+            color: #ff0000;
+        }
+
+        .log-entry .success {
+            color: #00ff00;
+        }
+
+        /* PLAYLIST */
+        .playlist-section {
+            margin-top: 15px;
+        }
+
+        .playlist-header {
+            font-size: 0.9rem;
+            color: var(--glitch-magenta);
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+        }
+
+        .playlist-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid #222;
+            margin-bottom: 5px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .playlist-item:hover {
+            border-color: var(--glitch-cyan);
+            background: rgba(0, 255, 255, 0.05);
+        }
+
+        .playlist-item.active {
+            border-color: var(--glitch-magenta);
+            background: rgba(255, 0, 255, 0.1);
+        }
+
+        .item-status {
+            width: 10px;
+            height: 10px;
+            background: #333;
+            margin-right: 15px;
+        }
+
+        .playlist-item.active .item-status {
+            background: var(--glitch-magenta);
+            box-shadow: 0 0 10px var(--glitch-magenta);
+            animation: status-pulse 1s infinite;
+        }
+
+        @keyframes status-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-title {
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .item-meta {
+            color: #555;
+            font-size: 0.7rem;
+            margin-top: 2px;
+        }
+
+        /* FOOTER */
+        .hijack-footer {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #333;
+        }
+
+        .hijack-footer a {
+            color: var(--glitch-cyan);
+            text-decoration: none;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .warning-text { font-size: 0.9rem; letter-spacing: 2px; }
+            .hijack-title { font-size: 1.3rem; }
+            .controls-row { flex-wrap: wrap; }
+            .color-bar { width: 25px; height: 50px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="static-bg"></div>
+
+<div class="hijack-container" id="player">
+    <!-- WARNING -->
+    <div class="warning-banner">
+        <div class="warning-inner">
+            <div class="warning-text">⚠ SIGNAL INTERCEPTÉ ⚠</div>
+        </div>
+    </div>
+
+    <!-- TV -->
+    <div class="tv-unit">
+        <div class="tv-screen" id="tvScreen">
+            <div class="video-layer" id="videoLayer"></div>
+            
+            <div class="glitch-overlay">
+                <div class="glitch-line"></div>
+                <div class="rgb-shift"></div>
+            </div>
+            
+            <div class="static-noise" id="staticNoise"></div>
+            <div class="scanlines"></div>
+            
+            <div class="hijack-message">
+                <div class="hijack-title">SIGNAL HIJACK</div>
+                <div class="hijack-subtitle">TRANSMISSION CITOYENNE EN COURS</div>
+            </div>
+            
+            <div class="no-signal-bars">
+                <div class="color-bar"></div>
+                <div class="color-bar"></div>
+                <div class="color-bar"></div>
+                <div class="color-bar"></div>
+                <div class="color-bar"></div>
+                <div class="color-bar"></div>
+                <div class="color-bar"></div>
+            </div>
+            
+            <div class="osd-layer">
+                <div class="osd-top">
+                    <div class="osd-box osd-hijack">● HIJACKED</div>
+                    <div class="osd-box osd-freq">CH 03 — 106.1 MHz</div>
+                </div>
+                <div class="osd-bottom">
+                    <div class="osd-title" id="osdTitle">BRIEFING TEAM ALPHA</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="control-panel">
+        <div class="controls-row">
+            <div class="playback-btns">
+                <button class="ctrl-btn" id="btnPrev">⏮</button>
+                <button class="ctrl-btn play-btn" id="btnPlay">▶</button>
+                <button class="ctrl-btn" id="btnNext">⏭</button>
+            </div>
+
+            <div class="progress-section">
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-times">
+                    <span id="timeCurrent">00:00</span>
+                    <span id="timeTotal">00:00</span>
+                </div>
+            </div>
+
+            <div class="options-btns">
+                <button class="opt-btn" id="btnStatic">STATIC</button>
+                <button class="opt-btn" id="btnFS">⛶</button>
+            </div>
+        </div>
+
+        <!-- LOG -->
+        <div class="transmission-log" id="transmissionLog"></div>
+    </div>
+
+    <!-- PLAYLIST -->
+    <div class="playlist-section">
+        <div class="playlist-header">▼ TRANSMISSIONS INTERCEPTÉES</div>
+        <div id="playlistContainer"></div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="hijack-footer">
+        FORK • HACK • SPREAD — <a href="https://ouaisfi.eu" target="_blank">ouaisfi.eu</a> — © 2026 CCPLC
+    </div>
+</div>
+
+<script>
+const videos = [
+    { title: "BRIEFING TEAM ALPHA", meta: "PRIORITÉ HAUTE • CONFIDENTIEL", src: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+    { title: "PARTICRATIE EXPOSÉE", meta: "DOCUMENTATION • PUBLIC", src: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+    { title: "SIGNAL D'ALERTE SOCIALE", meta: "URGENCE • DIFFUSION LARGE", src: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
+];
+
+let currentVideo = 0;
+let isPlaying = false;
+
+const player = document.getElementById('player');
+const tvScreen = document.getElementById('tvScreen');
+const videoLayer = document.getElementById('videoLayer');
+const btnPlay = document.getElementById('btnPlay');
+const osdTitle = document.getElementById('osdTitle');
+const progressFill = document.getElementById('progressFill');
+const staticNoise = document.getElementById('staticNoise');
+const transmissionLog = document.getElementById('transmissionLog');
+const playlistContainer = document.getElementById('playlistContainer');
+
+function log(msg, type = '') {
+    const now = new Date();
+    const ts = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    entry.innerHTML = `<span class="timestamp">[${ts}]</span> <span class="${type}">${msg}</span>`;
+    transmissionLog.appendChild(entry);
+    transmissionLog.scrollTop = transmissionLog.scrollHeight;
+}
+
+function renderPlaylist() {
+    playlistContainer.innerHTML = '';
+    videos.forEach((v, i) => {
+        const item = document.createElement('div');
+        item.className = `playlist-item ${i === currentVideo ? 'active' : ''}`;
+        item.innerHTML = `
+            <div class="item-status"></div>
+            <div class="item-info">
+                <div class="item-title">${v.title}</div>
+                <div class="item-meta">${v.meta}</div>
+            </div>
+        `;
+        item.onclick = () => loadVideo(i);
+        playlistContainer.appendChild(item);
+    });
+}
+
+function loadVideo(index) {
+    currentVideo = index;
+    const v = videos[index];
+    osdTitle.textContent = v.title;
+    
+    videoLayer.innerHTML = `
+        <iframe src="${v.src}?enablejsapi=1&autoplay=0&controls=0&modestbranding=1&rel=0" 
+            frameborder="0" allowfullscreen></iframe>
+    `;
+    
+    document.querySelectorAll('.playlist-item').forEach((item, i) => {
+        item.classList.toggle('active', i === index);
+    });
+    
+    tvScreen.classList.remove('no-signal');
+    isPlaying = false;
+    player.classList.remove('playing');
+    btnPlay.classList.remove('active');
+    btnPlay.textContent = '▶';
+    
+    log(`CHARGEMENT: ${v.title}`, 'success');
+}
+
+function togglePlay() {
+    isPlaying = !isPlaying;
+    player.classList.toggle('playing', isPlaying);
+    btnPlay.classList.toggle('active', isPlaying);
+    btnPlay.textContent = isPlaying ? '❚❚' : '▶';
+    tvScreen.classList.remove('no-signal');
+    
+    log(isPlaying ? 'TRANSMISSION EN COURS...' : 'TRANSMISSION SUSPENDUE', isPlaying ? 'success' : '');
+}
+
+let fakeProgress = 0;
+setInterval(() => {
+    if (isPlaying) {
+        fakeProgress = (fakeProgress + 0.5) % 100;
+        progressFill.style.width = `${fakeProgress}%`;
+        const secs = Math.floor(fakeProgress * 2.4);
+        document.getElementById('timeCurrent').textContent = 
+            `${String(Math.floor(secs/60)).padStart(2,'0')}:${String(secs%60).padStart(2,'0')}`;
+    }
+}, 1000);
+
+btnPlay.onclick = togglePlay;
+document.getElementById('btnPrev').onclick = () => { loadVideo((currentVideo - 1 + videos.length) % videos.length); };
+document.getElementById('btnNext').onclick = () => { loadVideo((currentVideo + 1) % videos.length); };
+
+document.getElementById('btnStatic').onclick = function() {
+    this.classList.toggle('active');
+    staticNoise.classList.toggle('active');
+    tvScreen.classList.toggle('no-signal');
+    log(staticNoise.classList.contains('active') ? 'INTERFÉRENCE ACTIVÉE' : 'INTERFÉRENCE DÉSACTIVÉE', 'error');
+};
+
+document.getElementById('btnFS').onclick = () => {
+    if (tvScreen.requestFullscreen) tvScreen.requestFullscreen();
+};
+
+document.getElementById('progressBar').onclick = (e) => {
+    const rect = e.target.getBoundingClientRect();
+    fakeProgress = ((e.clientX - rect.left) / rect.width) * 100;
+};
+
+document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+});
+
+// Init
+renderPlaylist();
+tvScreen.classList.add('no-signal');
+log('SYSTÈME INITIALISÉ');
+log('EN ATTENTE DE SIGNAL...', 'error');
+</script>
+
+</body>
+</html>
