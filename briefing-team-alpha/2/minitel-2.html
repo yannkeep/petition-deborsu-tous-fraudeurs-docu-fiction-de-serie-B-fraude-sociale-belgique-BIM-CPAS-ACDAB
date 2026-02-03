@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINITEL 2.0 — 3615 OUAISFIEU</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
+        
+        :root {
+            --minitel-beige: #d4c9a8;
+            --minitel-brown: #8b7355;
+            --minitel-dark: #2a2520;
+            --screen-amber: #ffb000;
+            --screen-dim: #aa7500;
+            --screen-bg: #1a1500;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: linear-gradient(180deg, #4a4035 0%, #2a2520 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            font-family: 'VT323', monospace;
+        }
+
+        /* MINITEL TERMINAL */
+        .minitel {
+            width: 100%;
+            max-width: 500px;
+            background: linear-gradient(180deg, var(--minitel-beige) 0%, #c4b998 100%);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 
+                0 30px 60px rgba(0,0,0,0.5),
+                inset 0 2px 0 rgba(255,255,255,0.3),
+                inset 0 -2px 0 rgba(0,0,0,0.1);
+        }
+
+        /* BRAND */
+        .minitel-brand {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .brand-logo {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1rem;
+            color: var(--minitel-brown);
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .brand-model {
+            font-size: 0.7rem;
+            color: #888;
+        }
+
+        /* SCREEN BEZEL */
+        .screen-bezel {
+            background: var(--minitel-dark);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: inset 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        /* SCREEN */
+        .screen {
+            background: var(--screen-bg);
+            border-radius: 5px;
+            aspect-ratio: 4/3;
+            position: relative;
+            overflow: hidden;
+            font-family: 'VT323', monospace;
+            color: var(--screen-amber);
+            padding: 15px;
+        }
+
+        /* CRT EFFECTS */
+        .crt-curve {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.4) 100%);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .scanlines {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0,0,0,0.1) 0px,
+                rgba(0,0,0,0.1) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .screen-glow {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            box-shadow: inset 0 0 50px rgba(255, 176, 0, 0.1);
+            pointer-events: none;
+        }
+
+        /* SCREEN CONTENT */
+        .screen-content {
+            position: relative;
+            z-index: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER LINE */
+        .header-line {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--screen-dim);
+        }
+
+        .service-name {
+            color: var(--screen-amber);
+            text-shadow: 0 0 10px var(--screen-amber);
+        }
+
+        .connection-status {
+            color: var(--screen-dim);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* BOX DRAWING */
+        .info-box {
+            border: 1px solid var(--screen-amber);
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .box-title {
+            background: var(--screen-amber);
+            color: var(--screen-bg);
+            padding: 2px 8px;
+            display: inline-block;
+            margin: -10px 0 8px -10px;
+            font-size: 0.9rem;
+        }
+
+        .track-display {
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .track-title {
+            font-size: 1.3rem;
+            color: var(--screen-amber);
+            text-shadow: 0 0 10px var(--screen-amber);
+        }
+
+        .track-artist {
+            font-size: 0.9rem;
+            color: var(--screen-dim);
+            margin-top: 5px;
+        }
+
+        /* ASCII VISUALIZER */
+        .ascii-viz {
+            font-size: 0.8rem;
+            text-align: center;
+            letter-spacing: 2px;
+            margin: 10px 0;
+            min-height: 40px;
+            color: var(--screen-amber);
+        }
+
+        /* PROGRESS */
+        .progress-line {
+            margin: 10px 0;
+        }
+
+        .progress-bar {
+            display: flex;
+            gap: 2px;
+        }
+
+        .progress-block {
+            width: 10px;
+            height: 15px;
+            background: var(--screen-dim);
+            opacity: 0.3;
+        }
+
+        .progress-block.filled {
+            background: var(--screen-amber);
+            opacity: 1;
+            box-shadow: 0 0 5px var(--screen-amber);
+        }
+
+        .time-line {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            color: var(--screen-dim);
+        }
+
+        /* STATUS LINE */
+        .status-line {
+            margin-top: auto;
+            padding-top: 10px;
+            border-top: 1px solid var(--screen-dim);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--screen-dim);
+        }
+
+        .status-playing {
+            color: var(--screen-amber);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* PLAYLIST BOX */
+        .playlist-box {
+            border: 1px solid var(--screen-dim);
+            padding: 5px;
+            max-height: 80px;
+            overflow-y: auto;
+        }
+
+        .playlist-item {
+            padding: 3px 5px;
+            cursor: pointer;
+            display: flex;
+            gap: 10px;
+        }
+
+        .playlist-item:hover {
+            background: rgba(255, 176, 0, 0.2);
+        }
+
+        .playlist-item.active {
+            background: var(--screen-amber);
+            color: var(--screen-bg);
+        }
+
+        .item-key {
+            color: var(--screen-dim);
+        }
+
+        .playlist-item.active .item-key {
+            color: var(--screen-bg);
+        }
+
+        /* KEYBOARD */
+        .keyboard {
+            background: linear-gradient(180deg, #b8a888 0%, #a89878 100%);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        /* FUNCTION KEYS */
+        .func-keys {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .func-key {
+            background: linear-gradient(180deg, #666 0%, #444 100%);
+            border: none;
+            border-radius: 3px;
+            padding: 8px 12px;
+            color: white;
+            font-family: 'VT323', monospace;
+            font-size: 0.7rem;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #222;
+        }
+
+        .func-key:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #222;
+        }
+
+        .func-key.special {
+            background: linear-gradient(180deg, var(--minitel-brown) 0%, #6a5a45 100%);
+        }
+
+        /* MAIN KEYS */
+        .main-keys {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .key {
+            background: linear-gradient(180deg, #555 0%, #333 100%);
+            border: none;
+            border-radius: 5px;
+            padding: 12px 8px;
+            color: white;
+            font-family: 'VT323', monospace;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #111;
+            transition: all 0.1s ease;
+        }
+
+        .key:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #111;
+        }
+
+        .key.play-key {
+            background: linear-gradient(180deg, #4a9 0%, #387 100%);
+            grid-column: span 2;
+        }
+
+        .key.play-key.active {
+            background: linear-gradient(180deg, #5ba 0%, #498 100%);
+            box-shadow: 0 4px 0 #111, 0 0 15px rgba(74, 153, 136, 0.5);
+        }
+
+        .key-label {
+            font-size: 0.55rem;
+            color: #aaa;
+            display: block;
+            margin-top: 3px;
+        }
+
+        /* VOLUME */
+        .volume-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #999;
+        }
+
+        .vol-label {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .vol-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 8px;
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .vol-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--minitel-brown);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* FOOTER */
+        .minitel-footer {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #888;
+        }
+
+        /* SCROLLBAR */
+        .playlist-box::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .playlist-box::-webkit-scrollbar-track {
+            background: var(--screen-bg);
+        }
+
+        .playlist-box::-webkit-scrollbar-thumb {
+            background: var(--screen-dim);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 400px) {
+            .func-key { padding: 6px 8px; font-size: 0.6rem; }
+            .key { padding: 10px 6px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="minitel" id="player">
+    <!-- BRAND -->
+    <div class="minitel-brand">
+        <div class="brand-logo">MINITEL 2.0</div>
+        <div class="brand-model">3615 OUAISFIEU</div>
+    </div>
+
+    <!-- SCREEN -->
+    <div class="screen-bezel">
+        <div class="screen">
+            <div class="crt-curve"></div>
+            <div class="scanlines"></div>
+            <div class="screen-glow"></div>
+            
+            <div class="screen-content">
+                <!-- HEADER -->
+                <div class="header-line">
+                    <span class="service-name">★ CCPLC RADIO ★</span>
+                    <span class="connection-status" id="connStatus">CONNECTÉ</span>
+                </div>
+
+                <!-- MAIN -->
+                <div class="main-content">
+                    <!-- TRACK INFO -->
+                    <div class="info-box">
+                        <span class="box-title">EN LECTURE</span>
+                        <div class="track-display">
+                            <div class="track-title" id="trackTitle">PARTY ON GAME OVER</div>
+                            <div class="track-artist" id="trackArtist">CCPLC BROADCAST</div>
+                        </div>
+                    </div>
+
+                    <!-- VISUALIZER -->
+                    <div class="ascii-viz" id="asciiViz">
+                        ▁▂▃▄▅▆▇█▇▆▅▄▃▂▁▂▃▄▅▆▇█▇▆▅▄▃▂▁
+                    </div>
+
+                    <!-- PROGRESS -->
+                    <div class="progress-line">
+                        <div class="progress-bar" id="progressBar"></div>
+                        <div class="time-line">
+                            <span id="timeCurrent">00:00</span>
+                            <span id="timeTotal">00:00</span>
+                        </div>
+                    </div>
+
+                    <!-- PLAYLIST -->
+                    <div class="playlist-box" id="playlistBox"></div>
+                </div>
+
+                <!-- STATUS -->
+                <div class="status-line">
+                    <span id="statusText">Appuyez sur ENVOI pour démarrer</span>
+                    <span id="playingIndicator"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KEYBOARD -->
+    <div class="keyboard">
+        <!-- FUNCTION KEYS -->
+        <div class="func-keys">
+            <button class="func-key" id="btnSommaire">SOMMAIRE</button>
+            <button class="func-key" id="btnAnnul">ANNUL</button>
+            <button class="func-key" id="btnRetour">RETOUR</button>
+            <button class="func-key" id="btnRepet">RÉPÉT</button>
+            <button class="func-key" id="btnGuide">GUIDE</button>
+            <button class="func-key special" id="btnConnex">CONNEXION</button>
+        </div>
+
+        <!-- MAIN KEYS -->
+        <div class="main-keys">
+            <button class="key" id="btnPrev">⏮<span class="key-label">PRÉC</span></button>
+            <button class="key" id="btnRew">⏪<span class="key-label">-10s</span></button>
+            <button class="key play-key" id="btnPlay">▶ ENVOI<span class="key-label">LECTURE</span></button>
+            <button class="key" id="btnFwd">⏩<span class="key-label">+10s</span></button>
+            <button class="key" id="btnNext">⏭<span class="key-label">SUIV</span></button>
+        </div>
+
+        <!-- VOLUME -->
+        <div class="volume-section">
+            <span class="vol-label">VOLUME</span>
+            <input type="range" class="vol-slider" id="volumeSlider" min="0" max="100" value="80">
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="minitel-footer">
+        TÉLÉTEL — © 2026 CCPLC — Tarif: GRATUIT
+    </div>
+</div>
+
+<audio id="audio" preload="metadata"></audio>
+
+<script>
+const playlist = [
+    { title: "PARTY ON GAME OVER", artist: "CCPLC BROADCAST", src: "https://dl.ouaisfi.eu/ccplc/test-o/party-on-game-over.mp3" },
+    { title: "BULLETIN SOCIAL #7", artist: "RÉSEAU 11·60", src: "https://dl.ouaisfi.eu/ccplc/test-o/party-on-game-over.mp3" },
+    { title: "WAKE UP CALL", artist: "CELLULE ALPHA", src: "https://dl.ouaisfi.eu/ccplc/test-o/party-on-game-over.mp3" }
+];
+
+const audio = document.getElementById('audio');
+const player = document.getElementById('player');
+const btnPlay = document.getElementById('btnPlay');
+const progressBarEl = document.getElementById('progressBar');
+const trackTitle = document.getElementById('trackTitle');
+const trackArtist = document.getElementById('trackArtist');
+const timeCurrent = document.getElementById('timeCurrent');
+const timeTotal = document.getElementById('timeTotal');
+const statusText = document.getElementById('statusText');
+const playingIndicator = document.getElementById('playingIndicator');
+const asciiViz = document.getElementById('asciiViz');
+const playlistBox = document.getElementById('playlistBox');
+const connStatus = document.getElementById('connStatus');
+
+let currentTrack = 0;
+let isPlaying = false;
+const numBlocks = 25;
+
+// Create progress blocks
+for (let i = 0; i < numBlocks; i++) {
+    const block = document.createElement('div');
+    block.className = 'progress-block';
+    progressBarEl.appendChild(block);
+}
+
+const vizChars = ['▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'];
+
+function formatTime(s) {
+    if (isNaN(s)) return "00:00";
+    return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+}
+
+function renderPlaylist() {
+    playlistBox.innerHTML = '';
+    playlist.forEach((t, i) => {
+        const item = document.createElement('div');
+        item.className = `playlist-item ${i === currentTrack ? 'active' : ''}`;
+        item.innerHTML = `<span class="item-key">${i+1}.</span> ${t.title}`;
+        item.onclick = () => { currentTrack = i; loadTrack(i); play(); };
+        playlistBox.appendChild(item);
+    });
+}
+
+function loadTrack(i) {
+    const t = playlist[i];
+    audio.src = t.src;
+    trackTitle.textContent = t.title;
+    trackArtist.textContent = t.artist;
+    document.querySelectorAll('.playlist-item').forEach((el, idx) => el.classList.toggle('active', idx === i));
+}
+
+function play() {
+    audio.play().then(() => {
+        isPlaying = true;
+        player.classList.add('playing');
+        btnPlay.classList.add('active');
+        btnPlay.innerHTML = '❚❚ PAUSE<span class="key-label">ARRÊT</span>';
+        statusText.textContent = 'Lecture en cours...';
+        playingIndicator.textContent = '▶';
+        playingIndicator.className = 'status-playing';
+        connStatus.textContent = 'EN LIGNE';
+        animateViz();
+    });
+}
+
+function pause() {
+    audio.pause();
+    isPlaying = false;
+    player.classList.remove('playing');
+    btnPlay.classList.remove('active');
+    btnPlay.innerHTML = '▶ ENVOI<span class="key-label">LECTURE</span>';
+    statusText.textContent = 'Pause';
+    playingIndicator.textContent = '❚❚';
+    playingIndicator.className = '';
+}
+
+function animateViz() {
+    if (!isPlaying) return;
+    let viz = '';
+    for (let i = 0; i < 30; i++) {
+        viz += vizChars[Math.floor(Math.random() * vizChars.length)];
+    }
+    asciiViz.textContent = viz;
+    setTimeout(() => requestAnimationFrame(animateViz), 100);
+}
+
+btnPlay.onclick = () => isPlaying ? pause() : play();
+document.getElementById('btnPrev').onclick = () => { currentTrack = (currentTrack - 1 + playlist.length) % playlist.length; loadTrack(currentTrack); if(isPlaying) play(); };
+document.getElementById('btnNext').onclick = () => { currentTrack = (currentTrack + 1) % playlist.length; loadTrack(currentTrack); if(isPlaying) play(); };
+document.getElementById('btnRew').onclick = () => audio.currentTime -= 10;
+document.getElementById('btnFwd').onclick = () => audio.currentTime += 10;
+
+document.getElementById('btnSommaire').onclick = () => { statusText.textContent = 'SOMMAIRE: 3 pistes disponibles'; };
+document.getElementById('btnAnnul').onclick = () => { pause(); audio.currentTime = 0; statusText.textContent = 'Annulé'; };
+document.getElementById('btnRetour').onclick = () => { currentTrack = (currentTrack - 1 + playlist.length) % playlist.length; loadTrack(currentTrack); };
+document.getElementById('btnRepet').onclick = () => { audio.loop = !audio.loop; statusText.textContent = audio.loop ? 'RÉPÉTITION: ON' : 'RÉPÉTITION: OFF'; };
+document.getElementById('btnGuide').onclick = () => { statusText.textContent = 'ENVOI=Play | ⏮⏭=Pistes | ⏪⏩=±10s'; };
+document.getElementById('btnConnex').onclick = () => { connStatus.textContent = connStatus.textContent === 'EN LIGNE' ? 'CONNECTÉ' : 'EN LIGNE'; };
+
+document.getElementById('volumeSlider').oninput = (e) => audio.volume = e.target.value / 100;
+
+audio.ontimeupdate = () => {
+    const percent = (audio.currentTime / audio.duration) || 0;
+    const filledBlocks = Math.floor(percent * numBlocks);
+    const blocks = progressBarEl.querySelectorAll('.progress-block');
+    blocks.forEach((b, i) => b.classList.toggle('filled', i < filledBlocks));
+    timeCurrent.textContent = formatTime(audio.currentTime);
+    timeTotal.textContent = formatTime(audio.duration);
+};
+
+audio.onended = () => { currentTrack = (currentTrack + 1) % playlist.length; loadTrack(currentTrack); play(); };
+
+document.addEventListener('keydown', (e) => { if (e.code === 'Space') { e.preventDefault(); isPlaying ? pause() : play(); } });
+
+renderPlaylist();
+loadTrack(0);
+audio.volume = 0.8;
+</script>
+
+</body>
+</html>

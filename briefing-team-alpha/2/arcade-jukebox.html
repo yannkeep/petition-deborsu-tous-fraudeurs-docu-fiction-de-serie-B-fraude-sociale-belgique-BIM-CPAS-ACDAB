@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARCADE JUKEBOX — Insert Coin to Play</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
+        :root {
+            --arcade-purple: #9b59b6;
+            --arcade-pink: #e91e63;
+            --arcade-cyan: #00bcd4;
+            --arcade-yellow: #ffeb3b;
+            --arcade-green: #4caf50;
+            --crt-green: #39ff14;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #0a0a0a;
+            background-image: 
+                radial-gradient(circle at 50% 50%, #1a1a2e 0%, #0a0a0a 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            font-family: 'Press Start 2P', monospace;
+        }
+
+        /* ARCADE CABINET */
+        .arcade-cabinet {
+            width: 100%;
+            max-width: 500px;
+            background: linear-gradient(180deg, #2a2a4a 0%, #1a1a2a 100%);
+            border-radius: 20px 20px 10px 10px;
+            padding: 15px;
+            box-shadow: 
+                0 30px 60px rgba(0,0,0,0.8),
+                inset 0 2px 0 rgba(255,255,255,0.1),
+                0 0 50px rgba(155, 89, 182, 0.2);
+            border: 4px solid #3a3a5a;
+            position: relative;
+        }
+
+        /* MARQUEE */
+        .marquee {
+            background: linear-gradient(180deg, #1a1a2a 0%, #0a0a1a 100%);
+            border: 3px solid #3a3a5a;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .marquee::before {
+            content: "";
+            position: absolute;
+            top: 0; left: -100%;
+            width: 200%; height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%,
+                rgba(255,255,255,0.1) 50%,
+                transparent 100%
+            );
+            animation: marquee-shine 3s infinite;
+        }
+
+        @keyframes marquee-shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .marquee-title {
+            font-size: 1rem;
+            background: linear-gradient(180deg, var(--arcade-yellow), var(--arcade-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+            filter: drop-shadow(0 0 10px var(--arcade-pink));
+        }
+
+        .marquee-sub {
+            font-size: 0.5rem;
+            color: var(--arcade-cyan);
+            margin-top: 8px;
+            letter-spacing: 2px;
+        }
+
+        /* SCREEN */
+        .screen-bezel {
+            background: #111;
+            border: 4px solid #222;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        .screen {
+            background: #000;
+            border-radius: 5px;
+            aspect-ratio: 4/3;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* CRT EFFECTS */
+        .crt-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0,0,0,0.2) 0px,
+                rgba(0,0,0,0.2) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .crt-flicker {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.3) 100%);
+            pointer-events: none;
+        }
+
+        /* SCREEN CONTENT */
+        .screen-content {
+            position: relative;
+            z-index: 1;
+            width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            color: white;
+        }
+
+        /* HIGH SCORE */
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.5rem;
+            margin-bottom: 10px;
+        }
+
+        .score-label { color: var(--arcade-cyan); }
+        .score-value { color: var(--arcade-yellow); }
+
+        /* NOW PLAYING */
+        .now-playing {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .np-label {
+            font-size: 0.4rem;
+            color: var(--arcade-purple);
+            margin-bottom: 10px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .np-title {
+            font-size: 0.7rem;
+            color: white;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px var(--arcade-pink);
+        }
+
+        .np-artist {
+            font-size: 0.45rem;
+            color: var(--arcade-cyan);
+        }
+
+        /* VISUALIZER */
+        .pixel-viz {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin: 15px 0;
+            height: 40px;
+            align-items: flex-end;
+        }
+
+        .pixel-bar {
+            width: 12px;
+            background: linear-gradient(to top, 
+                var(--arcade-green) 0%,
+                var(--arcade-yellow) 60%,
+                var(--arcade-pink) 100%
+            );
+            transition: height 0.1s ease;
+            image-rendering: pixelated;
+        }
+
+        /* PROGRESS */
+        .progress-bar {
+            height: 8px;
+            background: #222;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--arcade-cyan);
+            width: 0%;
+            box-shadow: 0 0 10px var(--arcade-cyan);
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.4rem;
+            color: var(--crt-green);
+        }
+
+        /* INSERT COIN */
+        .insert-coin {
+            text-align: center;
+            font-size: 0.5rem;
+            color: var(--arcade-yellow);
+            animation: coin-blink 0.5s infinite;
+            margin-top: 10px;
+        }
+
+        .playing .insert-coin {
+            animation: none;
+            color: var(--arcade-green);
+        }
+
+        @keyframes coin-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* CONTROL PANEL */
+        .control-panel {
+            background: linear-gradient(180deg, #3a3a5a 0%, #2a2a4a 100%);
+            border-radius: 10px;
+            padding: 15px;
+            border: 3px solid #4a4a6a;
+        }
+
+        /* JOYSTICK AREA */
+        .joystick-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .joystick {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 30% 30%, #444 0%, #222 100%);
+            border-radius: 50%;
+            border: 4px solid #555;
+            position: relative;
+            box-shadow: 
+                inset 0 -5px 10px rgba(0,0,0,0.5),
+                0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .joystick-stick {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 50px;
+            background: linear-gradient(180deg, #666 0%, #333 100%);
+            border-radius: 50% 50% 30% 30%;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.5);
+        }
+
+        .joystick-ball {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle at 30% 30%, #ff4444 0%, #aa0000 100%);
+            border-radius: 50%;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+        }
+
+        /* ARCADE BUTTONS */
+        .arcade-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .arcade-btn {
+            aspect-ratio: 1;
+            border-radius: 50%;
+            border: 4px solid #222;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.1s ease;
+            box-shadow: 
+                inset 0 -5px 10px rgba(0,0,0,0.3),
+                0 5px 10px rgba(0,0,0,0.3);
+        }
+
+        .arcade-btn:active {
+            transform: scale(0.95) translateY(2px);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .btn-red {
+            background: radial-gradient(circle at 30% 30%, #ff6666 0%, #cc0000 100%);
+            color: white;
+        }
+
+        .btn-yellow {
+            background: radial-gradient(circle at 30% 30%, #ffff66 0%, #ccaa00 100%);
+            color: #333;
+        }
+
+        .btn-green {
+            background: radial-gradient(circle at 30% 30%, #66ff66 0%, #00aa00 100%);
+            color: white;
+        }
+
+        .btn-blue {
+            background: radial-gradient(circle at 30% 30%, #6666ff 0%, #0000aa 100%);
+            color: white;
+        }
+
+        .btn-pink {
+            background: radial-gradient(circle at 30% 30%, #ff66ff 0%, #aa00aa 100%);
+            color: white;
+        }
+
+        .btn-cyan {
+            background: radial-gradient(circle at 30% 30%, #66ffff 0%, #00aaaa 100%);
+            color: #333;
+        }
+
+        /* VOLUME SLIDER */
+        .volume-section {
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .vol-label {
+            font-size: 0.4rem;
+            color: #888;
+        }
+
+        .vol-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 8px;
+            background: #222;
+            border-radius: 4px;
+        }
+
+        .vol-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--arcade-yellow);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* COIN SLOT */
+        .coin-slot {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .coin-slot-label {
+            font-size: 0.4rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .coin-slot-visual {
+            width: 60px;
+            height: 10px;
+            background: #111;
+            border: 2px solid #444;
+            border-radius: 5px;
+            margin: 0 auto;
+        }
+
+        /* PLAYLIST */
+        .playlist-section {
+            margin-top: 15px;
+            background: #111;
+            border: 2px solid #333;
+            border-radius: 5px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .playlist-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 10px;
+            border-bottom: 1px solid #222;
+            cursor: pointer;
+            font-size: 0.4rem;
+            transition: background 0.15s ease;
+        }
+
+        .playlist-item:hover {
+            background: rgba(155, 89, 182, 0.2);
+        }
+
+        .playlist-item.active {
+            background: rgba(233, 30, 99, 0.2);
+            border-left: 3px solid var(--arcade-pink);
+        }
+
+        .item-num {
+            width: 25px;
+            color: var(--arcade-yellow);
+        }
+
+        .item-name {
+            flex: 1;
+            color: white;
+        }
+
+        /* CREDITS */
+        .credits {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.35rem;
+            color: #444;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 400px) {
+            .marquee-title { font-size: 0.7rem; }
+            .joystick { width: 60px; height: 60px; }
+            .arcade-btn { font-size: 0.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="arcade-cabinet" id="player">
+    <!-- MARQUEE -->
+    <div class="marquee">
+        <div class="marquee-title">ARCADE JUKEBOX</div>
+        <div class="marquee-sub">★ VEILLE CITOYENNE ★</div>
+    </div>
+
+    <!-- SCREEN -->
+    <div class="screen-bezel">
+        <div class="screen">
+            <div class="crt-overlay"></div>
+            <div class="crt-flicker"></div>
+            
+            <div class="screen-content">
+                <div class="score-row">
+                    <div><span class="score-label">1UP</span> <span class="score-value" id="score1">00000</span></div>
+                    <div><span class="score-label">HI-SCORE</span> <span class="score-value">99999</span></div>
+                </div>
+
+                <div class="now-playing">
+                    <div class="np-label">♪ NOW PLAYING ♪</div>
+                    <div class="np-title" id="trackTitle">PARTY ON GAME OVER</div>
+                    <div class="np-artist" id="trackArtist">CCPLC BROADCAST</div>
+                    
+                    <div class="pixel-viz" id="visualizer"></div>
+                    
+                    <div class="progress-bar" id="progressBar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    
+                    <div class="time-display">
+                        <span id="timeCurrent">00:00</span>
+                        <span id="timeTotal">00:00</span>
+                    </div>
+                </div>
+
+                <div class="insert-coin" id="insertCoin">INSERT COIN</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTROL PANEL -->
+    <div class="control-panel">
+        <div class="joystick-area">
+            <div class="joystick">
+                <div class="joystick-stick">
+                    <div class="joystick-ball"></div>
+                </div>
+            </div>
+            
+            <div class="arcade-buttons">
+                <button class="arcade-btn btn-red" id="btnPrev">◀◀</button>
+                <button class="arcade-btn btn-green" id="btnPlay">▶</button>
+                <button class="arcade-btn btn-blue" id="btnNext">▶▶</button>
+                <button class="arcade-btn btn-yellow" id="btnRew">-10</button>
+                <button class="arcade-btn btn-pink" id="btnStop">■</button>
+                <button class="arcade-btn btn-cyan" id="btnFwd">+10</button>
+            </div>
+        </div>
+
+        <div class="volume-section">
+            <span class="vol-label">VOL</span>
+            <input type="range" class="vol-slider" id="volumeSlider" min="0" max="100" value="80">
+        </div>
+
+        <div class="coin-slot">
+            <div class="coin-slot-label">COIN</div>
+            <div class="coin-slot-visual"></div>
+        </div>
+    </div>
+
+    <!-- PLAYLIST -->
+    <div class="playlist-section" id="playlistContainer"></div>
+
+    <!-- CREDITS -->
+    <div class="credits">© 2026 CCPLC — FORK • HACK • SPREAD</div>
+</div>
+
+<audio id="audio" preload="metadata"></audio>
+
+<script>
+const playlist = [
+    { title: "PARTY ON GAME OVER", artist: "CCPLC BROADCAST", src: "https://dl.ouaisfi.eu/ccplc/test-o/party-on-game-over.mp3" },
+    { title: "LEVEL 2 - SOCIAL", artist: "RÉSEAU 11·60", src: "https://dl.ouaisfi.eu/ccplc/test-o/party-on-game-over.mp3" },
+    { title: "BOSS FIGHT", artist: "CELLULE ALPHA", src: "https://dl.ouaisfi.eu/ccplc/test-o/party-on-game-over.mp3" }
+];
+
+const audio = document.getElementById('audio');
+const player = document.getElementById('player');
+const btnPlay = document.getElementById('btnPlay');
+const progressFill = document.getElementById('progressFill');
+const progressBar = document.getElementById('progressBar');
+const trackTitle = document.getElementById('trackTitle');
+const trackArtist = document.getElementById('trackArtist');
+const timeCurrent = document.getElementById('timeCurrent');
+const timeTotal = document.getElementById('timeTotal');
+const insertCoin = document.getElementById('insertCoin');
+const visualizer = document.getElementById('visualizer');
+const score1 = document.getElementById('score1');
+
+let currentTrack = 0;
+let isPlaying = false;
+let score = 0;
+
+// Create visualizer bars
+for (let i = 0; i < 12; i++) {
+    const bar = document.createElement('div');
+    bar.className = 'pixel-bar';
+    bar.style.height = '4px';
+    visualizer.appendChild(bar);
+}
+
+function formatTime(s) {
+    if (isNaN(s)) return "00:00";
+    return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+}
+
+function renderPlaylist() {
+    const container = document.getElementById('playlistContainer');
+    container.innerHTML = '';
+    playlist.forEach((t, i) => {
+        const item = document.createElement('div');
+        item.className = `playlist-item ${i === currentTrack ? 'active' : ''}`;
+        item.innerHTML = `<span class="item-num">${i+1}.</span><span class="item-name">${t.title}</span>`;
+        item.onclick = () => { currentTrack = i; loadTrack(i); play(); };
+        container.appendChild(item);
+    });
+}
+
+function loadTrack(i) {
+    const t = playlist[i];
+    audio.src = t.src;
+    trackTitle.textContent = t.title;
+    trackArtist.textContent = t.artist;
+    document.querySelectorAll('.playlist-item').forEach((el, idx) => el.classList.toggle('active', idx === i));
+}
+
+function play() {
+    audio.play().then(() => {
+        isPlaying = true;
+        player.classList.add('playing');
+        btnPlay.textContent = '❚❚';
+        insertCoin.textContent = 'PLAYING...';
+        animateViz();
+    });
+}
+
+function pause() {
+    audio.pause();
+    isPlaying = false;
+    player.classList.remove('playing');
+    btnPlay.textContent = '▶';
+    insertCoin.textContent = 'PAUSED';
+}
+
+function animateViz() {
+    if (!isPlaying) return;
+    const bars = visualizer.querySelectorAll('.pixel-bar');
+    bars.forEach(bar => {
+        bar.style.height = `${Math.random() * 35 + 5}px`;
+    });
+    // Update score
+    score += Math.floor(Math.random() * 10);
+    score1.textContent = String(score).padStart(5, '0');
+    requestAnimationFrame(animateViz);
+}
+
+btnPlay.onclick = () => isPlaying ? pause() : play();
+document.getElementById('btnPrev').onclick = () => { currentTrack = (currentTrack - 1 + playlist.length) % playlist.length; loadTrack(currentTrack); if(isPlaying) play(); };
+document.getElementById('btnNext').onclick = () => { currentTrack = (currentTrack + 1) % playlist.length; loadTrack(currentTrack); if(isPlaying) play(); };
+document.getElementById('btnRew').onclick = () => audio.currentTime -= 10;
+document.getElementById('btnFwd').onclick = () => audio.currentTime += 10;
+document.getElementById('btnStop').onclick = () => { pause(); audio.currentTime = 0; insertCoin.textContent = 'INSERT COIN'; };
+
+document.getElementById('volumeSlider').oninput = (e) => audio.volume = e.target.value / 100;
+
+audio.ontimeupdate = () => {
+    progressFill.style.width = `${(audio.currentTime / audio.duration) * 100 || 0}%`;
+    timeCurrent.textContent = formatTime(audio.currentTime);
+    timeTotal.textContent = formatTime(audio.duration);
+};
+
+progressBar.onclick = (e) => {
+    const rect = progressBar.getBoundingClientRect();
+    audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
+};
+
+audio.onended = () => { currentTrack = (currentTrack + 1) % playlist.length; loadTrack(currentTrack); play(); };
+
+document.addEventListener('keydown', (e) => { if (e.code === 'Space') { e.preventDefault(); isPlaying ? pause() : play(); } });
+
+renderPlaylist();
+loadTrack(0);
+audio.volume = 0.8;
+</script>
+
+</body>
+</html>
