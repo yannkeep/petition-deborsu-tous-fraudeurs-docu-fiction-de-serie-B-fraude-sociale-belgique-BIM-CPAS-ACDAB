@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CINÉMA CITOYEN — Projecteur 35mm</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Bebas+Neue&family=Special+Elite&display=swap');
+        
+        :root {
+            --film-gold: #c9a227;
+            --film-red: #8b0000;
+            --screen-white: #f5f5f0;
+            --curtain-red: #6b0f1a;
+            --projector-beam: rgba(255, 248, 220, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #0a0a0a;
+            min-height: 100vh;
+            font-family: 'Special Elite', monospace;
+            overflow-x: hidden;
+        }
+
+        /* CINEMA ROOM */
+        .cinema-room {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* CURTAINS */
+        .curtains {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            display: flex;
+        }
+
+        .curtain {
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                var(--curtain-red) 0%, 
+                #8b1a2b 30%, 
+                var(--curtain-red) 50%,
+                #4a0a10 100%
+            );
+            background-size: 20px 100%;
+            transition: transform 1s ease;
+        }
+
+        .curtain-left {
+            transform-origin: left;
+        }
+
+        .curtain-right {
+            transform-origin: right;
+        }
+
+        .curtains.open .curtain-left {
+            transform: translateX(-100%);
+        }
+
+        .curtains.open .curtain-right {
+            transform: translateX(100%);
+        }
+
+        /* PROJECTOR BOOTH */
+        .projector-booth {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 50;
+            background: rgba(0,0,0,0.8);
+            padding: 15px;
+            border: 2px solid #333;
+            border-radius: 10px;
+        }
+
+        .booth-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.8rem;
+            color: var(--film-gold);
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .film-reels {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .film-reel {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: 
+                radial-gradient(circle at center, #222 0%, #111 30%),
+                conic-gradient(from 0deg, #444 0deg, #222 30deg, #444 60deg, #222 90deg, #444 120deg, #222 150deg, #444 180deg, #222 210deg, #444 240deg, #222 270deg, #444 300deg, #222 330deg, #444 360deg);
+            border: 3px solid #555;
+            position: relative;
+        }
+
+        .film-reel::before {
+            content: "";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 12px; height: 12px;
+            background: #666;
+            border-radius: 50%;
+        }
+
+        .playing .film-reel {
+            animation: reel-spin 1s linear infinite;
+        }
+
+        @keyframes reel-spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        .projector-light {
+            width: 10px;
+            height: 10px;
+            background: #333;
+            border-radius: 50%;
+            margin: 10px auto 0;
+        }
+
+        .playing .projector-light {
+            background: var(--film-gold);
+            box-shadow: 0 0 20px var(--film-gold);
+            animation: light-flicker 0.1s infinite;
+        }
+
+        @keyframes light-flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.9; }
+        }
+
+        /* SCREEN AREA */
+        .screen-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        /* PROJECTOR BEAM */
+        .projector-beam {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 400px solid transparent;
+            border-right: 400px solid transparent;
+            border-top: 600px solid var(--projector-beam);
+            pointer-events: none;
+            opacity: 0;
+            z-index: 5;
+        }
+
+        .playing .projector-beam {
+            opacity: 1;
+        }
+
+        /* MOVIE SCREEN */
+        .movie-screen {
+            width: 100%;
+            max-width: 900px;
+            background: var(--screen-white);
+            position: relative;
+            box-shadow: 
+                0 0 100px rgba(255,255,255,0.1),
+                inset 0 0 50px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
+        .screen-frame {
+            border: 8px solid #111;
+            border-radius: 3px;
+        }
+
+        .screen-inner {
+            aspect-ratio: 2.35/1;
+            background: #111;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-container {
+            width: 100%;
+            height: 100%;
+        }
+
+        .video-container video,
+        .video-container iframe {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* FILM GRAIN */
+        .film-grain {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 15;
+        }
+
+        /* COUNTDOWN */
+        .countdown-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+        }
+
+        .countdown-overlay.hidden {
+            display: none;
+        }
+
+        .countdown-circle {
+            width: 200px;
+            height: 200px;
+            border: 8px solid var(--film-gold);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .countdown-number {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 6rem;
+            color: var(--film-gold);
+        }
+
+        .countdown-ticks {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+        }
+
+        .countdown-tick {
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            width: 3px;
+            height: 15px;
+            background: var(--film-gold);
+            transform-origin: center 95px;
+        }
+
+        /* FILM SPROCKETS */
+        .film-sprockets {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            z-index: 5;
+        }
+
+        .film-sprockets.left { left: 0; }
+        .film-sprockets.right { right: 0; }
+
+        .sprocket {
+            width: 15px;
+            height: 10px;
+            background: #000;
+            border-radius: 2px;
+        }
+
+        /* TITLE CARD */
+        .title-card {
+            text-align: center;
+            margin-top: 30px;
+            z-index: 10;
+        }
+
+        .film-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--film-gold);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 10px;
+        }
+
+        .film-info {
+            font-size: 0.9rem;
+            color: #888;
+            letter-spacing: 2px;
+        }
+
+        /* CONTROL BAR */
+        .control-bar {
+            background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+            padding: 20px;
+            border-top: 1px solid #333;
+            z-index: 10;
+        }
+
+        .controls-inner {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* PROGRESS */
+        .progress-section {
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #333;
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--film-gold);
+            border-radius: 3px;
+            width: 0%;
+            box-shadow: 0 0 10px rgba(201, 162, 39, 0.5);
+        }
+
+        .progress-times {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* BUTTONS */
+        .controls-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .ctrl-btn {
+            width: 50px;
+            height: 50px;
+            background: transparent;
+            border: 2px solid #444;
+            border-radius: 50%;
+            color: #888;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .ctrl-btn:hover {
+            border-color: var(--film-gold);
+            color: var(--film-gold);
+        }
+
+        .ctrl-btn.play-btn {
+            width: 70px;
+            height: 70px;
+            border-color: var(--film-gold);
+            color: var(--film-gold);
+            font-size: 1.5rem;
+        }
+
+        .ctrl-btn.play-btn.active {
+            background: var(--film-gold);
+            color: #000;
+            box-shadow: 0 0 30px rgba(201, 162, 39, 0.3);
+        }
+
+        /* VOLUME */
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .vol-slider {
+            width: 100px;
+            -webkit-appearance: none;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+        }
+
+        .vol-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--film-gold);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* PLAYLIST */
+        .playlist-section {
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .playlist-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.2rem;
+            color: var(--film-gold);
+            letter-spacing: 5px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .playlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .playlist-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid #333;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .playlist-item:hover {
+            border-color: var(--film-gold);
+        }
+
+        .playlist-item.active {
+            border-color: var(--film-gold);
+            background: rgba(201, 162, 39, 0.1);
+        }
+
+        .item-poster {
+            aspect-ratio: 16/9;
+            background: #222;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .item-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: sepia(20%);
+        }
+
+        .item-title {
+            font-family: 'Playfair Display', serif;
+            color: var(--screen-white);
+            font-size: 1rem;
+        }
+
+        .item-meta {
+            font-size: 0.7rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* FOOTER */
+        .cinema-footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.7rem;
+            color: #444;
+        }
+
+        .cinema-footer a {
+            color: var(--film-gold);
+            text-decoration: none;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .projector-booth { display: none; }
+            .film-title { font-size: 1.3rem; }
+            .ctrl-btn { width: 40px; height: 40px; }
+            .ctrl-btn.play-btn { width: 55px; height: 55px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- CURTAINS -->
+<div class="curtains" id="curtains">
+    <div class="curtain curtain-left"></div>
+    <div class="curtain curtain-right"></div>
+</div>
+
+<div class="cinema-room" id="player">
+    <!-- PROJECTOR BOOTH -->
+    <div class="projector-booth">
+        <div class="booth-title">PROJECTEUR</div>
+        <div class="film-reels">
+            <div class="film-reel"></div>
+            <div class="film-reel"></div>
+        </div>
+        <div class="projector-light"></div>
+    </div>
+
+    <!-- SCREEN AREA -->
+    <div class="screen-area">
+        <div class="projector-beam"></div>
+        
+        <div class="movie-screen">
+            <div class="screen-frame">
+                <div class="screen-inner">
+                    <div class="film-sprockets left">
+                        <div class="sprocket"></div>
+                        <div class="sprocket"></div>
+                        <div class="sprocket"></div>
+                        <div class="sprocket"></div>
+                        <div class="sprocket"></div>
+                    </div>
+                    
+                    <div class="video-container" id="videoContainer"></div>
+                    <div class="film-grain"></div>
+                    
+                    <div class="countdown-overlay" id="countdown">
+                        <div class="countdown-circle">
+                            <div class="countdown-number" id="countdownNumber">5</div>
+                        </div>
+                    </div>
+                    
+                    <div class="film-sprockets right">
+                        <div class="sprocket"></div>
+                        <div class="sprocket"></div>
+                        <div class="sprocket"></div>
+                        <div class="sprocket"></div>
+                        <div class="sprocket"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="title-card">
+            <div class="film-title" id="filmTitle">BRIEFING TEAM ALPHA</div>
+            <div class="film-info" id="filmInfo">DOCUMENTAIRE • 2026 • CCPLC PRODUCTION</div>
+        </div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="control-bar">
+        <div class="controls-inner">
+            <div class="progress-section">
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-times">
+                    <span id="timeCurrent">00:00</span>
+                    <span id="timeTotal">00:00</span>
+                </div>
+            </div>
+
+            <div class="controls-row">
+                <button class="ctrl-btn" id="btnPrev">⏮</button>
+                <button class="ctrl-btn" id="btnRew">⏪</button>
+                <button class="ctrl-btn play-btn" id="btnPlay">▶</button>
+                <button class="ctrl-btn" id="btnFwd">⏩</button>
+                <button class="ctrl-btn" id="btnNext">⏭</button>
+                
+                <div class="volume-control">
+                    <span style="color: #666;">🔊</span>
+                    <input type="range" class="vol-slider" id="volumeSlider" min="0" max="100" value="80">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PLAYLIST -->
+    <div class="playlist-section">
+        <div class="playlist-title">★ PROGRAMME DE LA SÉANCE ★</div>
+        <div class="playlist-grid" id="playlistGrid"></div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="cinema-footer">
+        © 2026 CCPLC — <a href="https://ouaisfi.eu" target="_blank">ouaisfi.eu</a> — CC BY-NC 4.0
+    </div>
+</div>
+
+<script>
+const videos = [
+    {
+        title: "BRIEFING TEAM ALPHA",
+        info: "DOCUMENTAIRE • 2026 • CCPLC PRODUCTION",
+        src: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        thumb: "https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg"
+    },
+    {
+        title: "PARTICRATIE BELGE",
+        info: "ANALYSE • 2026 • RÉSEAU 11·60",
+        src: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        thumb: "https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg"
+    },
+    {
+        title: "LE RÉVEIL CITOYEN",
+        info: "FICTION • 2026 • CELLULE ALPHA",
+        src: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        thumb: "https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg"
+    }
+];
+
+let currentVideo = 0;
+let isPlaying = false;
+
+const player = document.getElementById('player');
+const curtains = document.getElementById('curtains');
+const videoContainer = document.getElementById('videoContainer');
+const countdown = document.getElementById('countdown');
+const countdownNumber = document.getElementById('countdownNumber');
+const btnPlay = document.getElementById('btnPlay');
+const filmTitle = document.getElementById('filmTitle');
+const filmInfo = document.getElementById('filmInfo');
+const progressFill = document.getElementById('progressFill');
+const playlistGrid = document.getElementById('playlistGrid');
+
+function renderPlaylist() {
+    playlistGrid.innerHTML = '';
+    videos.forEach((v, i) => {
+        const item = document.createElement('div');
+        item.className = `playlist-item ${i === currentVideo ? 'active' : ''}`;
+        item.innerHTML = `
+            <div class="item-poster"><img src="${v.thumb}" alt=""></div>
+            <div class="item-title">${v.title}</div>
+            <div class="item-meta">${v.info}</div>
+        `;
+        item.onclick = () => loadVideo(i);
+        playlistGrid.appendChild(item);
+    });
+}
+
+function loadVideo(index) {
+    currentVideo = index;
+    const v = videos[index];
+    filmTitle.textContent = v.title;
+    filmInfo.textContent = v.info;
+    
+    videoContainer.innerHTML = `
+        <iframe src="${v.src}?enablejsapi=1&autoplay=0&controls=0&modestbranding=1&rel=0" 
+            frameborder="0" allowfullscreen></iframe>
+    `;
+    
+    document.querySelectorAll('.playlist-item').forEach((item, i) => {
+        item.classList.toggle('active', i === index);
+    });
+    
+    countdown.classList.remove('hidden');
+    isPlaying = false;
+    player.classList.remove('playing');
+    btnPlay.classList.remove('active');
+    btnPlay.textContent = '▶';
+}
+
+function startCountdown() {
+    let count = 5;
+    countdownNumber.textContent = count;
+    countdown.classList.remove('hidden');
+    
+    const interval = setInterval(() => {
+        count--;
+        if (count > 0) {
+            countdownNumber.textContent = count;
+        } else {
+            clearInterval(interval);
+            countdown.classList.add('hidden');
+            play();
+        }
+    }, 1000);
+}
+
+function play() {
+    isPlaying = true;
+    player.classList.add('playing');
+    btnPlay.classList.add('active');
+    btnPlay.textContent = '❚❚';
+    curtains.classList.add('open');
+}
+
+function pause() {
+    isPlaying = false;
+    player.classList.remove('playing');
+    btnPlay.classList.remove('active');
+    btnPlay.textContent = '▶';
+}
+
+function togglePlay() {
+    if (isPlaying) {
+        pause();
+    } else {
+        if (!countdown.classList.contains('hidden')) {
+            startCountdown();
+        } else {
+            play();
+        }
+    }
+}
+
+let fakeProgress = 0;
+setInterval(() => {
+    if (isPlaying) {
+        fakeProgress = (fakeProgress + 0.3) % 100;
+        progressFill.style.width = `${fakeProgress}%`;
+        const secs = Math.floor(fakeProgress * 3);
+        document.getElementById('timeCurrent').textContent = 
+            `${String(Math.floor(secs/60)).padStart(2,'0')}:${String(secs%60).padStart(2,'0')}`;
+    }
+}, 1000);
+
+btnPlay.onclick = togglePlay;
+document.getElementById('btnPrev').onclick = () => loadVideo((currentVideo - 1 + videos.length) % videos.length);
+document.getElementById('btnNext').onclick = () => loadVideo((currentVideo + 1) % videos.length);
+document.getElementById('btnRew').onclick = () => { fakeProgress = Math.max(0, fakeProgress - 5); };
+document.getElementById('btnFwd').onclick = () => { fakeProgress = Math.min(100, fakeProgress + 5); };
+
+document.getElementById('progressBar').onclick = (e) => {
+    const rect = e.target.getBoundingClientRect();
+    fakeProgress = ((e.clientX - rect.left) / rect.width) * 100;
+};
+
+document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+});
+
+// Init
+renderPlaylist();
+loadVideo(0);
+</script>
+
+</body>
+</html>

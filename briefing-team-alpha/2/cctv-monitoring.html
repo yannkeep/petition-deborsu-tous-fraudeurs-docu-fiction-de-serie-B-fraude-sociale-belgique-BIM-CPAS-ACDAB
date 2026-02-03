@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCTV MONITORING — Centre de Surveillance Citoyenne</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap');
+        
+        :root {
+            --cctv-green: #00ff00;
+            --cctv-dim: #00aa00;
+            --cctv-red: #ff0000;
+            --cctv-amber: #ffaa00;
+            --panel-dark: #1a1a1a;
+            --panel-gray: #2a2a2a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #0a0a0a;
+            min-height: 100vh;
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--cctv-green);
+            padding: 15px;
+        }
+
+        /* MAIN CONTAINER */
+        .cctv-station {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* HEADER */
+        .station-header {
+            background: var(--panel-dark);
+            border: 2px solid #333;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .station-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+        }
+
+        .station-status {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+        }
+
+        .status-led {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #333;
+        }
+
+        .status-led.on {
+            background: var(--cctv-green);
+            box-shadow: 0 0 10px var(--cctv-green);
+            animation: led-blink 1s infinite;
+        }
+
+        .status-led.recording {
+            background: var(--cctv-red);
+            box-shadow: 0 0 10px var(--cctv-red);
+            animation: led-blink 0.5s infinite;
+        }
+
+        @keyframes led-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .datetime {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: var(--cctv-amber);
+        }
+
+        /* MONITOR GRID */
+        .monitor-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        /* MAIN MONITOR */
+        .main-monitor {
+            background: #000;
+            border: 3px solid #333;
+            position: relative;
+        }
+
+        .monitor-frame {
+            background: var(--panel-gray);
+            padding: 8px;
+        }
+
+        .monitor-screen {
+            background: #000;
+            aspect-ratio: 16/9;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* VIDEO CONTAINER */
+        .video-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .video-container video,
+        .video-container iframe {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* SCANLINES */
+        .scanlines {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0,0,0,0.2) 0px,
+                rgba(0,0,0,0.2) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* OSD OVERLAY */
+        .osd-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 20;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .osd-top {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .osd-cam {
+            background: rgba(0,0,0,0.7);
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            color: var(--cctv-green);
+            text-shadow: 0 0 5px var(--cctv-green);
+        }
+
+        .osd-rec {
+            background: rgba(255,0,0,0.8);
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .rec-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: rec-blink 1s infinite;
+        }
+
+        @keyframes rec-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .osd-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .osd-timestamp {
+            background: rgba(0,0,0,0.7);
+            padding: 5px 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: var(--cctv-amber);
+        }
+
+        .osd-location {
+            background: rgba(0,0,0,0.7);
+            padding: 5px 10px;
+            font-size: 0.7rem;
+            color: var(--cctv-green);
+            text-align: right;
+        }
+
+        /* SIDE MONITORS */
+        .side-monitors {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .mini-monitor {
+            background: var(--panel-gray);
+            padding: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid #333;
+        }
+
+        .mini-monitor:hover {
+            border-color: var(--cctv-green);
+        }
+
+        .mini-monitor.active {
+            border-color: var(--cctv-green);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+
+        .mini-screen {
+            background: #000;
+            aspect-ratio: 16/9;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mini-screen img,
+        .mini-screen video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(50%);
+        }
+
+        .mini-label {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            background: rgba(0,0,0,0.8);
+            padding: 2px 6px;
+            font-size: 0.55rem;
+            color: var(--cctv-green);
+        }
+
+        /* CONTROL PANEL */
+        .control-panel {
+            background: var(--panel-dark);
+            border: 2px solid #333;
+            padding: 15px;
+        }
+
+        .controls-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* PLAYBACK CONTROLS */
+        .playback-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .ctrl-btn {
+            width: 45px;
+            height: 40px;
+            background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
+            border: 2px solid #444;
+            color: #888;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+
+        .ctrl-btn:hover {
+            border-color: var(--cctv-green);
+            color: var(--cctv-green);
+        }
+
+        .ctrl-btn:active {
+            transform: scale(0.95);
+        }
+
+        .ctrl-btn.play-btn {
+            width: 60px;
+            border-color: var(--cctv-green);
+            color: var(--cctv-green);
+        }
+
+        .ctrl-btn.play-btn.active {
+            background: var(--cctv-green);
+            color: #000;
+        }
+
+        /* TIMELINE */
+        .timeline-section {
+            flex: 1;
+        }
+
+        .timeline-bar {
+            height: 8px;
+            background: #222;
+            cursor: pointer;
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .timeline-progress {
+            height: 100%;
+            background: var(--cctv-green);
+            width: 0%;
+            box-shadow: 0 0 5px var(--cctv-green);
+        }
+
+        .timeline-markers {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            top: -3px;
+            width: 2px;
+            height: 14px;
+            background: var(--cctv-amber);
+        }
+
+        .timeline-times {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #666;
+        }
+
+        /* VOLUME & OPTIONS */
+        .options-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .vol-icon {
+            color: var(--cctv-green);
+            font-size: 1rem;
+        }
+
+        .vol-slider {
+            width: 80px;
+            -webkit-appearance: none;
+            height: 6px;
+            background: #333;
+        }
+
+        .vol-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: var(--cctv-green);
+            cursor: pointer;
+        }
+
+        .option-btn {
+            background: transparent;
+            border: 1px solid #444;
+            color: #666;
+            padding: 5px 10px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .option-btn:hover, .option-btn.active {
+            border-color: var(--cctv-green);
+            color: var(--cctv-green);
+        }
+
+        /* INFO PANEL */
+        .info-panel {
+            margin-top: 15px;
+            background: var(--panel-dark);
+            border: 2px solid #333;
+            padding: 15px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: 0.6rem;
+            color: #666;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: var(--cctv-green);
+        }
+
+        /* FOOTER */
+        .station-footer {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            color: #444;
+        }
+
+        .station-footer a {
+            color: var(--cctv-dim);
+            text-decoration: none;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 700px) {
+            .monitor-grid {
+                grid-template-columns: 1fr;
+            }
+            .side-monitors {
+                flex-direction: row;
+            }
+            .mini-monitor {
+                flex: 1;
+            }
+            .controls-row {
+                flex-wrap: wrap;
+            }
+            .info-panel {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="cctv-station">
+    <!-- HEADER -->
+    <div class="station-header">
+        <div class="station-title">CCTV MONITORING STATION</div>
+        <div class="station-status">
+            <div class="status-item">
+                <div class="status-led on"></div>
+                <span>SYSTEM</span>
+            </div>
+            <div class="status-item">
+                <div class="status-led recording" id="recLed"></div>
+                <span>REC</span>
+            </div>
+            <div class="datetime" id="datetime">2026-02-03 14:32:07</div>
+        </div>
+    </div>
+
+    <!-- MONITOR GRID -->
+    <div class="monitor-grid">
+        <!-- MAIN MONITOR -->
+        <div class="main-monitor">
+            <div class="monitor-frame">
+                <div class="monitor-screen">
+                    <div class="video-container" id="videoContainer">
+                        <!-- Video or iframe will be inserted here -->
+                    </div>
+                    <div class="scanlines"></div>
+                    <div class="osd-overlay">
+                        <div class="osd-top">
+                            <div class="osd-cam" id="osdCam">CAM-01</div>
+                            <div class="osd-rec" id="osdRec">
+                                <div class="rec-dot"></div>
+                                <span>REC</span>
+                            </div>
+                        </div>
+                        <div class="osd-bottom">
+                            <div class="osd-timestamp" id="osdTimestamp">00:00:00</div>
+                            <div class="osd-location">
+                                <div id="osdTitle">BRIEFING ALPHA</div>
+                                <div style="color: #666; margin-top: 3px;">LAT 50.8503 | LON 4.3517</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SIDE MONITORS -->
+        <div class="side-monitors" id="sideMonitors">
+            <!-- Generated by JS -->
+        </div>
+    </div>
+
+    <!-- CONTROL PANEL -->
+    <div class="control-panel">
+        <div class="controls-row">
+            <div class="playback-controls">
+                <button class="ctrl-btn" id="btnPrev">⏮</button>
+                <button class="ctrl-btn" id="btnRew">⏪</button>
+                <button class="ctrl-btn play-btn" id="btnPlay">▶</button>
+                <button class="ctrl-btn" id="btnFwd">⏩</button>
+                <button class="ctrl-btn" id="btnNext">⏭</button>
+            </div>
+
+            <div class="timeline-section">
+                <div class="timeline-bar" id="timelineBar">
+                    <div class="timeline-progress" id="timelineProgress"></div>
+                    <div class="timeline-markers">
+                        <div class="timeline-marker" style="left: 25%;"></div>
+                        <div class="timeline-marker" style="left: 50%;"></div>
+                        <div class="timeline-marker" style="left: 75%;"></div>
+                    </div>
+                </div>
+                <div class="timeline-times">
+                    <span id="timeCurrent">00:00</span>
+                    <span id="timeTotal">00:00</span>
+                </div>
+            </div>
+
+            <div class="options-section">
+                <div class="volume-control">
+                    <span class="vol-icon">🔊</span>
+                    <input type="range" class="vol-slider" id="volumeSlider" min="0" max="100" value="80">
+                </div>
+                <button class="option-btn" id="btnLoop">LOOP</button>
+                <button class="option-btn" id="btnFullscreen">⛶</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- INFO PANEL -->
+    <div class="info-panel">
+        <div class="info-item">
+            <div class="info-label">RESOLUTION</div>
+            <div class="info-value">1920×1080</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">FRAMERATE</div>
+            <div class="info-value">30 FPS</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">BITRATE</div>
+            <div class="info-value" id="infoBitrate">4.2 Mbps</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">STORAGE</div>
+            <div class="info-value">127.4 GB</div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="station-footer">
+        <span>© 2026 CCPLC — SURVEILLANCE CITOYENNE</span>
+        <a href="https://ouaisfi.eu" target="_blank">ouaisfi.eu</a>
+        <span>CC BY-NC 4.0</span>
+    </div>
+</div>
+
+<script>
+// Video sources (can be video files or YouTube embeds)
+const videos = [
+    {
+        id: "cam01",
+        title: "BRIEFING TEAM ALPHA",
+        type: "youtube",
+        src: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        thumb: "https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg"
+    },
+    {
+        id: "cam02",
+        title: "TRANSMISSION #7",
+        type: "youtube",
+        src: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        thumb: "https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg"
+    },
+    {
+        id: "cam03",
+        title: "ARCHIVES 11·60",
+        type: "youtube",
+        src: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        thumb: "https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg"
+    }
+];
+
+let currentVideo = 0;
+let isPlaying = false;
+
+const videoContainer = document.getElementById('videoContainer');
+const btnPlay = document.getElementById('btnPlay');
+const osdCam = document.getElementById('osdCam');
+const osdTitle = document.getElementById('osdTitle');
+const osdTimestamp = document.getElementById('osdTimestamp');
+const osdRec = document.getElementById('osdRec');
+const recLed = document.getElementById('recLed');
+const timelineProgress = document.getElementById('timelineProgress');
+const timeCurrent = document.getElementById('timeCurrent');
+const timeTotal = document.getElementById('timeTotal');
+const sideMonitors = document.getElementById('sideMonitors');
+
+// Update datetime
+function updateDatetime() {
+    const now = new Date();
+    const str = now.toISOString().replace('T', ' ').substring(0, 19);
+    document.getElementById('datetime').textContent = str;
+}
+setInterval(updateDatetime, 1000);
+updateDatetime();
+
+// Render side monitors
+function renderSideMonitors() {
+    sideMonitors.innerHTML = '';
+    videos.forEach((v, i) => {
+        const monitor = document.createElement('div');
+        monitor.className = `mini-monitor ${i === currentVideo ? 'active' : ''}`;
+        monitor.innerHTML = `
+            <div class="mini-screen">
+                <img src="${v.thumb}" alt="${v.title}">
+                <div class="mini-label">CAM-${String(i+1).padStart(2,'0')}</div>
+            </div>
+        `;
+        monitor.onclick = () => loadVideo(i);
+        sideMonitors.appendChild(monitor);
+    });
+}
+
+// Load video
+function loadVideo(index) {
+    currentVideo = index;
+    const v = videos[index];
+    
+    osdCam.textContent = `CAM-${String(index+1).padStart(2,'0')}`;
+    osdTitle.textContent = v.title;
+    
+    if (v.type === 'youtube') {
+        videoContainer.innerHTML = `
+            <iframe 
+                src="${v.src}?enablejsapi=1&autoplay=0&controls=0&modestbranding=1&rel=0" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        `;
+    } else {
+        videoContainer.innerHTML = `
+            <video id="mainVideo" src="${v.src}"></video>
+        `;
+    }
+    
+    document.querySelectorAll('.mini-monitor').forEach((m, i) => {
+        m.classList.toggle('active', i === index);
+    });
+    
+    isPlaying = false;
+    btnPlay.classList.remove('active');
+    btnPlay.textContent = '▶';
+    osdRec.style.display = 'none';
+    recLed.classList.remove('recording');
+}
+
+// Play/Pause
+function togglePlay() {
+    const video = document.querySelector('#mainVideo');
+    const iframe = videoContainer.querySelector('iframe');
+    
+    if (iframe) {
+        // For YouTube, we'd need the API - simplified version
+        isPlaying = !isPlaying;
+    } else if (video) {
+        if (video.paused) {
+            video.play();
+            isPlaying = true;
+        } else {
+            video.pause();
+            isPlaying = false;
+        }
+    }
+    
+    btnPlay.classList.toggle('active', isPlaying);
+    btnPlay.textContent = isPlaying ? '❚❚' : '▶';
+    osdRec.style.display = isPlaying ? 'flex' : 'none';
+    recLed.classList.toggle('recording', isPlaying);
+}
+
+// Simulate timestamp update
+let fakeTime = 0;
+setInterval(() => {
+    if (isPlaying) {
+        fakeTime++;
+        const h = String(Math.floor(fakeTime / 3600)).padStart(2, '0');
+        const m = String(Math.floor((fakeTime % 3600) / 60)).padStart(2, '0');
+        const s = String(fakeTime % 60).padStart(2, '0');
+        osdTimestamp.textContent = `${h}:${m}:${s}`;
+        
+        // Fake progress
+        const progress = (fakeTime % 300) / 300 * 100;
+        timelineProgress.style.width = `${progress}%`;
+        timeCurrent.textContent = `${m}:${s}`;
+    }
+}, 1000);
+
+// Event listeners
+btnPlay.onclick = togglePlay;
+document.getElementById('btnPrev').onclick = () => loadVideo((currentVideo - 1 + videos.length) % videos.length);
+document.getElementById('btnNext').onclick = () => loadVideo((currentVideo + 1) % videos.length);
+document.getElementById('btnRew').onclick = () => { fakeTime = Math.max(0, fakeTime - 10); };
+document.getElementById('btnFwd').onclick = () => { fakeTime += 10; };
+
+document.getElementById('btnLoop').onclick = function() { this.classList.toggle('active'); };
+document.getElementById('btnFullscreen').onclick = () => {
+    const screen = document.querySelector('.monitor-screen');
+    if (screen.requestFullscreen) screen.requestFullscreen();
+};
+
+document.getElementById('volumeSlider').oninput = (e) => {
+    const video = document.querySelector('#mainVideo');
+    if (video) video.volume = e.target.value / 100;
+};
+
+document.getElementById('timelineBar').onclick = (e) => {
+    const rect = e.target.getBoundingClientRect();
+    const percent = (e.clientX - rect.left) / rect.width;
+    fakeTime = Math.floor(percent * 300);
+};
+
+// Keyboard
+document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+});
+
+// Init
+renderSideMonitors();
+loadVideo(0);
+</script>
+
+</body>
+</html>

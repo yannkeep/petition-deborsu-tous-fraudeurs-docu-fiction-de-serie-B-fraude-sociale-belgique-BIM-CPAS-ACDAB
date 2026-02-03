@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCPLC NEWS — Chaîne d'Information Citoyenne</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&family=Oswald:wght@400;600;700&display=swap');
+        
+        :root {
+            --news-red: #cc0000;
+            --news-blue: #003366;
+            --news-gold: #ffcc00;
+            --news-white: #ffffff;
+            --news-dark: #1a1a1a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--news-dark);
+            min-height: 100vh;
+            font-family: 'Roboto Condensed', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* BROADCAST CONTAINER */
+        .broadcast-container {
+            width: 100%;
+            max-width: 900px;
+            background: #000;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+        }
+
+        /* TV FRAME */
+        .tv-frame {
+            background: linear-gradient(180deg, #333 0%, #1a1a1a 100%);
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        /* SCREEN */
+        .tv-screen {
+            background: #000;
+            aspect-ratio: 16/9;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* VIDEO */
+        .video-layer {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+        }
+
+        .video-layer video,
+        .video-layer iframe {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* CHANNEL LOGO */
+        .channel-logo {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 20;
+        }
+
+        .logo-box {
+            background: var(--news-red);
+            padding: 8px 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 30px;
+            height: 30px;
+            background: var(--news-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--news-red);
+            font-size: 0.8rem;
+        }
+
+        .logo-text {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--news-white);
+            letter-spacing: 2px;
+        }
+
+        /* LIVE BADGE */
+        .live-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 20;
+            display: none;
+        }
+
+        .live-badge.active {
+            display: flex;
+        }
+
+        .live-inner {
+            background: var(--news-red);
+            padding: 5px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: live-pulse 1s infinite;
+        }
+
+        @keyframes live-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .live-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--news-white);
+            border-radius: 50%;
+            animation: dot-blink 1s infinite;
+        }
+
+        @keyframes dot-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .live-text {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            color: var(--news-white);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+        }
+
+        /* LOWER THIRD */
+        .lower-third {
+            position: absolute;
+            bottom: 60px;
+            left: 0;
+            right: 0;
+            z-index: 20;
+        }
+
+        .l3-container {
+            display: flex;
+            margin: 0 20px;
+        }
+
+        .l3-tag {
+            background: var(--news-red);
+            padding: 8px 15px;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: var(--news-white);
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        .l3-content {
+            flex: 1;
+            background: rgba(0, 51, 102, 0.95);
+            padding: 5px 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .l3-headline {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--news-white);
+        }
+
+        .l3-subline {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.8);
+            margin-top: 2px;
+        }
+
+        /* TICKER */
+        .ticker-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 35px;
+            background: var(--news-red);
+            display: flex;
+            z-index: 20;
+        }
+
+        .ticker-label {
+            background: var(--news-gold);
+            color: var(--news-dark);
+            padding: 0 15px;
+            display: flex;
+            align-items: center;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        .ticker-content {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+
+        .ticker-text {
+            white-space: nowrap;
+            font-size: 0.85rem;
+            color: var(--news-white);
+            animation: ticker-scroll 30s linear infinite;
+            padding-left: 100%;
+        }
+
+        @keyframes ticker-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .ticker-time {
+            background: var(--news-dark);
+            color: var(--news-white);
+            padding: 0 15px;
+            display: flex;
+            align-items: center;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        /* PROGRESS BAR */
+        .progress-overlay {
+            position: absolute;
+            bottom: 35px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(0,0,0,0.5);
+            z-index: 25;
+            cursor: pointer;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--news-gold);
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        /* CONTROL BAR */
+        .control-bar {
+            background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* PLAYBACK */
+        .playback-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .ctrl-btn {
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: 2px solid #444;
+            color: #888;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+            border-radius: 50%;
+        }
+
+        .ctrl-btn:hover {
+            border-color: var(--news-white);
+            color: var(--news-white);
+        }
+
+        .ctrl-btn.play-btn {
+            width: 50px;
+            height: 50px;
+            border-color: var(--news-red);
+            color: var(--news-red);
+        }
+
+        .ctrl-btn.play-btn.active {
+            background: var(--news-red);
+            color: var(--news-white);
+        }
+
+        .time-display {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .time-display span {
+            color: var(--news-white);
+        }
+
+        /* VOLUME */
+        .volume-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .vol-icon {
+            color: #888;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .vol-slider {
+            width: 80px;
+            -webkit-appearance: none;
+            height: 4px;
+            background: #444;
+            border-radius: 2px;
+        }
+
+        .vol-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: var(--news-white);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* OPTIONS */
+        .options-section {
+            display: flex;
+            gap: 10px;
+        }
+
+        .opt-btn {
+            background: transparent;
+            border: 1px solid #444;
+            color: #666;
+            padding: 8px 12px;
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .opt-btn:hover, .opt-btn.active {
+            border-color: var(--news-gold);
+            color: var(--news-gold);
+        }
+
+        /* PLAYLIST */
+        .playlist-section {
+            background: #111;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .playlist-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            border-bottom: 1px solid #222;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .playlist-item:hover {
+            background: rgba(204, 0, 0, 0.1);
+        }
+
+        .playlist-item.active {
+            background: rgba(204, 0, 0, 0.2);
+            border-left: 4px solid var(--news-red);
+        }
+
+        .item-thumb {
+            width: 80px;
+            height: 45px;
+            background: #333;
+            margin-right: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .item-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .item-duration {
+            position: absolute;
+            bottom: 3px;
+            right: 3px;
+            background: rgba(0,0,0,0.8);
+            padding: 2px 5px;
+            font-size: 0.6rem;
+            color: #fff;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-title {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600;
+            color: var(--news-white);
+            font-size: 0.9rem;
+        }
+
+        .item-meta {
+            font-size: 0.7rem;
+            color: #666;
+            margin-top: 3px;
+        }
+
+        /* FOOTER */
+        .broadcast-footer {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #444;
+        }
+
+        .broadcast-footer a {
+            color: var(--news-red);
+            text-decoration: none;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .l3-container { margin: 0 10px; }
+            .l3-headline { font-size: 0.9rem; }
+            .ticker-label { padding: 0 10px; font-size: 0.7rem; }
+            .control-bar { flex-wrap: wrap; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="broadcast-container">
+    <div class="tv-frame">
+        <div class="tv-screen" id="tvScreen">
+            <!-- VIDEO LAYER -->
+            <div class="video-layer" id="videoLayer">
+                <!-- Video/iframe inserted here -->
+            </div>
+
+            <!-- CHANNEL LOGO -->
+            <div class="channel-logo">
+                <div class="logo-box">
+                    <div class="logo-icon">CC</div>
+                    <div class="logo-text">NEWS</div>
+                </div>
+            </div>
+
+            <!-- LIVE BADGE -->
+            <div class="live-badge" id="liveBadge">
+                <div class="live-inner">
+                    <div class="live-dot"></div>
+                    <span class="live-text">EN DIRECT</span>
+                </div>
+            </div>
+
+            <!-- LOWER THIRD -->
+            <div class="lower-third">
+                <div class="l3-container">
+                    <div class="l3-tag">VEILLE CITOYENNE</div>
+                    <div class="l3-content">
+                        <div class="l3-headline" id="l3Headline">BRIEFING TEAM ALPHA — ÉDITION SPÉCIALE</div>
+                        <div class="l3-subline" id="l3Subline">Diffusion exclusive • Centre de documentation citoyenne</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROGRESS -->
+            <div class="progress-overlay" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <!-- TICKER -->
+            <div class="ticker-bar">
+                <div class="ticker-label">FLASH INFO</div>
+                <div class="ticker-content">
+                    <div class="ticker-text" id="tickerText">
+                        ★ CCPLC — Centre de contre-pouvoir et de liaison citoyenne ★ 
+                        Nouvelle émission disponible: "Particratie et démocratie" ★ 
+                        Rejoignez le réseau de veille citoyenne sur ouaisfi.eu ★ 
+                        Documentation complète sur les droits sociaux disponible ★ 
+                        Fork • Hack • Spread — Partagez l'information libre ★
+                    </div>
+                </div>
+                <div class="ticker-time" id="tickerTime">14:32</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="control-bar">
+        <div class="playback-section">
+            <button class="ctrl-btn" id="btnPrev">⏮</button>
+            <button class="ctrl-btn play-btn" id="btnPlay">▶</button>
+            <button class="ctrl-btn" id="btnNext">⏭</button>
+            <div class="time-display">
+                <span id="timeCurrent">00:00</span> / <span id="timeTotal">00:00</span>
+            </div>
+        </div>
+
+        <div class="volume-section">
+            <span class="vol-icon" id="volIcon">🔊</span>
+            <input type="range" class="vol-slider" id="volumeSlider" min="0" max="100" value="80">
+        </div>
+
+        <div class="options-section">
+            <button class="opt-btn" id="btnCC">CC</button>
+            <button class="opt-btn" id="btnHD">HD</button>
+            <button class="opt-btn" id="btnFS">⛶</button>
+        </div>
+    </div>
+
+    <!-- PLAYLIST -->
+    <div class="playlist-section" id="playlistSection"></div>
+
+    <!-- FOOTER -->
+    <div class="broadcast-footer">
+        <span>© 2026 CCPLC — Information citoyenne libre</span>
+        <a href="https://ouaisfi.eu" target="_blank">ouaisfi.eu</a>
+        <span>CC BY-NC 4.0</span>
+    </div>
+</div>
+
+<script>
+const videos = [
+    {
+        title: "BRIEFING TEAM ALPHA — ÉDITION SPÉCIALE",
+        subtitle: "Diffusion exclusive • Centre de documentation citoyenne",
+        type: "youtube",
+        src: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        thumb: "https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg",
+        duration: "4:32"
+    },
+    {
+        title: "PARTICRATIE BELGE — ANALYSE COMPLÈTE",
+        subtitle: "Documentation • Système politique",
+        type: "youtube",
+        src: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        thumb: "https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg",
+        duration: "12:45"
+    },
+    {
+        title: "DROITS SOCIAUX — CE QU'ON NE VOUS DIT PAS",
+        subtitle: "Enquête • Protection sociale",
+        type: "youtube",
+        src: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        thumb: "https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg",
+        duration: "8:17"
+    }
+];
+
+let currentVideo = 0;
+let isPlaying = false;
+
+const videoLayer = document.getElementById('videoLayer');
+const btnPlay = document.getElementById('btnPlay');
+const liveBadge = document.getElementById('liveBadge');
+const l3Headline = document.getElementById('l3Headline');
+const l3Subline = document.getElementById('l3Subline');
+const progressFill = document.getElementById('progressFill');
+const timeCurrent = document.getElementById('timeCurrent');
+const timeTotal = document.getElementById('timeTotal');
+const playlistSection = document.getElementById('playlistSection');
+const tickerTime = document.getElementById('tickerTime');
+
+// Update time
+function updateTime() {
+    const now = new Date();
+    tickerTime.textContent = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+}
+setInterval(updateTime, 1000);
+updateTime();
+
+// Render playlist
+function renderPlaylist() {
+    playlistSection.innerHTML = '';
+    videos.forEach((v, i) => {
+        const item = document.createElement('div');
+        item.className = `playlist-item ${i === currentVideo ? 'active' : ''}`;
+        item.innerHTML = `
+            <div class="item-thumb">
+                <img src="${v.thumb}" alt="">
+                <div class="item-duration">${v.duration}</div>
+            </div>
+            <div class="item-info">
+                <div class="item-title">${v.title}</div>
+                <div class="item-meta">${v.subtitle}</div>
+            </div>
+        `;
+        item.onclick = () => loadVideo(i);
+        playlistSection.appendChild(item);
+    });
+}
+
+// Load video
+function loadVideo(index) {
+    currentVideo = index;
+    const v = videos[index];
+    
+    l3Headline.textContent = v.title;
+    l3Subline.textContent = v.subtitle;
+    timeTotal.textContent = v.duration;
+    
+    videoLayer.innerHTML = `
+        <iframe 
+            src="${v.src}?enablejsapi=1&autoplay=0&controls=0&modestbranding=1&rel=0" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+        </iframe>
+    `;
+    
+    document.querySelectorAll('.playlist-item').forEach((item, i) => {
+        item.classList.toggle('active', i === index);
+    });
+    
+    isPlaying = false;
+    btnPlay.classList.remove('active');
+    btnPlay.textContent = '▶';
+    liveBadge.classList.remove('active');
+}
+
+// Play/Pause
+function togglePlay() {
+    isPlaying = !isPlaying;
+    btnPlay.classList.toggle('active', isPlaying);
+    btnPlay.textContent = isPlaying ? '❚❚' : '▶';
+    liveBadge.classList.toggle('active', isPlaying);
+}
+
+// Fake progress
+let fakeProgress = 0;
+setInterval(() => {
+    if (isPlaying) {
+        fakeProgress = (fakeProgress + 0.5) % 100;
+        progressFill.style.width = `${fakeProgress}%`;
+        const secs = Math.floor(fakeProgress * 2.72);
+        timeCurrent.textContent = `${String(Math.floor(secs/60)).padStart(2,'0')}:${String(secs%60).padStart(2,'0')}`;
+    }
+}, 1000);
+
+// Events
+btnPlay.onclick = togglePlay;
+document.getElementById('btnPrev').onclick = () => loadVideo((currentVideo - 1 + videos.length) % videos.length);
+document.getElementById('btnNext').onclick = () => loadVideo((currentVideo + 1) % videos.length);
+
+document.getElementById('btnFS').onclick = () => {
+    const screen = document.getElementById('tvScreen');
+    if (screen.requestFullscreen) screen.requestFullscreen();
+};
+
+document.getElementById('progressBar').onclick = (e) => {
+    const rect = e.target.getBoundingClientRect();
+    fakeProgress = ((e.clientX - rect.left) / rect.width) * 100;
+};
+
+document.getElementById('volumeSlider').oninput = (e) => {
+    document.getElementById('volIcon').textContent = e.target.value == 0 ? '🔇' : '🔊';
+};
+
+document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+});
+
+// Init
+renderPlaylist();
+loadVideo(0);
+</script>
+
+</body>
+</html>
