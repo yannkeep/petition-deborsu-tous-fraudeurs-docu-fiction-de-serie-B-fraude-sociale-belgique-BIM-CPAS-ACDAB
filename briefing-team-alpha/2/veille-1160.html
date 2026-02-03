@@ -3,995 +3,774 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OUAISFI://STREAM — Terminal de Diffusion</title>
+    <title>CCTV MONITORING — Centre de Surveillance Citoyenne</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap');
         
         :root {
-            --matrix-green: #00ff41;
-            --matrix-dim: #00aa2a;
-            --matrix-dark: #003300;
-            --terminal-bg: #0a0a0a;
-            --prompt-color: #ff6b6b;
-            --comment-color: #6272a4;
-            --string-color: #f1fa8c;
-            --keyword-color: #ff79c6;
+            --cctv-green: #00ff00;
+            --cctv-dim: #00aa00;
+            --cctv-red: #ff0000;
+            --cctv-amber: #ffaa00;
+            --panel-dark: #1a1a1a;
+            --panel-gray: #2a2a2a;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background: var(--terminal-bg);
+            background: #0a0a0a;
             min-height: 100vh;
-            font-family: 'Fira Code', monospace;
-            color: var(--matrix-green);
-            overflow: hidden;
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--cctv-green);
+            padding: 15px;
         }
 
-        /* MATRIX RAIN */
-        .matrix-rain {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.15;
+        /* MAIN CONTAINER */
+        .cctv-station {
+            max-width: 1000px;
+            margin: 0 auto;
         }
 
-        .rain-column {
-            position: absolute;
-            top: -100%;
-            font-size: 14px;
-            line-height: 1.2;
-            color: var(--matrix-green);
-            text-shadow: 0 0 5px var(--matrix-green);
-            animation: rain-fall linear infinite;
-            writing-mode: vertical-rl;
-        }
-
-        @keyframes rain-fall {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(250vh); }
-        }
-
-        /* TERMINAL CONTAINER */
-        .terminal-container {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            max-width: 900px;
-            margin: 20px auto;
-            padding: 0 20px;
-        }
-
-        /* WINDOW */
-        .terminal-window {
-            background: rgba(10, 10, 10, 0.95);
-            border: 1px solid #333;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 
-                0 20px 60px rgba(0,0,0,0.8),
-                0 0 30px rgba(0, 255, 65, 0.1);
-        }
-
-        /* TITLE BAR */
-        .title-bar {
-            background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
-            padding: 10px 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 1px solid #333;
-        }
-
-        .window-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .window-btn {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-
-        .btn-close { background: #ff5f56; }
-        .btn-minimize { background: #ffbd2e; }
-        .btn-maximize { background: #27ca40; }
-
-        .window-title {
-            flex: 1;
-            text-align: center;
-            font-size: 0.75rem;
-            color: #888;
-            letter-spacing: 1px;
-        }
-
-        /* TERMINAL BODY */
-        .terminal-body {
-            padding: 20px;
-            min-height: 500px;
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
-
-        /* OUTPUT LINES */
-        .output-line {
-            margin-bottom: 5px;
-            opacity: 0;
-            animation: type-in 0.1s ease forwards;
-        }
-
-        @keyframes type-in {
-            from { opacity: 0; transform: translateX(-5px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .prompt {
-            color: var(--prompt-color);
-        }
-
-        .command {
-            color: var(--matrix-green);
-        }
-
-        .comment {
-            color: var(--comment-color);
-        }
-
-        .string {
-            color: var(--string-color);
-        }
-
-        .keyword {
-            color: var(--keyword-color);
-        }
-
-        .success {
-            color: #50fa7b;
-        }
-
-        .error {
-            color: #ff5555;
-        }
-
-        .warning {
-            color: #ffb86c;
-        }
-
-        /* ASCII ART */
-        .ascii-art {
-            font-size: 0.6rem;
-            line-height: 1.1;
-            color: var(--matrix-dim);
-            margin: 15px 0;
-            white-space: pre;
-        }
-
-        /* PLAYER SECTION */
-        .player-section {
-            background: rgba(0, 255, 65, 0.03);
-            border: 1px solid rgba(0, 255, 65, 0.2);
-            border-radius: 4px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-
-        .player-header {
+        /* HEADER */
+        .station-header {
+            background: var(--panel-dark);
+            border: 2px solid #333;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px dashed rgba(0, 255, 65, 0.3);
         }
 
-        .player-status {
+        .station-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+        }
+
+        .station-status {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 20px;
         }
 
-        .status-dot {
-            width: 8px;
-            height: 8px;
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+        }
+
+        .status-led {
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
-            background: #444;
+            background: #333;
         }
 
-        .status-dot.active {
-            background: var(--matrix-green);
-            box-shadow: 0 0 10px var(--matrix-green);
-            animation: pulse 1s ease-in-out infinite;
+        .status-led.on {
+            background: var(--cctv-green);
+            box-shadow: 0 0 10px var(--cctv-green);
+            animation: led-blink 1s infinite;
         }
 
-        @keyframes pulse {
+        .status-led.recording {
+            background: var(--cctv-red);
+            box-shadow: 0 0 10px var(--cctv-red);
+            animation: led-blink 0.5s infinite;
+        }
+
+        @keyframes led-blink {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
 
-        .player-info {
-            text-align: right;
-            font-size: 0.75rem;
-            color: var(--comment-color);
+        .datetime {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: var(--cctv-amber);
         }
 
-        /* TRACK INFO */
-        .track-box {
-            background: #0d0d0d;
-            border: 1px solid #222;
-            padding: 15px;
+        /* MONITOR GRID */
+        .monitor-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 15px;
             margin-bottom: 15px;
-            font-family: 'JetBrains Mono', monospace;
         }
 
-        .track-label {
-            font-size: 0.65rem;
-            color: var(--comment-color);
-            margin-bottom: 5px;
-        }
-
-        .track-title {
-            font-size: 1.1rem;
-            color: var(--string-color);
-            margin-bottom: 5px;
-        }
-
-        .track-meta {
-            font-size: 0.75rem;
-            color: var(--matrix-dim);
-        }
-
-        /* VISUALIZER */
-        .visualizer-box {
-            height: 80px;
-            background: #080808;
-            border: 1px solid #222;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            gap: 3px;
-            padding: 10px;
-            margin-bottom: 15px;
+        /* MAIN MONITOR */
+        .main-monitor {
+            background: #000;
+            border: 3px solid #333;
             position: relative;
         }
 
-        .visualizer-box::before {
-            content: "FREQ ANALYSIS";
-            position: absolute;
-            top: 5px;
-            left: 10px;
-            font-size: 0.5rem;
-            color: #333;
-            letter-spacing: 2px;
+        .monitor-frame {
+            background: var(--panel-gray);
+            padding: 8px;
         }
 
-        .viz-bar {
-            width: 6px;
-            background: var(--matrix-green);
-            border-radius: 2px 2px 0 0;
-            box-shadow: 0 0 5px rgba(0, 255, 65, 0.5);
-            transition: height 0.05s ease;
-        }
-
-        /* PROGRESS */
-        .progress-section {
-            margin-bottom: 15px;
-        }
-
-        .progress-bar-bg {
-            height: 6px;
-            background: #1a1a1a;
-            border-radius: 3px;
-            cursor: pointer;
+        .monitor-screen {
+            background: #000;
+            aspect-ratio: 16/9;
             position: relative;
             overflow: hidden;
         }
 
-        .progress-bar-fill {
+        /* VIDEO CONTAINER */
+        .video-container {
+            width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, var(--matrix-dim), var(--matrix-green));
-            width: 0%;
-            border-radius: 3px;
-            box-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
-            transition: width 0.1s linear;
+            position: relative;
         }
 
-        .progress-times {
+        .video-container video,
+        .video-container iframe {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* SCANLINES */
+        .scanlines {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0,0,0,0.2) 0px,
+                rgba(0,0,0,0.2) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* OSD OVERLAY */
+        .osd-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 20;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .osd-top {
             display: flex;
             justify-content: space-between;
-            margin-top: 8px;
-            font-size: 0.75rem;
         }
 
-        .time-current {
-            color: var(--matrix-green);
+        .osd-cam {
+            background: rgba(0,0,0,0.7);
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            color: var(--cctv-green);
+            text-shadow: 0 0 5px var(--cctv-green);
         }
 
-        .time-total {
-            color: var(--comment-color);
-        }
-
-        /* CONTROLS */
-        .controls-row {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .ctrl-btn {
-            background: transparent;
-            border: 1px solid #444;
-            color: #666;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.75rem;
-            padding: 10px 20px;
-            cursor: pointer;
-            transition: all 0.15s ease;
+        .osd-rec {
+            background: rgba(255,0,0,0.8);
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            color: white;
             display: flex;
             align-items: center;
             gap: 5px;
         }
 
-        .ctrl-btn:hover {
-            border-color: var(--matrix-green);
-            color: var(--matrix-green);
-            text-shadow: 0 0 5px var(--matrix-green);
+        .rec-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: rec-blink 1s infinite;
         }
 
-        .ctrl-btn.play-btn {
-            border-color: var(--matrix-green);
-            color: var(--matrix-green);
-            padding: 10px 30px;
+        @keyframes rec-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
         }
 
-        .ctrl-btn.play-btn.active {
-            background: var(--matrix-green);
-            color: #000;
-            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+        .osd-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
         }
 
-        /* SECONDARY CONTROLS */
-        .secondary-row {
+        .osd-timestamp {
+            background: rgba(0,0,0,0.7);
+            padding: 5px 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: var(--cctv-amber);
+        }
+
+        .osd-location {
+            background: rgba(0,0,0,0.7);
+            padding: 5px 10px;
+            font-size: 0.7rem;
+            color: var(--cctv-green);
+            text-align: right;
+        }
+
+        /* SIDE MONITORS */
+        .side-monitors {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .mini-monitor {
+            background: var(--panel-gray);
+            padding: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid #333;
+        }
+
+        .mini-monitor:hover {
+            border-color: var(--cctv-green);
+        }
+
+        .mini-monitor.active {
+            border-color: var(--cctv-green);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+
+        .mini-screen {
+            background: #000;
+            aspect-ratio: 16/9;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mini-screen img,
+        .mini-screen video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(50%);
+        }
+
+        .mini-label {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            background: rgba(0,0,0,0.8);
+            padding: 2px 6px;
+            font-size: 0.55rem;
+            color: var(--cctv-green);
+        }
+
+        /* CONTROL PANEL */
+        .control-panel {
+            background: var(--panel-dark);
+            border: 2px solid #333;
+            padding: 15px;
+        }
+
+        .controls-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 20px;
+        }
+
+        /* PLAYBACK CONTROLS */
+        .playback-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .ctrl-btn {
+            width: 45px;
+            height: 40px;
+            background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
+            border: 2px solid #444;
+            color: #888;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+
+        .ctrl-btn:hover {
+            border-color: var(--cctv-green);
+            color: var(--cctv-green);
+        }
+
+        .ctrl-btn:active {
+            transform: scale(0.95);
+        }
+
+        .ctrl-btn.play-btn {
+            width: 60px;
+            border-color: var(--cctv-green);
+            color: var(--cctv-green);
+        }
+
+        .ctrl-btn.play-btn.active {
+            background: var(--cctv-green);
+            color: #000;
+        }
+
+        /* TIMELINE */
+        .timeline-section {
+            flex: 1;
+        }
+
+        .timeline-bar {
+            height: 8px;
+            background: #222;
+            cursor: pointer;
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .timeline-progress {
+            height: 100%;
+            background: var(--cctv-green);
+            width: 0%;
+            box-shadow: 0 0 5px var(--cctv-green);
+        }
+
+        .timeline-markers {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            top: -3px;
+            width: 2px;
+            height: 14px;
+            background: var(--cctv-amber);
+        }
+
+        .timeline-times {
+            display: flex;
+            justify-content: space-between;
             font-size: 0.7rem;
+            color: #666;
+        }
+
+        /* VOLUME & OPTIONS */
+        .options-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
         .volume-control {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
-        .volume-slider {
-            -webkit-appearance: none;
+        .vol-icon {
+            color: var(--cctv-green);
+            font-size: 1rem;
+        }
+
+        .vol-slider {
             width: 80px;
-            height: 4px;
-            background: #333;
-            border-radius: 2px;
-        }
-
-        .volume-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 12px;
-            height: 12px;
-            background: var(--matrix-green);
-            border-radius: 50%;
+            height: 6px;
+            background: #333;
+        }
+
+        .vol-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: var(--cctv-green);
             cursor: pointer;
         }
 
-        .mode-toggles {
-            display: flex;
-            gap: 10px;
-        }
-
-        .mode-toggle {
-            color: #444;
-            cursor: pointer;
-            transition: color 0.15s ease;
-        }
-
-        .mode-toggle:hover, .mode-toggle.active {
-            color: var(--matrix-green);
-            text-shadow: 0 0 5px var(--matrix-green);
-        }
-
-        /* PLAYLIST */
-        .playlist-section {
-            margin-top: 20px;
-            border-top: 1px dashed rgba(0, 255, 65, 0.3);
-            padding-top: 15px;
-        }
-
-        .playlist-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            font-size: 0.75rem;
-        }
-
-        .playlist-title {
-            color: var(--keyword-color);
-        }
-
-        .playlist-count {
-            color: var(--comment-color);
-        }
-
-        .playlist-item {
-            display: flex;
-            align-items: center;
-            padding: 8px 10px;
-            border-left: 2px solid transparent;
+        .option-btn {
+            background: transparent;
+            border: 1px solid #444;
+            color: #666;
+            padding: 5px 10px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem;
             cursor: pointer;
             transition: all 0.15s ease;
-            font-size: 0.8rem;
         }
 
-        .playlist-item:hover {
-            background: rgba(0, 255, 65, 0.05);
-            border-left-color: var(--matrix-dim);
+        .option-btn:hover, .option-btn.active {
+            border-color: var(--cctv-green);
+            color: var(--cctv-green);
         }
 
-        .playlist-item.active {
-            background: rgba(0, 255, 65, 0.1);
-            border-left-color: var(--matrix-green);
+        /* INFO PANEL */
+        .info-panel {
+            margin-top: 15px;
+            background: var(--panel-dark);
+            border: 2px solid #333;
+            padding: 15px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
         }
 
-        .playlist-item.active .item-title {
-            color: var(--matrix-green);
+        .info-item {
+            text-align: center;
         }
 
-        .item-index {
-            width: 30px;
-            color: var(--comment-color);
+        .info-label {
+            font-size: 0.6rem;
+            color: #666;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
         }
 
-        .item-title {
-            flex: 1;
-            color: #888;
-        }
-
-        .item-duration {
-            color: var(--comment-color);
+        .info-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: var(--cctv-green);
         }
 
         /* FOOTER */
-        .terminal-footer {
-            padding: 15px 20px;
-            border-top: 1px solid #222;
-            font-size: 0.7rem;
-            color: var(--comment-color);
+        .station-footer {
+            margin-top: 15px;
             display: flex;
             justify-content: space-between;
+            font-size: 0.65rem;
+            color: #444;
         }
 
-        .footer-link {
-            color: var(--matrix-dim);
+        .station-footer a {
+            color: var(--cctv-dim);
             text-decoration: none;
         }
 
-        .footer-link:hover {
-            color: var(--matrix-green);
-            text-shadow: 0 0 5px var(--matrix-green);
-        }
-
-        /* CURSOR BLINK */
-        .cursor {
-            display: inline-block;
-            width: 8px;
-            height: 1.2em;
-            background: var(--matrix-green);
-            animation: cursor-blink 1s step-end infinite;
-            vertical-align: bottom;
-        }
-
-        @keyframes cursor-blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        /* GLITCH TEXT */
-        .glitch {
-            position: relative;
-        }
-
-        .glitch::before,
-        .glitch::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        .glitch::before {
-            color: #ff0000;
-            animation: glitch-1 0.3s infinite;
-            clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
-        }
-
-        .glitch::after {
-            color: #00ffff;
-            animation: glitch-2 0.3s infinite;
-            clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
-        }
-
-        @keyframes glitch-1 {
-            0%, 100% { transform: translate(0); }
-            20% { transform: translate(-2px, 1px); }
-            60% { transform: translate(2px, -1px); }
-        }
-
-        @keyframes glitch-2 {
-            0%, 100% { transform: translate(0); }
-            40% { transform: translate(2px, 1px); }
-            80% { transform: translate(-2px, -1px); }
-        }
-
-        /* TYPING ANIMATION */
-        .typing {
-            overflow: hidden;
-            white-space: nowrap;
-            animation: typing 2s steps(40) forwards;
-        }
-
-        @keyframes typing {
-            from { width: 0; }
-            to { width: 100%; }
-        }
-
         /* RESPONSIVE */
-        @media (max-width: 600px) {
-            .terminal-container {
-                padding: 0 10px;
+        @media (max-width: 700px) {
+            .monitor-grid {
+                grid-template-columns: 1fr;
             }
-            .terminal-body {
-                padding: 15px;
-                font-size: 0.8rem;
+            .side-monitors {
+                flex-direction: row;
             }
-            .ascii-art {
-                font-size: 0.4rem;
+            .mini-monitor {
+                flex: 1;
             }
             .controls-row {
                 flex-wrap: wrap;
+            }
+            .info-panel {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
 </head>
 <body>
 
-<!-- MATRIX RAIN -->
-<div class="matrix-rain" id="matrixRain"></div>
-
-<div class="terminal-container">
-    <div class="terminal-window">
-        
-        <!-- TITLE BAR -->
-        <div class="title-bar">
-            <div class="window-buttons">
-                <div class="window-btn btn-close"></div>
-                <div class="window-btn btn-minimize"></div>
-                <div class="window-btn btn-maximize"></div>
+<div class="cctv-station">
+    <!-- HEADER -->
+    <div class="station-header">
+        <div class="station-title">CCTV MONITORING STATION</div>
+        <div class="station-status">
+            <div class="status-item">
+                <div class="status-led on"></div>
+                <span>SYSTEM</span>
             </div>
-            <div class="window-title">ouaisfi@stream:~/media — zsh</div>
+            <div class="status-item">
+                <div class="status-led recording" id="recLed"></div>
+                <span>REC</span>
+            </div>
+            <div class="datetime" id="datetime">2026-02-03 14:32:07</div>
         </div>
+    </div>
 
-        <!-- TERMINAL BODY -->
-        <div class="terminal-body" id="terminalBody">
-            
-            <!-- BOOT SEQUENCE -->
-            <div class="output-line comment"># OUAISFIEU STREAM TERMINAL v3.1</div>
-            <div class="output-line comment"># Initialisation du module de diffusion...</div>
-            <div class="output-line"><span class="prompt">$</span> <span class="command">./stream_init.sh --secure --no-tracking</span></div>
-            <div class="output-line success">[OK] Connexion établie - Aucun cookie déployé</div>
-            <div class="output-line success">[OK] Chiffrement activé - Privacy by Design</div>
-            <div class="output-line"><span class="prompt">$</span> <span class="command">media --load</span></div>
-            
-            <!-- ASCII ART -->
-            <pre class="ascii-art">
- ██████╗ ██╗   ██╗ █████╗ ██╗███████╗███████╗██╗███████╗██╗   ██╗
-██╔═══██╗██║   ██║██╔══██╗██║██╔════╝██╔════╝██║██╔════╝██║   ██║
-██║   ██║██║   ██║███████║██║███████╗█████╗  ██║█████╗  ██║   ██║
-██║   ██║██║   ██║██╔══██║██║╚════██║██╔══╝  ██║██╔══╝  ██║   ██║
-╚██████╔╝╚██████╔╝██║  ██║██║███████║██║     ██║███████╗╚██████╔╝
- ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝╚══════╝╚═╝     ╚═╝╚══════╝ ╚═════╝ 
-            [ TERMINAL DE VEILLE CITOYENNE — FORK • HACK • SPREAD ]
-            </pre>
-
-            <!-- PLAYER SECTION -->
-            <div class="player-section">
-                <div class="player-header">
-                    <div class="player-status">
-                        <div class="status-dot" id="statusDot"></div>
-                        <span id="statusText">STANDBY</span>
+    <!-- MONITOR GRID -->
+    <div class="monitor-grid">
+        <!-- MAIN MONITOR -->
+        <div class="main-monitor">
+            <div class="monitor-frame">
+                <div class="monitor-screen">
+                    <div class="video-container" id="videoContainer">
+                        <!-- Video or iframe will be inserted here -->
                     </div>
-                    <div class="player-info">
-                        PID: 31337 | CPU: 0.2% | MEM: 12MB
-                    </div>
-                </div>
-
-                <!-- TRACK INFO -->
-                <div class="track-box">
-                    <div class="track-label">// NOW_PLAYING</div>
-                    <div class="track-title glitch" data-text="PARTY ON GAME OVER" id="trackTitle">PARTY ON GAME OVER</div>
-                    <div class="track-meta">
-                        <span class="keyword">source:</span> <span class="string" id="trackSource">"CCPLC_BROADCAST"</span> | 
-                        <span class="keyword">format:</span> <span id="trackFormat">MP3/320kbps</span>
-                    </div>
-                </div>
-
-                <!-- VISUALIZER -->
-                <div class="visualizer-box" id="visualizer">
-                    <!-- Generated by JS -->
-                </div>
-
-                <!-- PROGRESS -->
-                <div class="progress-section">
-                    <div class="progress-bar-bg" id="progressBar">
-                        <div class="progress-bar-fill" id="progressFill"></div>
-                    </div>
-                    <div class="progress-times">
-                        <span class="time-current" id="timeCurrent">00:00:00</span>
-                        <span class="time-total" id="timeTotal">00:00:00</span>
-                    </div>
-                </div>
-
-                <!-- CONTROLS -->
-                <div class="controls-row">
-                    <button class="ctrl-btn" id="btnPrev">⏮ PREV</button>
-                    <button class="ctrl-btn" id="btnRew">◀◀ -10s</button>
-                    <button class="ctrl-btn play-btn" id="btnPlay">▶ PLAY</button>
-                    <button class="ctrl-btn" id="btnFwd">+10s ▶▶</button>
-                    <button class="ctrl-btn" id="btnNext">NEXT ⏭</button>
-                </div>
-
-                <!-- SECONDARY -->
-                <div class="secondary-row">
-                    <div class="volume-control">
-                        <span>VOL:</span>
-                        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="80">
-                        <span id="volumeValue">80%</span>
-                    </div>
-                    <div class="mode-toggles">
-                        <span class="mode-toggle" id="btnShuffle" title="Shuffle">[SHUFFLE]</span>
-                        <span class="mode-toggle" id="btnRepeat" title="Repeat">[REPEAT]</span>
-                    </div>
-                </div>
-
-                <!-- PLAYLIST -->
-                <div class="playlist-section">
-                    <div class="playlist-header">
-                        <span class="playlist-title">// QUEUE</span>
-                        <span class="playlist-count" id="playlistCount">3 tracks</span>
-                    </div>
-                    <div id="playlistContainer">
-                        <!-- Generated by JS -->
+                    <div class="scanlines"></div>
+                    <div class="osd-overlay">
+                        <div class="osd-top">
+                            <div class="osd-cam" id="osdCam">CAM-01</div>
+                            <div class="osd-rec" id="osdRec">
+                                <div class="rec-dot"></div>
+                                <span>REC</span>
+                            </div>
+                        </div>
+                        <div class="osd-bottom">
+                            <div class="osd-timestamp" id="osdTimestamp">00:00:00</div>
+                            <div class="osd-location">
+                                <div id="osdTitle">BRIEFING ALPHA</div>
+                                <div style="color: #666; margin-top: 3px;">LAT 50.8503 | LON 4.3517</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- COMMAND LINE -->
-            <div class="output-line" id="commandLine">
-                <span class="prompt">$</span> <span class="cursor"></span>
+        <!-- SIDE MONITORS -->
+        <div class="side-monitors" id="sideMonitors">
+            <!-- Generated by JS -->
+        </div>
+    </div>
+
+    <!-- CONTROL PANEL -->
+    <div class="control-panel">
+        <div class="controls-row">
+            <div class="playback-controls">
+                <button class="ctrl-btn" id="btnPrev">⏮</button>
+                <button class="ctrl-btn" id="btnRew">⏪</button>
+                <button class="ctrl-btn play-btn" id="btnPlay">▶</button>
+                <button class="ctrl-btn" id="btnFwd">⏩</button>
+                <button class="ctrl-btn" id="btnNext">⏭</button>
             </div>
 
-        </div>
+            <div class="timeline-section">
+                <div class="timeline-bar" id="timelineBar">
+                    <div class="timeline-progress" id="timelineProgress"></div>
+                    <div class="timeline-markers">
+                        <div class="timeline-marker" style="left: 25%;"></div>
+                        <div class="timeline-marker" style="left: 50%;"></div>
+                        <div class="timeline-marker" style="left: 75%;"></div>
+                    </div>
+                </div>
+                <div class="timeline-times">
+                    <span id="timeCurrent">00:00</span>
+                    <span id="timeTotal">00:00</span>
+                </div>
+            </div>
 
-        <!-- FOOTER -->
-        <div class="terminal-footer">
-            <span>© 2026 CCPLC — Licence CC BY-NC 4.0</span>
-            <a href="https://ouaisfi.eu" class="footer-link" target="_blank">ouaisfi.eu</a>
+            <div class="options-section">
+                <div class="volume-control">
+                    <span class="vol-icon">🔊</span>
+                    <input type="range" class="vol-slider" id="volumeSlider" min="0" max="100" value="80">
+                </div>
+                <button class="option-btn" id="btnLoop">LOOP</button>
+                <button class="option-btn" id="btnFullscreen">⛶</button>
+            </div>
         </div>
+    </div>
 
+    <!-- INFO PANEL -->
+    <div class="info-panel">
+        <div class="info-item">
+            <div class="info-label">RESOLUTION</div>
+            <div class="info-value">1920×1080</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">FRAMERATE</div>
+            <div class="info-value">30 FPS</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">BITRATE</div>
+            <div class="info-value" id="infoBitrate">4.2 Mbps</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">STORAGE</div>
+            <div class="info-value">127.4 GB</div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="station-footer">
+        <span>© 2026 CCPLC — SURVEILLANCE CITOYENNE</span>
+        <a href="https://ouaisfi.eu" target="_blank">ouaisfi.eu</a>
+        <span>CC BY-NC 4.0</span>
     </div>
 </div>
 
-<audio id="audioPlayer" preload="metadata"></audio>
-
 <script>
-// ========================================
-// OUAISFIEU STREAM TERMINAL - ENGINE
-// ========================================
-
-// Playlist
-const playlist = [
+// Video sources (can be video files or YouTube embeds)
+const videos = [
     {
-        title: "PARTY ON GAME OVER",
-        source: "CCPLC_BROADCAST",
-        src: "https://dl.ouaisfi.eu/ccplc/test-o/party-on-game-over.mp3",
-        format: "MP3/320kbps"
+        id: "cam01",
+        title: "BRIEFING TEAM ALPHA",
+        type: "youtube",
+        src: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        thumb: "https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg"
     },
     {
-        title: "SIGNAL_INTERCEPTED_07",
-        source: "RESEAU_ALPHA",
-        src: "https://dl.ouaisfi.eu/ccplc/test-o/party-on-game-over.mp3",
-        format: "MP3/256kbps"
+        id: "cam02",
+        title: "TRANSMISSION #7",
+        type: "youtube",
+        src: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        thumb: "https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg"
     },
     {
-        title: "WAKE_UP_CALL_EDITION",
-        source: "CELLULE_INDEPENDANTE",
-        src: "https://dl.ouaisfi.eu/ccplc/test-o/party-on-game-over.mp3",
-        format: "MP3/320kbps"
+        id: "cam03",
+        title: "ARCHIVES 11·60",
+        type: "youtube",
+        src: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        thumb: "https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg"
     }
 ];
 
-// DOM
-const audio = document.getElementById('audioPlayer');
+let currentVideo = 0;
+let isPlaying = false;
+
+const videoContainer = document.getElementById('videoContainer');
 const btnPlay = document.getElementById('btnPlay');
-const btnPrev = document.getElementById('btnPrev');
-const btnNext = document.getElementById('btnNext');
-const btnRew = document.getElementById('btnRew');
-const btnFwd = document.getElementById('btnFwd');
-const btnShuffle = document.getElementById('btnShuffle');
-const btnRepeat = document.getElementById('btnRepeat');
-const volumeSlider = document.getElementById('volumeSlider');
-const volumeValue = document.getElementById('volumeValue');
-const trackTitle = document.getElementById('trackTitle');
-const trackSource = document.getElementById('trackSource');
-const trackFormat = document.getElementById('trackFormat');
+const osdCam = document.getElementById('osdCam');
+const osdTitle = document.getElementById('osdTitle');
+const osdTimestamp = document.getElementById('osdTimestamp');
+const osdRec = document.getElementById('osdRec');
+const recLed = document.getElementById('recLed');
+const timelineProgress = document.getElementById('timelineProgress');
 const timeCurrent = document.getElementById('timeCurrent');
 const timeTotal = document.getElementById('timeTotal');
-const progressBar = document.getElementById('progressBar');
-const progressFill = document.getElementById('progressFill');
-const visualizer = document.getElementById('visualizer');
-const playlistContainer = document.getElementById('playlistContainer');
-const playlistCount = document.getElementById('playlistCount');
-const statusDot = document.getElementById('statusDot');
-const statusText = document.getElementById('statusText');
-const matrixRain = document.getElementById('matrixRain');
+const sideMonitors = document.getElementById('sideMonitors');
 
-// State
-let currentTrack = 0;
-let isPlaying = false;
-let isShuffle = false;
-let isRepeat = false;
-
-// Matrix Rain
-function createMatrixRain() {
-    const chars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF";
-    const columns = Math.floor(window.innerWidth / 20);
-    
-    for (let i = 0; i < columns; i++) {
-        const column = document.createElement('div');
-        column.className = 'rain-column';
-        column.style.left = `${i * 20}px`;
-        column.style.animationDuration = `${5 + Math.random() * 10}s`;
-        column.style.animationDelay = `${Math.random() * 5}s`;
-        
-        let text = '';
-        for (let j = 0; j < 30; j++) {
-            text += chars[Math.floor(Math.random() * chars.length)] + '\n';
-        }
-        column.textContent = text;
-        matrixRain.appendChild(column);
-    }
+// Update datetime
+function updateDatetime() {
+    const now = new Date();
+    const str = now.toISOString().replace('T', ' ').substring(0, 19);
+    document.getElementById('datetime').textContent = str;
 }
+setInterval(updateDatetime, 1000);
+updateDatetime();
 
-// Visualizer
-function createVisualizer() {
-    visualizer.innerHTML = '';
-    for (let i = 0; i < 40; i++) {
-        const bar = document.createElement('div');
-        bar.className = 'viz-bar';
-        bar.style.height = '4px';
-        visualizer.appendChild(bar);
-    }
-}
-
-// Render playlist
-function renderPlaylist() {
-    playlistContainer.innerHTML = '';
-    playlistCount.textContent = `${playlist.length} tracks`;
-    
-    playlist.forEach((track, index) => {
-        const item = document.createElement('div');
-        item.className = `playlist-item ${index === currentTrack ? 'active' : ''}`;
-        item.innerHTML = `
-            <span class="item-index">${String(index).padStart(2, '0')}</span>
-            <span class="item-title">${track.title}</span>
-            <span class="item-duration">${track.format}</span>
+// Render side monitors
+function renderSideMonitors() {
+    sideMonitors.innerHTML = '';
+    videos.forEach((v, i) => {
+        const monitor = document.createElement('div');
+        monitor.className = `mini-monitor ${i === currentVideo ? 'active' : ''}`;
+        monitor.innerHTML = `
+            <div class="mini-screen">
+                <img src="${v.thumb}" alt="${v.title}">
+                <div class="mini-label">CAM-${String(i+1).padStart(2,'0')}</div>
+            </div>
         `;
-        item.addEventListener('click', () => {
-            currentTrack = index;
-            loadTrack(currentTrack);
-            play();
-        });
-        playlistContainer.appendChild(item);
+        monitor.onclick = () => loadVideo(i);
+        sideMonitors.appendChild(monitor);
     });
 }
 
-// Load track
-function loadTrack(index) {
-    const track = playlist[index];
-    audio.src = track.src;
-    trackTitle.textContent = track.title;
-    trackTitle.dataset.text = track.title;
-    trackSource.textContent = `"${track.source}"`;
-    trackFormat.textContent = track.format;
+// Load video
+function loadVideo(index) {
+    currentVideo = index;
+    const v = videos[index];
     
-    document.querySelectorAll('.playlist-item').forEach((item, i) => {
-        item.classList.toggle('active', i === index);
-    });
+    osdCam.textContent = `CAM-${String(index+1).padStart(2,'0')}`;
+    osdTitle.textContent = v.title;
     
-    logCommand(`media --play "${track.title}"`);
-}
-
-// Log command
-function logCommand(cmd) {
-    const terminalBody = document.getElementById('terminalBody');
-    const commandLine = document.getElementById('commandLine');
-    
-    const newLine = document.createElement('div');
-    newLine.className = 'output-line';
-    newLine.innerHTML = `<span class="prompt">$</span> <span class="command">${cmd}</span>`;
-    
-    terminalBody.insertBefore(newLine, commandLine);
-    
-    // Keep limited history
-    const lines = terminalBody.querySelectorAll('.output-line');
-    if (lines.length > 20) {
-        lines[0].remove();
+    if (v.type === 'youtube') {
+        videoContainer.innerHTML = `
+            <iframe 
+                src="${v.src}?enablejsapi=1&autoplay=0&controls=0&modestbranding=1&rel=0" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        `;
+    } else {
+        videoContainer.innerHTML = `
+            <video id="mainVideo" src="${v.src}"></video>
+        `;
     }
+    
+    document.querySelectorAll('.mini-monitor').forEach((m, i) => {
+        m.classList.toggle('active', i === index);
+    });
+    
+    isPlaying = false;
+    btnPlay.classList.remove('active');
+    btnPlay.textContent = '▶';
+    osdRec.style.display = 'none';
+    recLed.classList.remove('recording');
 }
 
 // Play/Pause
 function togglePlay() {
-    if (audio.paused) {
-        play();
-    } else {
-        pause();
-    }
-}
-
-function play() {
-    audio.play().then(() => {
-        isPlaying = true;
-        btnPlay.textContent = '⏸ PAUSE';
-        btnPlay.classList.add('active');
-        statusDot.classList.add('active');
-        statusText.textContent = 'STREAMING';
-        logCommand('[OK] Stream started');
-        animateVisualizer();
-    }).catch(err => {
-        logCommand(`[ERROR] ${err.message}`);
-    });
-}
-
-function pause() {
-    audio.pause();
-    isPlaying = false;
-    btnPlay.textContent = '▶ PLAY';
-    btnPlay.classList.remove('active');
-    statusDot.classList.remove('active');
-    statusText.textContent = 'PAUSED';
-}
-
-// Visualizer animation
-function animateVisualizer() {
-    if (!isPlaying) return;
+    const video = document.querySelector('#mainVideo');
+    const iframe = videoContainer.querySelector('iframe');
     
-    const bars = visualizer.querySelectorAll('.viz-bar');
-    bars.forEach(bar => {
-        const height = Math.random() * 55 + 5;
-        bar.style.height = `${height}px`;
-    });
-    
-    requestAnimationFrame(animateVisualizer);
-}
-
-// Format time
-function formatTime(seconds) {
-    if (isNaN(seconds)) return "00:00:00";
-    const hrs = Math.floor(seconds / 3600);
-    const mins = Math.floor((seconds % 3600) / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-}
-
-// Navigation
-function prevTrack() {
-    currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
-    loadTrack(currentTrack);
-    if (isPlaying) play();
-}
-
-function nextTrack() {
-    if (isShuffle) {
-        currentTrack = Math.floor(Math.random() * playlist.length);
-    } else {
-        currentTrack = (currentTrack + 1) % playlist.length;
+    if (iframe) {
+        // For YouTube, we'd need the API - simplified version
+        isPlaying = !isPlaying;
+    } else if (video) {
+        if (video.paused) {
+            video.play();
+            isPlaying = true;
+        } else {
+            video.pause();
+            isPlaying = false;
+        }
     }
-    loadTrack(currentTrack);
-    if (isPlaying) play();
+    
+    btnPlay.classList.toggle('active', isPlaying);
+    btnPlay.textContent = isPlaying ? '❚❚' : '▶';
+    osdRec.style.display = isPlaying ? 'flex' : 'none';
+    recLed.classList.toggle('recording', isPlaying);
 }
+
+// Simulate timestamp update
+let fakeTime = 0;
+setInterval(() => {
+    if (isPlaying) {
+        fakeTime++;
+        const h = String(Math.floor(fakeTime / 3600)).padStart(2, '0');
+        const m = String(Math.floor((fakeTime % 3600) / 60)).padStart(2, '0');
+        const s = String(fakeTime % 60).padStart(2, '0');
+        osdTimestamp.textContent = `${h}:${m}:${s}`;
+        
+        // Fake progress
+        const progress = (fakeTime % 300) / 300 * 100;
+        timelineProgress.style.width = `${progress}%`;
+        timeCurrent.textContent = `${m}:${s}`;
+    }
+}, 1000);
 
 // Event listeners
-function setupEventListeners() {
-    btnPlay.addEventListener('click', togglePlay);
-    btnPrev.addEventListener('click', prevTrack);
-    btnNext.addEventListener('click', nextTrack);
-    btnRew.addEventListener('click', () => { audio.currentTime -= 10; });
-    btnFwd.addEventListener('click', () => { audio.currentTime += 10; });
-    
-    volumeSlider.addEventListener('input', (e) => {
-        audio.volume = e.target.value / 100;
-        volumeValue.textContent = `${e.target.value}%`;
-    });
-    
-    btnShuffle.addEventListener('click', () => {
-        isShuffle = !isShuffle;
-        btnShuffle.classList.toggle('active', isShuffle);
-        logCommand(isShuffle ? '--shuffle ON' : '--shuffle OFF');
-    });
-    
-    btnRepeat.addEventListener('click', () => {
-        isRepeat = !isRepeat;
-        btnRepeat.classList.toggle('active', isRepeat);
-        logCommand(isRepeat ? '--repeat ON' : '--repeat OFF');
-    });
-    
-    audio.addEventListener('timeupdate', () => {
-        const { currentTime, duration } = audio;
-        timeCurrent.textContent = formatTime(currentTime);
-        timeTotal.textContent = formatTime(duration);
-        
-        const percent = (currentTime / duration) * 100 || 0;
-        progressFill.style.width = `${percent}%`;
-    });
-    
-    progressBar.addEventListener('click', (e) => {
-        const rect = progressBar.getBoundingClientRect();
-        const percent = (e.clientX - rect.left) / rect.width;
-        audio.currentTime = percent * audio.duration;
-    });
-    
-    audio.addEventListener('loadedmetadata', () => {
-        timeTotal.textContent = formatTime(audio.duration);
-    });
-    
-    audio.addEventListener('ended', () => {
-        if (isRepeat) {
-            audio.currentTime = 0;
-            play();
-        } else {
-            nextTrack();
-        }
-    });
-    
-    audio.addEventListener('error', () => {
-        logCommand('[ERROR] Stream interrupted');
-        statusText.textContent = 'ERROR';
-    });
-    
-    document.addEventListener('keydown', (e) => {
-        if (e.code === 'Space') {
-            e.preventDefault();
-            togglePlay();
-        }
-    });
-}
+btnPlay.onclick = togglePlay;
+document.getElementById('btnPrev').onclick = () => loadVideo((currentVideo - 1 + videos.length) % videos.length);
+document.getElementById('btnNext').onclick = () => loadVideo((currentVideo + 1) % videos.length);
+document.getElementById('btnRew').onclick = () => { fakeTime = Math.max(0, fakeTime - 10); };
+document.getElementById('btnFwd').onclick = () => { fakeTime += 10; };
+
+document.getElementById('btnLoop').onclick = function() { this.classList.toggle('active'); };
+document.getElementById('btnFullscreen').onclick = () => {
+    const screen = document.querySelector('.monitor-screen');
+    if (screen.requestFullscreen) screen.requestFullscreen();
+};
+
+document.getElementById('volumeSlider').oninput = (e) => {
+    const video = document.querySelector('#mainVideo');
+    if (video) video.volume = e.target.value / 100;
+};
+
+document.getElementById('timelineBar').onclick = (e) => {
+    const rect = e.target.getBoundingClientRect();
+    const percent = (e.clientX - rect.left) / rect.width;
+    fakeTime = Math.floor(percent * 300);
+};
+
+// Keyboard
+document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+});
 
 // Init
-function init() {
-    createMatrixRain();
-    createVisualizer();
-    renderPlaylist();
-    loadTrack(currentTrack);
-    setupEventListeners();
-    audio.volume = volumeSlider.value / 100;
-}
-
-init();
+renderSideMonitors();
+loadVideo(0);
 </script>
 
 </body>
